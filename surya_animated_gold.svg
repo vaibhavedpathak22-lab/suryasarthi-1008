@@ -1,0 +1,290 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="100%" height="100%" preserveAspectRatio="xMidYMid meet">
+  <defs>
+    <!-- 24K Gold Metallic Halo Gradient -->
+    <linearGradient id="goldMetallic" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFFBEB"/>
+      <stop offset="25%" stop-color="#FBBF24"/>
+      <stop offset="50%" stop-color="#F59E0B"/>
+      <stop offset="75%" stop-color="#D97706"/>
+      <stop offset="100%" stop-color="#B45309"/>
+    </linearGradient>
+
+    <!-- Radiant Sunburst Ray Gradient -->
+    <linearGradient id="sunRayGrad" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#F59E0B" stop-opacity="0.3"/>
+      <stop offset="45%" stop-color="#FBBF24" stop-opacity="0.85"/>
+      <stop offset="100%" stop-color="#FFFBEB" stop-opacity="1"/>
+    </linearGradient>
+
+    <!-- Secondary Starburst Ray Gradient -->
+    <linearGradient id="sunRayInnerGrad" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#EF4444" stop-opacity="0.2"/>
+      <stop offset="50%" stop-color="#FB923C" stop-opacity="0.75"/>
+      <stop offset="100%" stop-color="#FEF08A" stop-opacity="0.95"/>
+    </linearGradient>
+
+    <!-- Yogi Prana Halo Glow -->
+    <radialGradient id="pranaHaloGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FFFBEB" stop-opacity="0.9"/>
+      <stop offset="40%" stop-color="#FDE68A" stop-opacity="0.75"/>
+      <stop offset="80%" stop-color="#F59E0B" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#F59E0B" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Yogi Skin / Silhouette (Luminous High-Clarity Ivory-Gold) -->
+    <linearGradient id="yogiSkinGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="50%" stop-color="#FFFBEB"/>
+      <stop offset="100%" stop-color="#FEF3C7"/>
+    </linearGradient>
+
+    <!-- Yogi Torso -->
+    <linearGradient id="yogiTorsoGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="70%" stop-color="#FFFBEB"/>
+      <stop offset="100%" stop-color="#FDE68A"/>
+    </linearGradient>
+
+    <!-- Yogi Folded Legs -->
+    <linearGradient id="yogiLegsGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFBEB"/>
+      <stop offset="60%" stop-color="#FEF3C7"/>
+      <stop offset="100%" stop-color="#FDE68A"/>
+    </linearGradient>
+
+    <!-- Lotus Petal Gradients (Layered Saffron to Rose) -->
+    <linearGradient id="petalGradCenter" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#EA580C"/>
+      <stop offset="50%" stop-color="#FB923C"/>
+      <stop offset="100%" stop-color="#FFEDD5"/>
+    </linearGradient>
+
+    <linearGradient id="petalGradInner" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#E11D48"/>
+      <stop offset="60%" stop-color="#FB7185"/>
+      <stop offset="100%" stop-color="#FFE4E6"/>
+    </linearGradient>
+
+    <linearGradient id="petalGradMid" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#DB2777"/>
+      <stop offset="60%" stop-color="#F472B6"/>
+      <stop offset="100%" stop-color="#FDF2F8"/>
+    </linearGradient>
+
+    <linearGradient id="petalGradSide" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#BE185D"/>
+      <stop offset="60%" stop-color="#EC4899"/>
+      <stop offset="100%" stop-color="#FCE7F3"/>
+    </linearGradient>
+
+    <!-- Emerald Lotus Leaves Gradient -->
+    <linearGradient id="leafGreenGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#34D399"/>
+      <stop offset="50%" stop-color="#10B981"/>
+      <stop offset="100%" stop-color="#047857"/>
+    </linearGradient>
+
+    <!-- Glow Filter -->
+    <filter id="glowFilter" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="5" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <filter id="solarBloom" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="8" result="bloom"/>
+      <feMerge>
+        <feMergeNode in="bloom"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <style>
+    /* CSS Animations for smooth 60fps GPU rendering */
+    @keyframes spinSolarRays {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    @keyframes spinSolarCounter {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(-360deg); }
+    }
+    @keyframes coronaPulse {
+      0%, 100% { transform: scale(1); opacity: 0.88; }
+      50% { transform: scale(1.06); opacity: 1; }
+    }
+    @keyframes yogiPranaBreath {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.025); }
+    }
+    @keyframes goldShimmerSweep {
+      0% { stroke-dashoffset: 0; }
+      100% { stroke-dashoffset: 880; }
+    }
+    .spin-layer {
+      transform-origin: 150px 150px;
+      animation: spinSolarRays 28s linear infinite;
+    }
+    .spin-counter-layer {
+      transform-origin: 150px 150px;
+      animation: spinSolarCounter 36s linear infinite;
+    }
+    .corona-layer {
+      transform-origin: 150px 150px;
+      animation: coronaPulse 4.5s ease-in-out infinite;
+    }
+    .prana-layer {
+      transform-origin: 150px 150px;
+      animation: yogiPranaBreath 4.5s ease-in-out infinite;
+    }
+    .bezel-sweep {
+      animation: goldShimmerSweep 4s linear infinite;
+    }
+  </style>
+
+  <!-- Layer 0: Outer Circular Mask / Background Disc -->
+  <circle cx="150" cy="150" r="142" fill="#0C071E" stroke="rgba(251,191,36,0.25)" stroke-width="1.5"/>
+
+  <!-- Layer 1: Ambient Solar Dawn Glow -->
+  <circle cx="150" cy="150" r="130" fill="url(#pranaHaloGrad)" opacity="0.3" class="corona-layer"/>
+
+  <!-- Layer 2: Animated Rotating Sunburst Rays (Outer) -->
+  <g class="spin-layer" transform-origin="150 150">
+    <animateTransform attributeName="transform" type="rotate" from="0 150 150" to="360 150 150" dur="28s" repeatCount="indefinite"/>
+    <polygon points="213.8,145.3 282.0,150.0 213.8,154.7" fill="url(#sunRayGrad)" opacity="0.92"/>
+<polygon points="210.4,171.2 257.3,194.5 207.7,177.8" fill="url(#sunRayGrad)" opacity="0.92"/>
+<polygon points="198.4,191.8 243.3,243.3 191.8,198.4" fill="url(#sunRayGrad)" opacity="0.92"/>
+<polygon points="177.8,207.7 194.5,257.3 171.2,210.4" fill="url(#sunRayGrad)" opacity="0.92"/>
+<polygon points="154.7,213.8 150.0,282.0 145.3,213.8" fill="url(#sunRayGrad)" opacity="0.92"/>
+<polygon points="128.8,210.4 105.5,257.3 122.2,207.7" fill="url(#sunRayGrad)" opacity="0.92"/>
+<polygon points="108.2,198.4 56.7,243.3 101.6,191.8" fill="url(#sunRayGrad)" opacity="0.92"/>
+<polygon points="92.3,177.8 42.7,194.5 89.6,171.2" fill="url(#sunRayGrad)" opacity="0.92"/>
+<polygon points="86.2,154.7 18.0,150.0 86.2,145.3" fill="url(#sunRayGrad)" opacity="0.92"/>
+<polygon points="89.6,128.8 42.7,105.5 92.3,122.2" fill="url(#sunRayGrad)" opacity="0.92"/>
+<polygon points="101.6,108.2 56.7,56.7 108.2,101.6" fill="url(#sunRayGrad)" opacity="0.92"/>
+<polygon points="122.2,92.3 105.5,42.7 128.8,89.6" fill="url(#sunRayGrad)" opacity="0.92"/>
+<polygon points="145.3,86.2 150.0,18.0 154.7,86.2" fill="url(#sunRayGrad)" opacity="0.92"/>
+<polygon points="171.2,89.6 194.5,42.7 177.8,92.3" fill="url(#sunRayGrad)" opacity="0.92"/>
+<polygon points="191.8,101.6 243.3,56.7 198.4,108.2" fill="url(#sunRayGrad)" opacity="0.92"/>
+<polygon points="207.7,122.2 257.3,105.5 210.4,128.8" fill="url(#sunRayGrad)" opacity="0.92"/>
+  </g>
+
+  <!-- Layer 3: Animated Rotating Sunburst Rays (Inner Starburst) -->
+  <g class="spin-counter-layer" transform-origin="150 150">
+    <animateTransform attributeName="transform" type="rotate" from="0 150 150" to="-360 150 150" dur="36s" repeatCount="indefinite"/>
+    <polygon points="201.9,146.2 248.0,150.0 201.9,153.8" fill="url(#sunRayGrad)" opacity="0.92"/>
+<polygon points="196.4,173.4 224.7,193.1 193.5,178.5" fill="url(#sunRayGrad)" opacity="0.92"/>
+<polygon points="179.2,193.0 199.0,234.9 172.6,196.8" fill="url(#sunRayGrad)" opacity="0.92"/>
+<polygon points="152.9,201.9 150.0,236.2 147.1,201.9" fill="url(#sunRayGrad)" opacity="0.92"/>
+<polygon points="127.4,196.8 101.0,234.9 120.8,193.0" fill="url(#sunRayGrad)" opacity="0.92"/>
+<polygon points="106.5,178.5 75.3,193.1 103.6,173.4" fill="url(#sunRayGrad)" opacity="0.92"/>
+<polygon points="98.1,153.8 52.0,150.0 98.1,146.2" fill="url(#sunRayGrad)" opacity="0.92"/>
+<polygon points="103.6,126.6 75.3,106.9 106.5,121.5" fill="url(#sunRayGrad)" opacity="0.92"/>
+<polygon points="120.8,107.0 101.0,65.1 127.4,103.2" fill="url(#sunRayGrad)" opacity="0.92"/>
+<polygon points="147.1,98.1 150.0,63.8 152.9,98.1" fill="url(#sunRayGrad)" opacity="0.92"/>
+<polygon points="172.6,103.2 199.0,65.1 179.2,107.0" fill="url(#sunRayGrad)" opacity="0.92"/>
+<polygon points="193.5,121.5 224.7,106.9 196.4,126.6" fill="url(#sunRayGrad)" opacity="0.92"/>
+  </g>
+
+  <!-- Layer 4: Solar Corona Sun Disc behind Yogi -->
+  <circle cx="150" cy="142" r="42" fill="url(#sunRayGrad)" opacity="0.85" class="corona-layer" filter="url(#glowFilter)">
+    <animate attributeName="r" values="40;44;40" dur="4.5s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- Layer 5: Sacred Blooming Lotus (Living Prana Breath) -->
+  <g class="prana-layer" transform-origin="150 184">
+    <animateTransform attributeName="transform" type="scale" values="1;1.03;1" dur="4.5s" repeatCount="indefinite" additive="sum"/>
+    <path d="M 150.0 184.0 Q 134.6 168.0 108.3 164.6 Q 127.9 182.5 150.0 184.0 Z" fill="url(#leafGreenGrad)" stroke="#10B981" stroke-width="0.8"/>
+<path d="M 150.0 184.0 Q 140.7 162.7 116.1 150.1 Q 128.7 174.7 150.0 184.0 Z" fill="url(#leafGreenGrad)" stroke="#10B981" stroke-width="0.8"/>
+<path d="M 150.0 184.0 Q 148.7 162.3 131.0 143.2 Q 134.2 169.0 150.0 184.0 Z" fill="url(#leafGreenGrad)" stroke="#10B981" stroke-width="0.8"/>
+<path d="M 150.0 184.0 Q 165.8 169.0 169.0 143.2 Q 151.3 162.3 150.0 184.0 Z" fill="url(#leafGreenGrad)" stroke="#10B981" stroke-width="0.8"/>
+<path d="M 150.0 184.0 Q 171.3 174.7 183.9 150.1 Q 159.3 162.7 150.0 184.0 Z" fill="url(#leafGreenGrad)" stroke="#10B981" stroke-width="0.8"/>
+<path d="M 150.0 184.0 Q 172.1 182.5 191.7 164.6 Q 165.4 168.0 150.0 184.0 Z" fill="url(#leafGreenGrad)" stroke="#10B981" stroke-width="0.8"/>
+<path d="M 150.0 184.0 Q 132.1 169.2 104.3 169.2 Q 126.8 185.4 150.0 184.0 Z" fill="url(#petalGradSide)" stroke="#FDA4AF" stroke-width="0.7" opacity="0.95"/>
+<path d="M 150.0 184.0 Q 139.0 161.3 111.4 149.2 Q 126.3 175.4 150.0 184.0 Z" fill="url(#petalGradMid)" stroke="#FDA4AF" stroke-width="0.7" opacity="0.95"/>
+<path d="M 150.0 184.0 Q 149.3 156.7 127.2 132.8 Q 130.2 165.2 150.0 184.0 Z" fill="url(#petalGradInner)" stroke="#FDA4AF" stroke-width="0.7" opacity="0.95"/>
+<path d="M 150.0 184.0 Q 161.0 157.0 150.0 124.0 Q 139.0 157.0 150.0 184.0 Z" fill="url(#petalGradCenter)" stroke="#FDA4AF" stroke-width="0.7" opacity="0.95"/>
+<path d="M 150.0 184.0 Q 169.8 165.2 172.8 132.8 Q 150.7 156.7 150.0 184.0 Z" fill="url(#petalGradInner)" stroke="#FDA4AF" stroke-width="0.7" opacity="0.95"/>
+<path d="M 150.0 184.0 Q 173.7 175.4 188.6 149.2 Q 161.0 161.3 150.0 184.0 Z" fill="url(#petalGradMid)" stroke="#FDA4AF" stroke-width="0.7" opacity="0.95"/>
+<path d="M 150.0 184.0 Q 173.2 185.4 195.7 169.2 Q 167.9 169.2 150.0 184.0 Z" fill="url(#petalGradSide)" stroke="#FDA4AF" stroke-width="0.7" opacity="0.95"/>
+  </g>
+
+  <!-- Layer 6: Meditating Yogi in Padmasana (High Clarity & Visibility) -->
+  <g class="prana-layer" transform-origin="150 150" filter="url(#glowFilter)">
+    <animateTransform attributeName="transform" type="scale" values="1;1.02;1" dur="4.5s" repeatCount="indefinite" additive="sum"/>
+    <circle cx="150" cy="116" r="18" fill="url(#pranaHaloGrad)" opacity="0.85" filter="url(#glowFilter)"/><path d="M 146 102 C 146 98 154 98 154 102 C 153 105 147 105 146 102 Z" fill="#FBBF24" /><circle cx="150" cy="114" r="11" fill="url(#yogiSkinGrad)" stroke="#FBBF24" stroke-width="1.2"/><circle cx="150" cy="112" r="1.5" fill="#EF4444" filter="drop-shadow(0 0 2px #FBBF24)"/><path d="M 147 124 L 153 124 L 154 128 L 146 128 Z" fill="url(#yogiSkinGrad)"/>
+    <path d="M 146 128 
+             C 142 129, 134 133, 128 138 
+             C 124 141, 122 146, 120 154 
+             L 125 155 
+             C 127 148, 132 144, 138 143 
+             L 138 165 
+             C 142 168, 158 168, 162 165 
+             L 162 143 
+             C 168 144, 173 148, 175 155 
+             L 180 154 
+             C 178 146, 176 141, 172 138 
+             C 166 133, 158 129, 154 128 Z" 
+          fill="url(#yogiTorsoGrad)" stroke="#FDE68A" stroke-width="0.8"/>
+    
+    <!-- Left Arm -->
+    <path d="M 124 146 
+             C 118 155, 114 165, 112 174 
+             C 111 179, 116 182, 122 181 
+             C 126 180, 130 176, 134 172 
+             L 131 169 
+             C 127 173, 124 176, 121 176 
+             C 119 176, 118 174, 119 171 
+             C 121 163, 124 154, 129 148 Z" 
+          fill="url(#yogiSkinGrad)" stroke="#FBBF24" stroke-width="0.7"/>
+    <!-- Right Arm -->
+    <path d="M 176 146 
+             C 182 155, 186 165, 188 174 
+             C 189 179, 184 182, 178 181 
+             C 174 180, 170 176, 166 172 
+             L 169 169 
+             C 173 173, 176 176, 179 176 
+             C 181 176, 182 174, 181 171 
+             C 179 163, 176 154, 171 148 Z" 
+          fill="url(#yogiSkinGrad)" stroke="#FBBF24" stroke-width="0.7"/>
+    <!-- Jnana Mudra Fingers on Knees -->
+    <circle cx="119" cy="179" r="3.2" fill="#FBBF24"/>
+    <circle cx="181" cy="179" r="3.2" fill="#FBBF24"/>
+    
+    <path d="M 112 176 
+             C 106 182, 108 190, 118 192 
+             C 128 194, 142 191, 150 188 
+             C 158 191, 172 194, 182 192 
+             C 192 190, 194 182, 188 176 
+             C 183 172, 176 176, 170 179 
+             C 162 183, 156 183, 150 181 
+             C 144 183, 138 183, 130 179 
+             C 124 176, 117 172, 112 176 Z" 
+          fill="url(#yogiLegsGrad)" stroke="#FBBF24" stroke-width="1"/>
+    <!-- Lotus Soles turned upward -->
+    <ellipse cx="134" cy="183" rx="4.5" ry="3" fill="#FDE68A" transform="rotate(-15 134 183)"/>
+    <ellipse cx="166" cy="183" rx="4.5" ry="3" fill="#FDE68A" transform="rotate(15 166 183)"/>
+    <circle cx="150" cy="148" r="3" fill="#FFFBEB" filter="drop-shadow(0 0 4px #FBBF24)"/>
+  </g>
+
+  <!-- Layer 7: 24K Gold Circular Bezel Ring with Concentric Bands -->
+  <!-- Inner Gold Trim -->
+  <circle cx="150" cy="150" r="138" fill="none" stroke="url(#goldMetallic)" stroke-width="2.5" opacity="0.95"/>
+  
+  <!-- Outer Master 24K Gold Ring -->
+  <circle cx="150" cy="150" r="144" fill="none" stroke="url(#goldMetallic)" stroke-width="5" filter="drop-shadow(0 0 8px rgba(251,191,36,0.6))"/>
+
+  <!-- Shimmering Light Sweep Highlight -->
+  <circle cx="150" cy="150" r="144" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round"
+          stroke-dasharray="70 810" class="bezel-sweep" opacity="0.85">
+    <animate attributeName="stroke-dashoffset" from="0" to="880" dur="4s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- Sacred 12 Beaded Ray Accents on Bezel (Symbolizing 12 Surya Adityas) -->
+  <g>
+    <circle cx="294.0" cy="150.0" r="2" fill="#FEF08A"/><circle cx="274.7" cy="222.0" r="2" fill="#FEF08A"/><circle cx="222.0" cy="274.7" r="2" fill="#FEF08A"/><circle cx="150.0" cy="294.0" r="2" fill="#FEF08A"/><circle cx="78.0" cy="274.7" r="2" fill="#FEF08A"/><circle cx="25.3" cy="222.0" r="2" fill="#FEF08A"/><circle cx="6.0" cy="150.0" r="2" fill="#FEF08A"/><circle cx="25.3" cy="78.0" r="2" fill="#FEF08A"/><circle cx="78.0" cy="25.3" r="2" fill="#FEF08A"/><circle cx="150.0" cy="6.0" r="2" fill="#FEF08A"/><circle cx="222.0" cy="25.3" r="2" fill="#FEF08A"/><circle cx="274.7" cy="78.0" r="2" fill="#FEF08A"/>
+  </g>
+</svg>

@@ -1,0 +1,227 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="100%" height="100%" preserveAspectRatio="xMidYMid meet">
+  <defs>
+    <!-- Radiant 24K Gold Ring Gradient -->
+    <linearGradient id="ivoryGoldRing" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FEF08A"/>
+      <stop offset="30%" stop-color="#FBBF24"/>
+      <stop offset="65%" stop-color="#F59E0B"/>
+      <stop offset="100%" stop-color="#D97706"/>
+    </linearGradient>
+
+    <!-- Sunburst Warm Orange-Gold -->
+    <linearGradient id="sunRayGrad" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#FBBF24" stop-opacity="0.3"/>
+      <stop offset="50%" stop-color="#F59E0B" stop-opacity="0.85"/>
+      <stop offset="100%" stop-color="#EA580C" stop-opacity="1"/>
+    </linearGradient>
+
+    <!-- Sun Halo on White Background -->
+    <radialGradient id="ivorySunGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FEF08A" stop-opacity="0.9"/>
+      <stop offset="60%" stop-color="#FDE68A" stop-opacity="0.5"/>
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Lotus Petal Gradients -->
+    <linearGradient id="petalGradCenter" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#EA580C"/>
+      <stop offset="50%" stop-color="#FB923C"/>
+      <stop offset="100%" stop-color="#FFEDD5"/>
+    </linearGradient>
+
+    <linearGradient id="petalGradInner" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#E11D48"/>
+      <stop offset="60%" stop-color="#FB7185"/>
+      <stop offset="100%" stop-color="#FFE4E6"/>
+    </linearGradient>
+
+    <linearGradient id="petalGradMid" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#DB2777"/>
+      <stop offset="60%" stop-color="#F472B6"/>
+      <stop offset="100%" stop-color="#FDF2F8"/>
+    </linearGradient>
+
+    <linearGradient id="petalGradSide" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#BE185D"/>
+      <stop offset="60%" stop-color="#EC4899"/>
+      <stop offset="100%" stop-color="#FCE7F3"/>
+    </linearGradient>
+
+    <!-- Emerald Lotus Leaves -->
+    <linearGradient id="leafGreenGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#34D399"/>
+      <stop offset="50%" stop-color="#10B981"/>
+      <stop offset="100%" stop-color="#047857"/>
+    </linearGradient>
+
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="rgba(245,158,11,0.3)"/>
+    </filter>
+  </defs>
+
+  <style>
+    @keyframes spinIvoryRays {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    @keyframes pulseIvory {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.035); }
+    }
+    @keyframes ringLightSweep {
+      0% { stroke-dashoffset: 0; }
+      100% { stroke-dashoffset: 880; }
+    }
+    .spin-ivory {
+      transform-origin: 150px 150px;
+      animation: spinIvoryRays 24s linear infinite;
+    }
+    .pulse-ivory {
+      transform-origin: 150px 180px;
+      animation: pulseIvory 4s ease-in-out infinite;
+    }
+    .sweep-ivory {
+      animation: ringLightSweep 6s linear infinite;
+    }
+  </style>
+
+  <!-- Layer 0: Pristine White / Ivory Background Disc (Matching Reference Image) -->
+  <circle cx="150" cy="150" r="142" fill="#FFFFFF" filter="url(#softShadow)"/>
+
+  <!-- Layer 1: Ambient Sunrise Corona Glow -->
+  <circle cx="150" cy="150" r="132" fill="url(#ivorySunGlow)"/>
+
+  <!-- Layer 2: Animated Rotating Sunburst Rays -->
+  <g class="spin-ivory" transform-origin="150 150">
+    <animateTransform attributeName="transform" type="rotate" from="0 150 150" to="360 150 150" dur="24s" repeatCount="indefinite"/>
+    <polygon points="211.8,145.5 280.0,150.0 211.8,154.5" fill="url(#sunRayGrad)" opacity="0.92"/>
+<polygon points="208.5,170.5 255.7,193.8 205.9,176.9" fill="url(#sunRayGrad)" opacity="0.92"/>
+<polygon points="196.9,190.5 241.9,241.9 190.5,196.9" fill="url(#sunRayGrad)" opacity="0.92"/>
+<polygon points="176.9,205.9 193.8,255.7 170.5,208.5" fill="url(#sunRayGrad)" opacity="0.92"/>
+<polygon points="154.5,211.8 150.0,280.0 145.5,211.8" fill="url(#sunRayGrad)" opacity="0.92"/>
+<polygon points="129.5,208.5 106.2,255.7 123.1,205.9" fill="url(#sunRayGrad)" opacity="0.92"/>
+<polygon points="109.5,196.9 58.1,241.9 103.1,190.5" fill="url(#sunRayGrad)" opacity="0.92"/>
+<polygon points="94.1,176.9 44.3,193.8 91.5,170.5" fill="url(#sunRayGrad)" opacity="0.92"/>
+<polygon points="88.2,154.5 20.0,150.0 88.2,145.5" fill="url(#sunRayGrad)" opacity="0.92"/>
+<polygon points="91.5,129.5 44.3,106.2 94.1,123.1" fill="url(#sunRayGrad)" opacity="0.92"/>
+<polygon points="103.1,109.5 58.1,58.1 109.5,103.1" fill="url(#sunRayGrad)" opacity="0.92"/>
+<polygon points="123.1,94.1 106.2,44.3 129.5,91.5" fill="url(#sunRayGrad)" opacity="0.92"/>
+<polygon points="145.5,88.2 150.0,20.0 154.5,88.2" fill="url(#sunRayGrad)" opacity="0.92"/>
+<polygon points="170.5,91.5 193.8,44.3 176.9,94.1" fill="url(#sunRayGrad)" opacity="0.92"/>
+<polygon points="190.5,103.1 241.9,58.1 196.9,109.5" fill="url(#sunRayGrad)" opacity="0.92"/>
+<polygon points="205.9,123.1 255.7,106.2 208.5,129.5" fill="url(#sunRayGrad)" opacity="0.92"/>
+  </g>
+
+  <!-- Layer 3: Sun Disc Behind Yogi -->
+  <circle cx="150" cy="142" r="38" fill="url(#ivorySunGlow)">
+    <animate attributeName="r" values="36;40;36" dur="4s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- Layer 4: Sacred Blooming Lotus (Emerald Leaves + Rose Petals) -->
+  <g class="pulse-ivory" transform-origin="150 184">
+    <animateTransform attributeName="transform" type="scale" values="1;1.035;1" dur="4s" repeatCount="indefinite" additive="sum"/>
+    <path d="M 150.0 184.0 Q 134.6 168.0 108.3 164.6 Q 127.9 182.5 150.0 184.0 Z" fill="url(#leafGreenGrad)" stroke="#10B981" stroke-width="0.8"/>
+<path d="M 150.0 184.0 Q 140.7 162.7 116.1 150.1 Q 128.7 174.7 150.0 184.0 Z" fill="url(#leafGreenGrad)" stroke="#10B981" stroke-width="0.8"/>
+<path d="M 150.0 184.0 Q 148.7 162.3 131.0 143.2 Q 134.2 169.0 150.0 184.0 Z" fill="url(#leafGreenGrad)" stroke="#10B981" stroke-width="0.8"/>
+<path d="M 150.0 184.0 Q 165.8 169.0 169.0 143.2 Q 151.3 162.3 150.0 184.0 Z" fill="url(#leafGreenGrad)" stroke="#10B981" stroke-width="0.8"/>
+<path d="M 150.0 184.0 Q 171.3 174.7 183.9 150.1 Q 159.3 162.7 150.0 184.0 Z" fill="url(#leafGreenGrad)" stroke="#10B981" stroke-width="0.8"/>
+<path d="M 150.0 184.0 Q 172.1 182.5 191.7 164.6 Q 165.4 168.0 150.0 184.0 Z" fill="url(#leafGreenGrad)" stroke="#10B981" stroke-width="0.8"/>
+<path d="M 150.0 184.0 Q 132.1 169.2 104.3 169.2 Q 126.8 185.4 150.0 184.0 Z" fill="url(#petalGradSide)" stroke="#FDA4AF" stroke-width="0.7" opacity="0.95"/>
+<path d="M 150.0 184.0 Q 139.0 161.3 111.4 149.2 Q 126.3 175.4 150.0 184.0 Z" fill="url(#petalGradMid)" stroke="#FDA4AF" stroke-width="0.7" opacity="0.95"/>
+<path d="M 150.0 184.0 Q 149.3 156.7 127.2 132.8 Q 130.2 165.2 150.0 184.0 Z" fill="url(#petalGradInner)" stroke="#FDA4AF" stroke-width="0.7" opacity="0.95"/>
+<path d="M 150.0 184.0 Q 161.0 157.0 150.0 124.0 Q 139.0 157.0 150.0 184.0 Z" fill="url(#petalGradCenter)" stroke="#FDA4AF" stroke-width="0.7" opacity="0.95"/>
+<path d="M 150.0 184.0 Q 169.8 165.2 172.8 132.8 Q 150.7 156.7 150.0 184.0 Z" fill="url(#petalGradInner)" stroke="#FDA4AF" stroke-width="0.7" opacity="0.95"/>
+<path d="M 150.0 184.0 Q 173.7 175.4 188.6 149.2 Q 161.0 161.3 150.0 184.0 Z" fill="url(#petalGradMid)" stroke="#FDA4AF" stroke-width="0.7" opacity="0.95"/>
+<path d="M 150.0 184.0 Q 173.2 185.4 195.7 169.2 Q 167.9 169.2 150.0 184.0 Z" fill="url(#petalGradSide)" stroke="#FDA4AF" stroke-width="0.7" opacity="0.95"/>
+  </g>
+
+  <!-- Layer 5: Meditating Yogi in Padmasana (Deep Royal Navy & Gold Contours) -->
+  <g class="pulse-ivory" transform-origin="150 150">
+    <animateTransform attributeName="transform" type="scale" values="1;1.02;1" dur="4s" repeatCount="indefinite" additive="sum"/>
+    
+    <!-- Yogi Prana Halo behind head -->
+    <circle cx="150" cy="116" r="18" fill="url(#ivorySunGlow)" opacity="0.85"/>
+    
+    <!-- Ushnisha -->
+    <path d="M 147 102 C 147 98 153 98 153 102 C 152 105 148 105 147 102 Z" fill="#D97706" />
+    <!-- Head -->
+    <circle cx="150" cy="114" r="11" fill="#FFFFFF" stroke="#092B4F" stroke-width="2.2"/>
+    <circle cx="150" cy="112" r="1.5" fill="#EF4444"/>
+    
+    <!-- Neck -->
+    <path d="M 147 124 L 153 124 L 154 128 L 146 128 Z" fill="#092B4F"/>
+    
+    <!-- Torso & Broad Shoulders -->
+    <path d="M 146 128 
+             C 142 129, 134 133, 128 138 
+             C 124 141, 122 146, 120 154 
+             L 125 155 
+             C 127 148, 132 144, 138 143 
+             L 138 165 
+             C 142 168, 158 168, 162 165 
+             L 162 143 
+             C 168 144, 173 148, 175 155 
+             L 180 154 
+             C 178 146, 176 141, 172 138 
+             C 166 133, 158 129, 154 128 Z" 
+          fill="#FFFFFF" stroke="#092B4F" stroke-width="2.2"/>
+          
+    <!-- Arms descending to knees -->
+    <path d="M 124 146 
+             C 118 155, 114 165, 112 174 
+             C 111 179, 116 182, 122 181 
+             C 126 180, 130 176, 134 172 
+             L 131 169 
+             C 127 173, 124 176, 121 176 
+             C 119 176, 118 174, 119 171 
+             C 121 163, 124 154, 129 148 Z" 
+          fill="#FFFFFF" stroke="#092B4F" stroke-width="2.2"/>
+    <path d="M 176 146 
+             C 182 155, 186 165, 188 174 
+             C 189 179, 184 182, 178 181 
+             C 174 180, 170 176, 166 172 
+             L 169 169 
+             C 173 173, 176 176, 179 176 
+             C 181 176, 182 174, 181 171 
+             C 179 163, 176 154, 171 148 Z" 
+          fill="#FFFFFF" stroke="#092B4F" stroke-width="2.2"/>
+          
+    <!-- Jnana Mudra Circles -->
+    <circle cx="119" cy="179" r="3.5" fill="#F59E0B" stroke="#092B4F" stroke-width="1"/>
+    <circle cx="181" cy="179" r="3.5" fill="#F59E0B" stroke="#092B4F" stroke-width="1"/>
+    
+    <!-- Crossed Legs (Padmasana) -->
+    <path d="M 112 176 
+             C 106 182, 108 190, 118 192 
+             C 128 194, 142 191, 150 188 
+             C 158 191, 172 194, 182 192 
+             C 192 190, 194 182, 188 176 
+             C 183 172, 176 176, 170 179 
+             C 162 183, 156 183, 150 181 
+             C 144 183, 138 183, 130 179 
+             C 124 176, 117 172, 112 176 Z" 
+          fill="#FFFFFF" stroke="#092B4F" stroke-width="2.2"/>
+    <!-- Feet -->
+    <ellipse cx="134" cy="183" rx="4.5" ry="3" fill="#FDE68A" stroke="#092B4F" stroke-width="1" transform="rotate(-15 134 183)"/>
+    <ellipse cx="166" cy="183" rx="4.5" ry="3" fill="#FDE68A" stroke="#092B4F" stroke-width="1" transform="rotate(15 166 183)"/>
+    <circle cx="150" cy="148" r="3.2" fill="#F59E0B"/>
+    
+  </g>
+
+  
+
+  <!-- Layer 6: 24K Gold Circular Border -->
+  <circle cx="150" cy="150" r="138" fill="none" stroke="url(#ivoryGoldRing)" stroke-width="2.5"/>
+  <circle cx="150" cy="150" r="144" fill="none" stroke="url(#ivoryGoldRing)" stroke-width="5.5"/>
+
+  <!-- Traveling Highlight Gleam on Gold Ring -->
+  <circle cx="150" cy="150" r="144" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round"
+          stroke-dasharray="65 815" class="sweep-ivory">
+    <animate attributeName="stroke-dashoffset" from="0" to="880" dur="6s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- 12 Gold Beaded Studs -->
+  <g>
+    <circle cx="294.0" cy="150.0" r="2.2" fill="#D97706"/><circle cx="274.7" cy="222.0" r="2.2" fill="#D97706"/><circle cx="222.0" cy="274.7" r="2.2" fill="#D97706"/><circle cx="150.0" cy="294.0" r="2.2" fill="#D97706"/><circle cx="78.0" cy="274.7" r="2.2" fill="#D97706"/><circle cx="25.3" cy="222.0" r="2.2" fill="#D97706"/><circle cx="6.0" cy="150.0" r="2.2" fill="#D97706"/><circle cx="25.3" cy="78.0" r="2.2" fill="#D97706"/><circle cx="78.0" cy="25.3" r="2.2" fill="#D97706"/><circle cx="150.0" cy="6.0" r="2.2" fill="#D97706"/><circle cx="222.0" cy="25.3" r="2.2" fill="#D97706"/><circle cx="274.7" cy="78.0" r="2.2" fill="#D97706"/>
+  </g>
+</svg>

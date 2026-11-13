@@ -1,0 +1,21 @@
+# Development & Scratch
+scratch/
+__pycache__/
+*.pyc
+*.pyo
+*.log
+.DS_Store
+Thumbs.db
+
+# Local SQLite databases
+*.db
+*.sqlite
+*.sqlite3
+
+# Presentation files & legacy archives
+*.pptx
+Working app 21-08-2026/
+
+# Release bundles
+*.zip
+github-package/
