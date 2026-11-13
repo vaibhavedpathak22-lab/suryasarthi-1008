@@ -4502,6 +4502,59 @@ function switchAuthTab(tab) {
 }
 </script>
 
+
+  <!-- Smart PWA Installation & Clean Reset Assistant Modal -->
+  <div class="ov" id="pwa-install-modal" style="display:none;z-index:99999;background:rgba(0,0,0,0.85);backdrop-filter:blur(14px);position:fixed;inset:0;align-items:center;justify-content:center;padding:16px;">
+    <div style="background:var(--modal-card-bg, #0F172A);border:1.5px solid var(--acc, #F59E0B);border-radius:24px;width:100%;max-width:390px;padding:22px 20px;display:flex;flex-direction:column;gap:14px;box-shadow:0 12px 48px rgba(0,0,0,0.7);position:relative;">
+      
+      <!-- Top header with close -->
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <img src="icon-192.png" alt="Surya Sarthi Icon" style="width:38px;height:38px;border-radius:10px;object-fit:cover;border:1px solid rgba(255,255,255,0.2);">
+          <div>
+            <div style="font-size:15px;font-weight:900;color:var(--txt, #FFF);line-height:1.2;">Install Surya Sarthi</div>
+            <div style="font-size:11px;color:var(--acc-lt, #FBBF24);font-weight:700;">100% Offline Vedic App</div>
+          </div>
+        </div>
+        <button onclick="closeInstallModal()" style="background:none;border:none;color:var(--txt2, #94A3B8);font-size:22px;font-weight:900;cursor:pointer;padding:4px;line-height:1;">✕</button>
+      </div>
+
+      <!-- Status banner -->
+      <div id="pwa-modal-status-box" style="background:rgba(245,158,11,0.12);border:1px solid var(--acc, #F59E0B);border-radius:12px;padding:10px 12px;font-size:12px;color:var(--txt, #FFF);line-height:1.45;">
+        Checking installation state...
+      </div>
+
+      <!-- Action 1: Direct 1-Click Install Button (When beforeinstallprompt is ready) -->
+      <button id="pwa-modal-direct-btn" onclick="executeNativeInstall()" style="display:none;width:100%;background:linear-gradient(135deg,#F59E0B,#D97706);color:#070B14;border:none;border-radius:14px;padding:12px;font-size:14px;font-weight:900;cursor:pointer;box-shadow:0 4px 18px rgba(245,158,11,0.4);align-items:center;justify-content:center;gap:8px;">
+        🚀 Tap to Install App Directly
+      </button>
+
+      <!-- Action 2: Visual 2-Step Android / Chrome Guide -->
+      <div id="pwa-modal-manual-guide" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:12px;font-size:12px;line-height:1.5;color:var(--txt, #FFF);">
+        <div style="font-weight:800;color:var(--acc-lt, #FBBF24);margin-bottom:6px;display:flex;align-items:center;gap:6px;">
+          <span>💡</span> In Chrome: Use "Create shortcut" or "Install"
+        </div>
+        <ol style="margin:0;padding-left:18px;color:var(--txt2, #CBD5E1);display:flex;flex-direction:column;gap:5px;">
+          <li>Tap Chrome's <strong>⋮ (three dots menu)</strong> at top-right.</li>
+          <li>Tap <strong>"Install and create shortcut"</strong> (or <em>"Add to Home screen"</em>).</li>
+          <li>Tap <strong>"Create shortcut"</strong> (or <em>"Install"</em>).</li>
+          <li>Tap <strong>"Add"</strong> — it will launch as a standalone app!</li>
+        </ol>
+      </div>
+
+      <!-- Action 3: Deep Auto-Clean & Reset Previous Installation -->
+      <div style="border-top:1px solid rgba(255,255,255,0.1);padding-top:10px;display:flex;flex-direction:column;gap:6px;">
+        <div style="font-size:11px;color:var(--muted, #94A3B8);line-height:1.35;">
+          Having trouble with an older version? This will clear stale caches and reset service workers for a fresh install:
+        </div>
+        <button onclick="resetAndCleanAppInstallation()" style="background:rgba(239,68,68,0.15);border:1.2px solid #EF4444;color:#FCA5A5;border-radius:12px;padding:9px 12px;font-size:12px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:all .2s;">
+          🧹 Clean &amp; Reset Previous Installation
+        </button>
+      </div>
+
+    </div>
+  </div>
+
 <script src="surya-avatars.js"></script>
 <script src="gita-quotes.js"></script>
 <script src="ayurvedic-diet.js"></script>

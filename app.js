@@ -3717,19 +3717,140 @@ if(resetDataBtn) resetDataBtn.addEventListener("click", () => {
   location.reload();
 });
 
-/* ── PWA ─────────────────────────────────────────────────────── */
+/* ── PWA & Self-Healing Lifecycle Engine ─────────────────────── */
 let deferredPrompt = null;
+const CURRENT_CACHE_NAME = "surya-v139";
+
+// Check standalone state across all browsers
+function checkIsStandalone() {
+  return window.matchMedia("(display-mode: standalone)").matches ||
+         window.navigator.standalone === true ||
+         (document.referrer && document.referrer.includes("android-app://"));
+}
+
+// 1. Auto-clean previous/stale installations & outdated caches
+async function autoCheckAndCleanPreviousInstallations() {
+  console.log("[PWA-Lifecycle] Checking for old service workers & stale caches...");
+  try {
+    if ("caches" in window) {
+      const keys = await caches.keys();
+      for (const k of keys) {
+        if (k !== CURRENT_CACHE_NAME) {
+          console.log("[PWA-Lifecycle] Purging outdated cache:", k);
+          await caches.delete(k);
+        }
+      }
+    }
+
+    if ("serviceWorker" in navigator) {
+      const registrations = await navigator.serviceWorker.getRegistrations();
+      for (const reg of registrations) {
+        const scriptURL = (reg.active || reg.waiting || reg.installing || {}).scriptURL || "";
+        if (scriptURL && !scriptURL.includes("sw.js")) {
+          console.log("[PWA-Lifecycle] Unregistering mismatched SW:", scriptURL);
+          await reg.unregister();
+        } else {
+          reg.update().catch(() => {});
+        }
+      }
+    }
+  } catch (err) {
+    console.warn("[PWA-Lifecycle] Auto-clean check notice:", err);
+  }
+}
+
+// Deep clean & reset function
+window.resetAndCleanAppInstallation = async function() {
+  try {
+    if ("serviceWorker" in navigator) {
+      const registrations = await navigator.serviceWorker.getRegistrations();
+      for (const reg of registrations) {
+        await reg.unregister();
+      }
+    }
+    if ("caches" in window) {
+      const keys = await caches.keys();
+      for (const k of keys) {
+        await caches.delete(k);
+      }
+    }
+    alert("✅ All previous installation files and caches have been cleaned!\n\nThe page will now reload with the fresh update.");
+    window.location.reload(true);
+  } catch(e) {
+    console.error("Reset error:", e);
+    window.location.reload(true);
+  }
+};
+
+// UI Install Modal Controls
+window.openInstallModal = function() {
+  const modal = document.getElementById("pwa-install-modal");
+  if (!modal) return;
+  modal.style.display = "flex";
+
+  const statusBox = document.getElementById("pwa-modal-status-box");
+  const directBtn = document.getElementById("pwa-modal-direct-btn");
+  const isStandalone = checkIsStandalone();
+
+  if (isStandalone) {
+    if (statusBox) {
+      statusBox.innerHTML = "<strong>✅ App Already Installed!</strong><br>You are currently running Surya Sarthi in full-screen standalone mode with offline access.";
+      statusBox.style.background = "rgba(16, 185, 129, 0.15)";
+      statusBox.style.borderColor = "#10B981";
+    }
+    if (directBtn) directBtn.style.display = "none";
+  } else if (deferredPrompt) {
+    if (statusBox) {
+      statusBox.innerHTML = "<strong>🚀 Ready to Install:</strong><br>Your browser is primed. Tap the button below to add Surya Sarthi to your home screen.";
+      statusBox.style.background = "rgba(245, 158, 11, 0.15)";
+      statusBox.style.borderColor = "#F59E0B";
+    }
+    if (directBtn) directBtn.style.display = "flex";
+  } else {
+    if (statusBox) {
+      statusBox.innerHTML = "<strong>📲 Fast 2-Step Installation:</strong><br>Use Chrome's menu to add the app icon to your phone's Home Screen:";
+      statusBox.style.background = "rgba(59, 130, 246, 0.12)";
+      statusBox.style.borderColor = "#3B82F6";
+    }
+    if (directBtn) directBtn.style.display = "none";
+  }
+};
+
+window.closeInstallModal = function() {
+  const modal = document.getElementById("pwa-install-modal");
+  if (modal) modal.style.display = "none";
+};
+
+window.executeNativeInstall = async function() {
+  if (deferredPrompt) {
+    try {
+      deferredPrompt.prompt();
+      const choice = await deferredPrompt.userChoice;
+      console.log("[PWA] Install prompt outcome:", choice);
+      if (choice && choice.outcome === "accepted") {
+        setStatus("Installing Surya Sarthi...");
+        closeInstallModal();
+      }
+    } catch(err) {
+      console.warn("[PWA] Prompt error:", err);
+    }
+    deferredPrompt = null;
+    const hb = document.getElementById("header-install-btn");
+    if (hb) hb.style.display = "none";
+  }
+};
+
+window.installPwa = function() {
+  openInstallModal();
+};
+
 window.addEventListener("beforeinstallprompt", e => {
   e.preventDefault();
   deferredPrompt = e;
   setStatus("📲 Tap Install or ⋮ → Add to Home Screen to install offline");
-  const isStandalone = window.matchMedia("(display-mode: standalone)").matches ||
-                       window.navigator.standalone === true ||
-                       (document.referrer && document.referrer.includes("android-app://"));
+  const isStandalone = checkIsStandalone();
   if (!isStandalone) {
-    const b = document.getElementById("pwa-install-btn");
     const hb = document.getElementById("header-install-btn");
-    if (b) b.style.display = "flex";
     if (hb) hb.style.display = "inline-flex";
   }
 });
@@ -3747,44 +3868,12 @@ window.addEventListener("appinstalled", () => {
   if (hb) hb.style.display = "none";
 });
 
-window.installPwa = async function() {
-  const isStandalone = window.matchMedia("(display-mode: standalone)").matches ||
-                       window.navigator.standalone === true ||
-                       (document.referrer && document.referrer.includes("android-app://"));
-
-  if (isStandalone) {
-    alert("✅ Surya Sarthi is ALREADY installed on your device!\n\nYou are currently using the installed standalone app. It works 100% offline.\n\n(No further installation is needed!)");
-    return;
-  }
-
-  if (deferredPrompt) {
-    try {
-      deferredPrompt.prompt();
-      const choice = await deferredPrompt.userChoice;
-      console.log("[PWA] User choice:", choice);
-      if (choice && choice.outcome === "accepted") {
-        setStatus("Installing Surya Sarthi...");
-      }
-    } catch(err) {
-      console.warn("[PWA] Prompt error:", err);
-    }
-    deferredPrompt = null;
-    const hb = document.getElementById("header-install-btn");
-    if (hb) hb.style.display = "none";
-  } else {
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-    if (isIOS) {
-      alert("📲 To Install Surya Sarthi on iPhone/iPad:\n\n1. Tap the Share button (square with arrow ⎋ at bottom of Safari)\n2. Scroll down and tap 'Add to Home Screen'\n3. Tap 'Add' at top right\n\nThe app icon will appear on your home screen and work 100% offline!");
-    } else {
-      alert("📲 How to Install Surya Sarthi on Android / PC:\n\n1. Tap Chrome's menu (⋮ three vertical dots at top-right)\n2. Tap 'Install app' or 'Add to Home screen'\n3. Confirm 'Install'\n\n⚠️ IMPORTANT FIX IF IT SAYS 'THIS APP CANNOT BE INSTALLED':\nAn older version of Surya Sarthi is already installed on your phone! Android prevents overwriting an older installation.\n\n👉 FIX STEPS:\n1. Go to your phone's home screen or app drawer\n2. Long-press the existing 'Surya Sarthi' icon → tap 'Uninstall' (or App info ⓘ → Uninstall)\n3. Return to Chrome and tap 'Install app' — it will install smoothly!");
-    }
-  }
-};
-if("serviceWorker" in navigator){
+// Run auto-clean and register service worker on load
+if ("serviceWorker" in navigator) {
   window.addEventListener("load", async () => {
+    await autoCheckAndCleanPreviousInstallations();
     try {
       const reg = await navigator.serviceWorker.register("sw.js");
-      // Show update banner when new SW installs
       const showBanner = () => {
         const b = document.getElementById("upd-banner");
         if(b) b.classList.add("show");
@@ -3796,12 +3885,14 @@ if("serviceWorker" in navigator){
         });
       });
       if(reg.waiting && navigator.serviceWorker.controller) showBanner();
-      // Auto-reload when new SW takes over
-      let refreshing=false;
-      navigator.serviceWorker.addEventListener("controllerchange",()=>{
-        if(!refreshing){refreshing=true;location.reload();}
+
+      let refreshing = false;
+      navigator.serviceWorker.addEventListener("controllerchange", () => {
+        if(!refreshing) { refreshing = true; location.reload(); }
       });
-    } catch(e){ console.warn("SW:",e); }
+    } catch(e) {
+      console.warn("SW Error:", e);
+    }
   });
 }
 
