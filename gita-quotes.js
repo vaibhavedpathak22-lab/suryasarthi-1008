@@ -734,44 +734,104 @@ function scheduleAlarm() {
   console.log("Alarm timer set for", fmtAlarmTime(h, m), "— fires in", Math.round(ms/1000), "sec");
 }
 
-function _tryAndroidAlarm(h, m) {
-  const hour = parseInt(h !== undefined ? h : (cfg.alarmHour || 5));
-  const min  = parseInt(m !== undefined ? m : (cfg.alarmMinute || 0));
-  const name = cfg.userName || "Vaibhav";
-  const label = "Suryasarthi 108 - " + name;
-  const timeStr = String(hour).padStart(2, '0') + ":" + String(min).padStart(2, '0');
-
-  // Primary SET_ALARM Intent
-  const intentSet = `intent:#Intent;action=android.intent.action.SET_ALARM;i.android.intent.extra.alarm.HOUR=${hour};i.android.intent.extra.alarm.MINUTES=${min};S.android.intent.extra.alarm.MESSAGE=${encodeURIComponent(label)};B.android.intent.extra.alarm.SKIP_UI=false;end`;
-
-  // Secondary SHOW_ALARMS Intent (Opens Clock app directly)
-  const intentShow = `intent:#Intent;action=android.intent.action.SHOW_ALARMS;end`;
-
-  // Legacy intent:// format
-  const intentLegacy = `intent://alarm/#Intent;action=android.intent.action.SET_ALARM;extra.android.intent.extra.alarm.HOUR=${hour};extra.android.intent.extra.alarm.MINUTES=${min};extra.android.intent.extra.alarm.MESSAGE=${encodeURIComponent(label)};extra.android.intent.extra.alarm.SKIP_UI=false;end`;
-
-  // Update in-page status info (no thread-blocking alert!)
-  const infoEl = document.getElementById("cfg-voice-info");
-  if (infoEl) {
-    infoEl.textContent = "⏰ Opening Clock app for " + timeStr + " (" + label + ")…";
-    infoEl.style.color = "var(--acc-lt)";
-  }
-
-  // Trigger direct intent navigation synchronously
+function launchAndroidIntent(url) {
   try {
-    window.location.href = intentSet;
-  } catch (e1) {
-    try {
-      window.location.href = intentShow;
-    } catch (e2) {
-      try {
-        window.location.href = intentLegacy;
-      } catch (e3) {
-        console.warn("Android Clock intent navigation unavailable.");
-      }
-    }
+    const a = document.createElement("a");
+    a.href = url;
+    a.target = "_top";
+    a.rel = "noopener noreferrer";
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => {
+      if (a.parentNode) a.parentNode.removeChild(a);
+    }, 400);
+    return true;
+  } catch (err) {
+    console.warn("[Alarm] Intent launch error:", err);
+    return false;
   }
 }
+
+function _tryAndroidAlarm(h, m) {
+  let hour = parseInt(h !== undefined ? h : (typeof cfg !== "undefined" && cfg.alarmHour !== undefined ? cfg.alarmHour : 5), 10);
+  let min  = parseInt(m !== undefined ? m : (typeof cfg !== "undefined" && cfg.alarmMinute !== undefined ? cfg.alarmMinute : 0), 10);
+  if (isNaN(hour) || hour < 0 || hour > 23) hour = 5;
+  if (isNaN(min) || min < 0 || min > 59) min = 0;
+
+  const timeStr = String(hour).padStart(2, '0') + ":" + String(min).padStart(2, '0');
+  const name = (typeof cfg !== "undefined" && cfg.userName) ? cfg.userName : "Vaibhav";
+
+  // Sync to cfg and save immediately
+  if (typeof cfg !== "undefined") {
+    cfg.alarmHour = hour;
+    cfg.alarmMinute = min;
+    cfg.alarmOn = true;
+    if (typeof togSet === "function") togSet("tog-alarm", true);
+    if (typeof saveAll === "function") saveAll();
+  }
+  if (typeof scheduleAlarm === "function") scheduleAlarm();
+
+  // Status feedback in app
+  const infoEl = document.getElementById("cfg-voice-info");
+  if (infoEl) {
+    infoEl.textContent = "⏰ Daily alarm scheduled for " + timeStr + " · Opening Clock…";
+    infoEl.style.color = "var(--acc-lt)";
+  }
+  if (typeof setStatus === "function") {
+    setStatus("⏰ Daily alarm scheduled for " + timeStr);
+  }
+
+  const isAndroid = /Android/i.test(navigator.userAgent || "");
+  if (isAndroid) {
+    // Primary: Standard Android SET_ALARM Intent with DEFAULT category
+    const intentSet = `intent:#Intent;action=android.intent.action.SET_ALARM;category=android.intent.category.DEFAULT;i.android.intent.extra.alarm.HOUR=${hour};i.android.intent.extra.alarm.MINUTES=${min};S.android.intent.extra.alarm.MESSAGE=Surya%20Sarthi;B.android.intent.extra.alarm.SKIP_UI=false;end`;
+    
+    // Secondary Fallback: SHOW_ALARMS (Universal across all Android Clock apps)
+    const intentShow = `intent:#Intent;action=android.intent.action.SHOW_ALARMS;category=android.intent.category.DEFAULT;end`;
+
+    launchAndroidIntent(intentSet);
+
+    // Watch for window blur; if page stays focused after 400ms, try SHOW_ALARMS
+    let appBlurred = false;
+    const blurHandler = () => { appBlurred = true; };
+    window.addEventListener("blur", blurHandler, { once: true });
+
+    setTimeout(() => {
+      window.removeEventListener("blur", blurHandler);
+      if (!appBlurred && document.visibilityState === "visible") {
+        console.log("[Alarm] Trying universal SHOW_ALARMS intent...");
+        launchAndroidIntent(intentShow);
+      }
+    }, 400);
+  } else {
+    alert("⏰ Daily Motivational Alarm is scheduled for " + timeStr + " in Surya Sarthi!\n\nThe app will remind you with sacred Bhagavad Gita wisdom and mantras.");
+  }
+}
+
+function triggerSetAndroidAlarm(btn) {
+  const timeInput = document.getElementById("cfg-alarm-time");
+  let h = 5, m = 0;
+  if (timeInput && timeInput.value) {
+    const parts = timeInput.value.split(":").map(Number);
+    h = isNaN(parts[0]) ? 5 : parts[0];
+    m = isNaN(parts[1]) ? 0 : parts[1];
+  }
+  _tryAndroidAlarm(h, m);
+
+  if (btn) {
+    const orig = btn.textContent;
+    const timeStr = String(h).padStart(2, "0") + ":" + String(m).padStart(2, "0");
+    btn.textContent = `✓ Alarm Set (${timeStr})`;
+    btn.style.background = "rgba(16, 185, 129, 0.3)";
+    btn.style.color = "#34D399";
+    setTimeout(() => {
+      btn.textContent = orig;
+      btn.style.background = "";
+      btn.style.color = "";
+    }, 3500);
+  }
+}
+window.triggerSetAndroidAlarm = triggerSetAndroidAlarm;
 
 function cancelAlarm() {
   if(_alarmTimeout) { clearTimeout(_alarmTimeout); _alarmTimeout = null; }

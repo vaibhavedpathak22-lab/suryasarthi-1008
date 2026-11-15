@@ -3095,7 +3095,7 @@
   <!-- Workout Reel Action Button -->
   <button id="btn-open-reel" onclick="handleOpenReelClick()"
     style="width:100%;margin-top:6px;padding:12px;border-radius:14px;background:linear-gradient(135deg,rgba(37,211,102,0.2),rgba(18,140,126,0.3));border:1.5px solid #25D366;color:#25D366;font-size:13.5px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;font-family:inherit;box-shadow:0 0 15px rgba(37,211,102,0.25)">
-    🎬 Download / Share Workout Reel <span style="font-size:11px;background:#25D366;color:#111B21;padding:2px 7px;border-radius:10px;font-weight:900">HD Reel</span>
+    🎬 Download / Share Workout Reel <span style="font-size:11px;background:#25D366;color:#111B21;padding:2px 7px;border-radius:10px;font-weight:900">30s HD Reel</span>
   </button>
 
   <footer>
@@ -3211,8 +3211,8 @@
   <div class="prana-ov" id="prana-ov">
 
     <!-- Sacred Lord Hanuman Watermark inside Pranayama Screen (100% Stationary, Full Figure Visible Behind Text Across All Pranayamas) -->
-    <div id="prana-hanuman-watermark" aria-hidden="true" style="position:absolute;top:0;left:0;right:0;bottom:0;width:100%;height:100%;pointer-events:none;z-index:0;display:flex;align-items:center;justify-content:center;opacity:0.28;filter:contrast(120%);">
-      <img src="hanuman_watermark.png" alt="" style="max-width:94%;max-height:86vh;width:auto;height:auto;object-fit:contain;filter:drop-shadow(0 0 2px rgba(255,255,255,0.85)) drop-shadow(0 0 24px rgba(245,158,11,0.45));">
+    <div id="prana-hanuman-watermark" aria-hidden="true" style="position:absolute;top:0;left:0;right:0;bottom:0;width:100%;height:100%;pointer-events:none;z-index:0;display:flex;align-items:center;justify-content:center;opacity:0.38;filter:contrast(125%);">
+      <img src="hanuman_watermark.png" alt="" style="max-width:96%;max-height:88vh;width:auto;height:auto;object-fit:contain;filter:drop-shadow(0 0 2px rgba(255,255,255,0.85)) drop-shadow(0 0 24px rgba(245,158,11,0.45));">
     </div>
 
     <!-- Scrollable content wrapper: Hanuman stays frozen in background while text scrolls -->
@@ -3612,32 +3612,65 @@
           <span style="font-size:12px;font-weight:700;color:var(--txt2)">kg</span>
         </div>
       </div>
-      <div class="srow">
-        <label>🍾 Water Bottle / Container Capacity</label>
-        <select id="cfg-bottle-size"
-          style="background:var(--surf2);border:1px solid var(--bdr);color:var(--txt);border-radius:8px;padding:6px 8px;font-size:13px;font-weight:700">
-          <option value="250">🥤 Glass (250 ml)</option>
-          <option value="300">🍾 Small Bottle (300 ml)</option>
-          <option value="500">🍶 Medium Bottle (500 ml / 0.5 L)</option>
-          <option value="750">🚴 Sports Bottle (750 ml / 0.75 L)</option>
-          <option value="1000" selected>🍾 1 Liter Bottle (1000 ml / 1 L)</option>
-        </select>
-      </div>
-      <div class="srow">
-        <label>🥗 Diet Preference</label>
-        <select id="cfg-diet-type"
-          style="background:var(--surf2);border:1px solid var(--bdr);color:var(--txt);border-radius:8px;padding:6px 8px;font-size:13px">
-          <option value="veg" selected>🌱 Vegetarian (शाकाहारी)</option>
-          <option value="nonveg">🍗 Non-Vegetarian (मांसाहारी)</option>
-        </select>
-      </div>
-      <div class="srow">
-        <label>🥗 Ayurvedic Diet &amp; Hydration</label>
-        <button onclick="event.stopPropagation(); handleDietPlanClick(event)" style="background:var(--acc-dim);border:1px solid var(--acc);
-               color:var(--acc-lt);border-radius:8px;padding:6px 10px;
-               font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap">
-          🥗 View Today's Plan
-        </button>
+      <!-- ═══ AYURVEDIC DIET & HYDRATION SETTINGS ═══ -->
+      <div style="margin:14px 0 10px 0;padding:12px 14px;background:linear-gradient(135deg,rgba(245,158,11,0.08),rgba(16,185,129,0.06));border:1.2px solid rgba(245,158,11,0.28);border-radius:14px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,0.08)">
+          <div style="font-size:13px;font-weight:900;color:var(--txt);display:flex;align-items:center;gap:6px">
+            🥗 <span>Ayurvedic Diet &amp; Hydration</span>
+          </div>
+          <button type="button" onclick="event.stopPropagation(); showDietModal()" style="background:rgba(16,185,129,0.2);border:1px solid #10B981;color:#34D399;font-size:11px;font-weight:800;padding:5px 10px;border-radius:8px;cursor:pointer">
+            Open Diet Guide ↗
+          </button>
+        </div>
+
+        <!-- Setting 1: Show Diet Card on Main Screen (Default: OFF as requested) -->
+        <div class="srow" style="margin-bottom:10px" onclick="toggleSettingKey('tog-show-diet-card', event)">
+          <label style="cursor:pointer;font-size:12px;font-weight:700">
+            📱 Show Diet Card on Main Screen<br>
+            <small style="font-size:10px;color:var(--txt2);font-weight:400">Keep OFF to hide tab from home · Turn ON to display</small>
+          </label>
+          <button class="tog" id="tog-show-diet-card" onclick="toggleSettingKey('tog-show-diet-card', event)"></button>
+        </div>
+
+        <!-- Setting 2: Ayurvedic Meal Time Reminders -->
+        <div class="srow" style="margin-bottom:10px" onclick="toggleSettingKey('tog-diet-reminders', event)">
+          <label style="cursor:pointer;font-size:12px;font-weight:700">
+            🔔 Ayurvedic Meal Window Reminders<br>
+            <small style="font-size:10px;color:var(--txt2);font-weight:400">Alerts for breakfast, lunch &amp; 7:30 PM dinner cutoff</small>
+          </label>
+          <button class="tog on" id="tog-diet-reminders" onclick="toggleSettingKey('tog-diet-reminders', event)"></button>
+        </div>
+
+        <!-- Setting 3: Water Hydration Reminders -->
+        <div class="srow" style="margin-bottom:10px" onclick="toggleSettingKey('tog-water-reminders', event)">
+          <label style="cursor:pointer;font-size:12px;font-weight:700">
+            💧 Water Drinking Reminders<br>
+            <small style="font-size:10px;color:var(--txt2);font-weight:400">Gentle reminders to reach your daily hydration goal</small>
+          </label>
+          <button class="tog on" id="tog-water-reminders" onclick="toggleSettingKey('tog-water-reminders', event)"></button>
+        </div>
+
+        <!-- Bottle size & Diet preference -->
+        <div class="srow" style="margin-bottom:8px">
+          <label style="font-size:12px">🍾 Bottle / Container Capacity</label>
+          <select id="cfg-bottle-size"
+            style="background:var(--surf2);border:1px solid var(--bdr);color:var(--txt);border-radius:8px;padding:6px 8px;font-size:12px;font-weight:700">
+            <option value="250">🥤 Glass (250 ml)</option>
+            <option value="300">🍾 Small Bottle (300 ml)</option>
+            <option value="500">🍶 Medium Bottle (500 ml / 0.5 L)</option>
+            <option value="750">🚴 Sports Bottle (750 ml / 0.75 L)</option>
+            <option value="1000" selected>🍾 1 Liter Bottle (1000 ml / 1 L)</option>
+          </select>
+        </div>
+
+        <div class="srow" style="margin-bottom:4px">
+          <label style="font-size:12px">🌱 Diet Preference</label>
+          <select id="cfg-diet-type"
+            style="background:var(--surf2);border:1px solid var(--bdr);color:var(--txt);border-radius:8px;padding:6px 8px;font-size:12px">
+            <option value="veg" selected>🌱 Vegetarian (शाकाहारी)</option>
+            <option value="nonveg">🍗 Non-Vegetarian (मांसाहारी)</option>
+          </select>
+        </div>
       </div>
       <div class="srow">
         <label>📜 Bhagavad Gita Quote Language</label>
@@ -3657,42 +3690,10 @@
         </button>
       </div>
       <div class="srow">
-        <label style="font-size:11px;color:var(--muted)">
-          Tap to set real Android alarm in Clock app
-        </label>
-        <button
-          onclick="const aVal=(document.getElementById('cfg-alarm-time')?document.getElementById('cfg-alarm-time').value:'05:00')||'05:00'; const [aH,aM]=aVal.split(':').map(Number); setAndroidAlarm(aH,aM); this.textContent='✓ Opening Clock…'; setTimeout(()=>this.textContent='Set Android Alarm',3000)"
-          style="background:var(--acc-dim);border:1px solid var(--acc);
-               color:var(--acc-lt);border-radius:8px;padding:6px 10px;
-               font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap">
+        <label>⏰ Device Clock Alarm<br><small style="font-size:10px;color:var(--txt2);font-weight:400">Syncs pre-filled alarm with your phone's Clock app</small></label>
+        <button type="button" id="btn-set-android-alarm" onclick="triggerSetAndroidAlarm(this)"
+          style="background:linear-gradient(135deg,#0284C7,#0D9488);border:none;color:#FFF;border-radius:8px;padding:7px 12px;font-size:11px;font-weight:800;cursor:pointer;white-space:nowrap;box-shadow:0 2px 8px rgba(6,182,212,0.3)">
           Set Android Alarm
-        </button>
-      </div>
-      <div style="font-size:10px;color:var(--muted);padding:0 4px;line-height:1.5">
-        ⚠ PWA cannot fire background alarms reliably on OxygenOS.<br>
-        Tap "Set Android Alarm" — it opens your Clock app with the alarm pre-filled at the time you chose above. Approve
-        it once and it fires every day even if app is closed.
-      </div>
-
-      <!-- ⚡ Battery Optimization & Lock-Screen Notifications Section -->
-      <div class="srow divider"
-        style="flex-direction:column;align-items:stretch;gap:8px;padding-top:10px;padding-bottom:10px;background:linear-gradient(135deg,rgba(245,158,11,0.12),rgba(56,189,248,0.1));border-radius:12px;padding:12px;border:1px solid rgba(245,158,11,0.3)">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <div style="font-size:12px;font-weight:800;color:var(--acc-lt);display:flex;align-items:center;gap:6px">
-            ⚡ Battery Optimization &amp; Lock-Screen Reminders
-          </div>
-          <button onclick="showBatteryOptModal()"
-            style="background:linear-gradient(135deg,#38BDF8,#0284C7);color:#031527;border:none;border-radius:8px;padding:6px 12px;font-size:11px;font-weight:900;cursor:pointer;box-shadow:0 2px 8px rgba(56,189,248,0.3)">
-            Turn Off Guide
-          </button>
-        </div>
-        <div style="font-size:10px;color:var(--txt2);line-height:1.4">
-          Android OS aggressive battery saver can delay background water notifications when the screen is locked. Turn
-          off battery optimization for Chrome/Browser to ensure 100% lock-screen water &amp; alarm reminders!
-        </div>
-        <button onclick="testLockscreenNotification()"
-          style="background:rgba(16,185,129,0.18);border:1px solid #10B981;color:#34D399;border-radius:8px;padding:7px 12px;font-size:11px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px">
-          🔔 Test Lock-Screen Water Notification
         </button>
       </div>
 
@@ -4211,88 +4212,7 @@
         </div>
       </div>
 
-      <!-- ⚡ Battery Optimization Guidance Modal -->
-      <div id="battery-opt-modal"
-        style="display:none;position:fixed;inset:0;background:rgba(7,11,20,.96);backdrop-filter:blur(16px);z-index:10000;flex-direction:column;align-items:center;justify-content:center;padding:1.2rem;overflow-y:auto">
-        <div
-          style="background:linear-gradient(145deg,rgba(23,35,58,0.98),rgba(12,19,33,0.99));border:1.5px solid var(--acc);border-radius:20px;padding:1.2rem;width:100%;max-width:420px;display:flex;flex-direction:column;gap:12px;box-shadow:0 8px 32px rgba(0,0,0,0.6)">
 
-          <div style="display:flex;justify-content:space-between;align-items:center">
-            <div style="font-size:15px;font-weight:900;color:var(--acc-lt);display:flex;align-items:center;gap:6px">
-              ⚡ Turn Off Battery Optimization
-            </div>
-            <button onclick="closeBatteryOptModal()"
-              style="background:none;border:none;color:var(--txt2);font-size:22px;cursor:pointer;padding:0 4px">✕</button>
-          </div>
-
-          <div style="font-size:11.5px;color:var(--txt2);line-height:1.5">
-            To receive <strong>Water &amp; Diet Reminders on your lock screen even when the app is closed</strong>,
-            Android requires turning off battery optimization for your browser:
-          </div>
-
-          <!-- Step 1: Chrome / Android PWA -->
-          <div
-            style="background:rgba(28,42,69,0.7);border-radius:12px;padding:10px;border:1px solid rgba(96,165,250,0.2)">
-            <div style="font-size:12px;font-weight:800;color:#60A5FA;margin-bottom:4px">📱 Chrome / PWA Settings:</div>
-            <div style="font-size:10.5px;color:var(--txt2);line-height:1.5">
-              1. Open Android <strong>Settings</strong> → <strong>Apps</strong> → <strong>Chrome</strong> (or
-              <strong>Suryasarthi 108</strong>).<br>
-              2. Tap <strong>Battery</strong> → Select <strong>"Unrestricted"</strong>.<br>
-              3. Tap <strong>Notifications</strong> → Enable <strong>"Allow sound and vibration"</strong> &amp;
-              <strong>"Lock screen: Show content"</strong>.
-            </div>
-          </div>
-
-          <!-- Step 2: Samsung Devices -->
-          <div
-            style="background:rgba(28,42,69,0.7);border-radius:12px;padding:10px;border:1px solid rgba(96,165,250,0.2)">
-            <div style="font-size:12px;font-weight:800;color:#38BDF8;margin-bottom:4px">📲 Samsung (One UI):</div>
-            <div style="font-size:10.5px;color:var(--txt2);line-height:1.5">
-              1. <strong>Settings</strong> → <strong>Apps</strong> → <strong>Chrome / App</strong> →
-              <strong>Battery</strong> → Choose <strong>"Unrestricted"</strong>.<br>
-              2. <strong>Settings</strong> → <strong>Battery</strong> → <strong>Background usage limits</strong> → Add
-              Chrome to <strong>"Never sleeping apps"</strong>.
-            </div>
-          </div>
-
-          <!-- Step 3: Xiaomi / Redmi / Poco -->
-          <div
-            style="background:rgba(28,42,69,0.7);border-radius:12px;padding:10px;border:1px solid rgba(96,165,250,0.2)">
-            <div style="font-size:12px;font-weight:800;color:#FBBF24;margin-bottom:4px">📱 Xiaomi / Redmi (MIUI /
-              HyperOS):</div>
-            <div style="font-size:10.5px;color:var(--txt2);line-height:1.5">
-              1. <strong>Settings</strong> → <strong>Apps</strong> → <strong>Manage Apps</strong> → <strong>Chrome /
-                App</strong>.<br>
-              2. Turn ON <strong>"Autostart"</strong> → Tap <strong>Battery Saver</strong> → Choose <strong>"No
-                Restrictions"</strong>.
-            </div>
-          </div>
-
-          <!-- Step 4: OnePlus / Oppo / RealMe -->
-          <div
-            style="background:rgba(28,42,69,0.7);border-radius:12px;padding:10px;border:1px solid rgba(96,165,250,0.2)">
-            <div style="font-size:12px;font-weight:800;color:#F87171;margin-bottom:4px">📲 OnePlus / Oppo / RealMe:
-            </div>
-            <div style="font-size:10.5px;color:var(--txt2);line-height:1.5">
-              1. <strong>Settings</strong> → <strong>Battery</strong> → <strong>App Battery Management</strong> → Select
-              <strong>Chrome / App</strong>.<br>
-              2. Enable <strong>"Allow background activity"</strong> &amp; <strong>"Allow auto-launch"</strong>.
-            </div>
-          </div>
-
-          <div style="display:flex;gap:8px;margin-top:4px">
-            <button onclick="testLockscreenNotification()"
-              style="flex:1;background:linear-gradient(135deg,#38BDF8,#0284C7);color:#031527;border:none;border-radius:10px;padding:10px;font-size:12px;font-weight:900;cursor:pointer;box-shadow:0 2px 8px rgba(56,189,248,0.4)">
-              🔔 Test Lock-Screen Notification
-            </button>
-            <button onclick="closeBatteryOptModal()"
-              style="background:var(--surf2);border:1px solid var(--bdr);color:var(--txt2);border-radius:10px;padding:10px 16px;font-size:12px;font-weight:700;cursor:pointer">
-              Done
-            </button>
-          </div>
-
-        </div>
-      </div>
 
 <!-- Social Media Reel Preview Modal -->
 <div class="ov" id="reel-social-modal" style="z-index:10000;background:rgba(7,11,20,0.92);backdrop-filter:blur(16px)">
@@ -4325,7 +4245,7 @@
     <div style="font-size:42px;margin-bottom:8px" id="reel-confirm-icon">🎉</div>
     <h3 style="font-size:18px;font-weight:900;color:#FBBF24;margin-bottom:8px" id="reel-confirm-title">Workout Reel Generated!</h3>
     <p style="font-size:13px;color:#D1D5DB;line-height:1.45;margin-bottom:18px" id="reel-confirm-msg">
-      🎯 Today's Goal Completed: 52 Rounds Mastered! Your 15-second 9:16 HD Reel is ready to share.
+      🎯 Today's Goal Completed: Mastered! Your 30-second 9:16 HD Reel is ready to share.
     </p>
     <div style="display:flex;flex-direction:column;gap:10px">
       <button onclick="confirmOpenReelPreview()" style="background:linear-gradient(135deg,#34D399,#059669);color:#060D0A;border:none;border-radius:12px;padding:12px;font-size:14px;font-weight:900;cursor:pointer;box-shadow:0 4px 15px rgba(52,211,153,0.35);display:flex;align-items:center;justify-content:center;gap:6px">
@@ -4510,7 +4430,7 @@ function switchAuthTab(tab) {
       <!-- Top header with close -->
       <div style="display:flex;align-items:center;justify-content:space-between;">
         <div style="display:flex;align-items:center;gap:10px;">
-          <img src="icon-192.png" alt="Surya Sarthi Icon" style="width:38px;height:38px;border-radius:10px;object-fit:cover;border:1px solid rgba(255,255,255,0.2);">
+          <img src="./icon-192.png" alt="Surya Sarthi Icon" style="width:38px;height:38px;border-radius:10px;object-fit:cover;border:1px solid rgba(255,255,255,0.2);">
           <div>
             <div style="font-size:15px;font-weight:900;color:var(--txt, #FFF);line-height:1.2;">Install Surya Sarthi</div>
             <div style="font-size:11px;color:var(--acc-lt, #FBBF24);font-weight:700;">100% Offline Vedic App</div>

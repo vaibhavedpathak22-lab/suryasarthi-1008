@@ -979,14 +979,15 @@ function applyDietTabVisibility() {
 }
 
 function isDietReminderActiveToday() {
-  const today = todayKey();
+  const today = (typeof todayKey === "function") ? todayKey() : new Date().toISOString().slice(0, 10);
   // Auto-reset check: if turned OFF on a previous day, automatically restore to ON for today!
   if (data.dietOffDate && data.dietOffDate !== today) {
     delete data.dietOffDate;
     cfg.dietNotifOn = true;
-    saveAll();
+    cfg.dietRemindersOn = true;
+    if (typeof saveAll === "function") saveAll();
   }
-  return cfg.dietNotifOn !== false;
+  return (cfg.dietNotifOn !== false) && (cfg.dietRemindersOn !== false);
 }
 
 function syncModalReminderToggles() {
@@ -1290,8 +1291,9 @@ function triggerAyurvedicDietNotification(windowId) {
     } catch (e) { console.warn("Notification error:", e); }
   }
 
-  // 2. If app is visible, pop diet modal and speak voice reminder
-  if (document.visibilityState === "visible") {
+  // 2. If app is visible and NOT in active workout, pop diet modal and speak voice reminder
+  const inExercise = (typeof isPlaying !== "undefined" && isPlaying) || (typeof currentPose !== "undefined" && currentPose > 0);
+  if (document.visibilityState === "visible" && !inExercise) {
     showDietModal(modalMeal);
   }
 
@@ -1360,13 +1362,78 @@ let _waterNotifTimer = null;
 
 function scheduleWaterIntakeReminders() {
   if (_waterNotifTimer) { clearInterval(_waterNotifTimer); _waterNotifTimer = null; }
-  // Completely stopped water intake reminders as per user instruction
-  return;
+
+  if (typeof cfg === "undefined" || cfg.waterRemindersOn === false) return;
+
+  _waterNotifTimer = setInterval(() => {
+    if (typeof cfg === "undefined" || cfg.waterRemindersOn === false) return;
+
+    const now = new Date();
+    const h = now.getHours();
+    const m = now.getMinutes();
+    // Active during daytime hours between 8:00 AM and 8:00 PM
+    if (h < 8 || h >= 20) return;
+
+    // Check every 90 minutes
+    const curMin = h * 60 + m;
+    const slotIdx = Math.floor(curMin / 90);
+    const today = (typeof todayKey === "function") ? todayKey() : now.toISOString().slice(0, 10);
+    const slotKey = `${today}_water_slot_${slotIdx}`;
+
+    data.waterRemindersSent = data.waterRemindersSent || {};
+    if (!data.waterRemindersSent[slotKey]) {
+      const metrics = calcAyurvedicHydrationAndProtein();
+      const logged = getWaterLoggedToday();
+      // Only remind if target not yet reached
+      if (logged < metrics.targetContainers) {
+        data.waterRemindersSent[slotKey] = true;
+        if (typeof saveAll === "function") saveAll();
+        triggerWaterHydrationNotification();
+      }
+    }
+  }, 60000); // Check every minute
 }
 
 function triggerWaterHydrationNotification() {
-  // Completely stopped water intake reminders as per user instruction
-  return;
+  if (typeof cfg === "undefined" || cfg.waterRemindersOn === false) return;
+
+  const name = cfg.userName || "Vaibhav";
+  const metrics = calcAyurvedicHydrationAndProtein();
+  const logged = getWaterLoggedToday();
+  const remaining = Math.max(0, metrics.targetContainers - logged);
+
+  const title = "💧 Mindful Hydration Reminder";
+  const body = `Namaste ${name}! Drink a glass of warm or room-temperature water. ${remaining} ${metrics.containerLabel}(s) remaining today to reach ${metrics.waterLiters}L.`;
+
+  if ("Notification" in window && Notification.permission === "granted") {
+    try {
+      const n = new Notification(title, {
+        body: body,
+        icon: "./icon-192.png",
+        badge: "./icon-192.png",
+        tag: "surya-water-reminder",
+        renotify: false,
+        vibrate: [100, 50, 100]
+      });
+      n.onclick = () => {
+        try { window.focus(); } catch (e) { }
+        showDietModal();
+        n.close();
+      };
+    } catch (e) { console.warn("Water notification error:", e); }
+  }
+
+  // If app is currently visible and not exercising, speak a gentle chime/prompt
+  const inExercise = (typeof isPlaying !== "undefined" && isPlaying) || (typeof currentPose !== "undefined" && currentPose > 0);
+  if (!inExercise && !voiceMuted && window.speechSynthesis && typeof SpeechSynthesisUtterance !== "undefined") {
+    const lang = cfg.quoteLang || cfg.pranaLang || "hi";
+    const speechText = lang === "hi"
+      ? `नमस्ते ${name}! थोड़ा गुनगुना पानी पीने का समय है। अपने शरीर को हाइड्रेटेड रखें।`
+      : lang === "mr"
+        ? `नमस्ते ${name}! पाणी पिण्याची वेळ झाली आहे. शरीरातील ऊर्जा टिकवण्यासाठी पाणी प्या.`
+        : `Namaste ${name}! Gentle reminder to drink water and stay refreshed.`;
+    qSpeak(speechText);
+  }
 }
 
 window.showDietModal = showDietModal;
@@ -2237,6 +2304,22 @@ function getAyurvedicMealStatus() {
 }
 
 function isDietCardVisibleNow() {
+  const showOnMain = (typeof cfg !== "undefined" && cfg && typeof cfg.showDietCardOnMain !== "undefined")
+    ? !!cfg.showDietCardOnMain
+    : false;
+
+  const mealStatus = getAyurvedicMealStatus();
+
+  // If user has not enabled the Diet Card on main screen in Settings: KEEP HIDDEN!
+  if (!showOnMain) {
+    return {
+      visible: false,
+      reason: "disabled_in_settings",
+      mealStatus: mealStatus
+    };
+  }
+
+  // When enabled in Settings, the card is visible on the main screen
   const today = (typeof todayKey === "function") ? todayKey() : new Date().toISOString().slice(0, 10);
   const doneToday = (typeof todayDone === "function" && typeof todayGoal === "function") ? (todayDone() >= todayGoal()) : false;
 
@@ -2245,8 +2328,6 @@ function isDietCardVisibleNow() {
 
   // Condition A: Today's goal was completed within the last 10 minutes (600,000 ms)
   const within10MinOfGoal = doneToday && (completedDate === today) && (Date.now() - completedAt < 10 * 60 * 1000);
-
-  const mealStatus = getAyurvedicMealStatus();
 
   if (within10MinOfGoal) {
     return {
@@ -2257,7 +2338,7 @@ function isDietCardVisibleNow() {
     };
   }
 
-  // Condition B: Within one of the 5 sacred Ayurvedic meal windows
+  // Condition B: Within one of the sacred Ayurvedic meal windows
   if (mealStatus.inWindow) {
     return {
       visible: true,
@@ -2266,9 +2347,10 @@ function isDietCardVisibleNow() {
     };
   }
 
+  // Condition C: General enabled state on main screen
   return {
-    visible: false,
-    reason: "hidden",
+    visible: true,
+    reason: "active_setting",
     mealStatus: mealStatus
   };
 }
@@ -2283,7 +2365,7 @@ function updateDietPlanButtonLockUI() {
 
   const vis = isDietCardVisibleNow();
 
-  // If outside 10 min goal window AND outside all meal windows: HIDE completely from main screen!
+  // If disabled in settings OR outside display criteria: HIDE completely from main screen!
   if (!vis.visible) {
     card.style.display = "none";
     return;
@@ -2343,7 +2425,12 @@ function updateDietPlanButtonLockUI() {
       mealNotice.innerHTML = `🕒 <strong>Active Ayurvedic Window:</strong> ${vis.mealStatus.sub}`;
     }
   } else {
-    if (mealNotice) mealNotice.style.display = "none";
+    if (mainIcon) mainIcon.textContent = "🥗";
+    if (titleEl) titleEl.innerHTML = `<span style="font-weight:900">Today's Ayurvedic Diet &amp; Hydration</span>`;
+    if (mealNotice) {
+      mealNotice.style.display = "block";
+      mealNotice.innerHTML = `🕒 <strong>Ayurvedic Schedule:</strong> Next window opens soon · Finish dinner before 7:30 PM`;
+    }
   }
 }
 

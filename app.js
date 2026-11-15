@@ -1500,12 +1500,11 @@ function completeSet() {
     return;
   }
 
-  // Speak: Om (Sanskrit) then "Round N" in English (only for ongoing sets before goal)
+  // Speak Om briefly, then Grace period speaks Krishna's name, next set count, and countdown seconds
   setTimeout(()=>{
     qClear();
     qSpeak(makeMantraUtt("ॐ"));
-    qSpeak(makeEnUtt("Round " + done));
-  }, 300);
+  }, 100);
 
   saveAll();
 
@@ -1575,11 +1574,11 @@ function getNextKrishnaName() {
   return item;
 }
 
-function makeKrishnaUtt(itemOrText) {
+function makeKrishnaUtt(itemOrText, customRate) {
   const vList = (typeof window !== "undefined" && window.speechSynthesis) ? speechSynthesis.getVoices() : [];
   const lang = (cfg.voiceAppreciationLang && cfg.voiceAppreciationLang !== "auto") 
     ? cfg.voiceAppreciationLang 
-    : (cfg.pranaLang || "en");
+    : (cfg.quoteLang || cfg.pranaLang || "hi");
 
   const isIndic = lang === "hi" || lang === "mr" || lang === "sa";
   let text = "";
@@ -1591,19 +1590,20 @@ function makeKrishnaUtt(itemOrText) {
 
   const u = new SpeechSynthesisUtterance(text);
   if (isIndic) {
-    u.lang = "hi-IN";
-    const iv = vList.find(v => v.lang === "hi-IN" && v.localService) ||
+    u.lang = (lang === "mr") ? "mr-IN" : "hi-IN";
+    const iv = (lang === "mr" ? (vList.find(v => v.lang.startsWith("mr")) || vList.find(v => v.lang.startsWith("hi"))) : null) ||
+               vList.find(v => v.lang === "hi-IN" && v.localService) ||
                vList.find(v => v.lang === "hi-IN") ||
                vList.find(v => v.lang.startsWith("hi")) ||
-               vList.find(v => v.lang.startsWith("mr")) || hiVoice;
+               hiVoice;
     if (iv) u.voice = iv;
-    u.rate = 0.88;
+    u.rate = customRate || 0.95;
   } else {
     u.lang = "en-IN";
     const ev = vList.find(v => v.lang === "en-IN") ||
                vList.find(v => v.lang.startsWith("en")) || breathVoice;
     if (ev) u.voice = ev;
-    u.rate = 0.92;
+    u.rate = customRate || 0.96;
   }
   u.pitch = 1.0;
   u.volume = 1.0;
@@ -1627,36 +1627,39 @@ function startGrace() {
   const kName = getNextKrishnaName();
   const lang = (cfg.voiceAppreciationLang && cfg.voiceAppreciationLang !== "auto") 
     ? cfg.voiceAppreciationLang 
-    : (cfg.pranaLang || "en");
+    : (cfg.quoteLang || cfg.pranaLang || "hi");
 
-  // Update rest label to display Lord Krishna's name with sacred lotus
+  const doneCount = (typeof todayDone === "function") ? todayDone() : (sess.done || 0);
+  const nextSet = doneCount + 1;
+
+  // Update rest label to display Lord Krishna's name with sacred lotus and next set number
   const lbl = document.querySelector(".grace-label");
   if (lbl) {
-    lbl.innerHTML = `🪷 <strong>${kName.devanagari}</strong> · REST — Next round in`;
+    lbl.innerHTML = `🪷 <strong>${kName.devanagari}</strong> · REST — Set ${nextSet} in`;
   }
 
-  // 🦚 Speak Lord Krishna's sacred name during rest time peacefully + announce next round start cue!
+  // 🦚 Speak Lord Krishna's sacred name, then next set count, then start seconds countdown!
   setTimeout(() => {
     if (!graceActive || voiceMuted || !window.speechSynthesis) return;
 
     let chantText = "";
-    let restCue = "";
+    let nextSetCue = "";
 
-    if (lang === "hi") {
+    if (lang === "mr") {
       chantText = `जय श्री कृष्ण · ${kName.devanagari}`;
-      restCue = `विश्राम। अगली फेरी ${durSec} सेकंड में शुरू होगी।`;
-    } else if (lang === "mr") {
+      nextSetCue = `पुढील सेट ${nextSet}। ${durSec} सेकंद।`;
+    } else if (lang === "hi") {
       chantText = `जय श्री कृष्ण · ${kName.devanagari}`;
-      restCue = `विश्रांती। पुढील फेरी ${durSec} सेकंदात सुरू होईल।`;
+      nextSetCue = `अगला सेट ${nextSet}। ${durSec} सेकंड।`;
     } else {
       chantText = `Jai Shree Krishna · ${kName.en}`;
-      restCue = `Rest. Next round starts in ${durSec} seconds.`;
+      nextSetCue = `Next Set ${nextSet}. ${durSec} seconds.`;
     }
 
     qClear();
-    qSpeak(makeKrishnaUtt(chantText));
-    qSpeak(makeKrishnaUtt(restCue));
-  }, 450);
+    qSpeak(makeKrishnaUtt(chantText, 0.95));
+    qSpeak(makeKrishnaUtt(nextSetCue, 1.0));
+  }, 600);
 
   const el = document.getElementById("grace-bar");
   const wt = document.getElementById("grace-wrap");
@@ -1672,12 +1675,11 @@ function startGrace() {
     if(ct) ct.textContent = secsLeft > 0 ? secsLeft : "";
 
     // 🔔 Speak 3, 2, 1 countdown as next round approaches
-    if (secsLeft === 3 && !graceCountdownSaid && dur >= 6000) {
+    if (secsLeft === 3 && !graceCountdownSaid && dur >= 5000) {
       graceCountdownSaid = true;
       if (!voiceMuted && window.speechSynthesis) {
-        const cdText = (lang === "hi") ? "तीन... दो... एक" : (lang === "mr") ? "तीन... दोन... एक" : "Three, two, one";
-        const cdUtt = makeKrishnaUtt(cdText);
-        cdUtt.rate = 1.05;
+        const cdText = (lang === "mr") ? "तीन... दोन... एक" : (lang === "hi") ? "तीन... दो... एक" : "Three, two, one";
+        const cdUtt = makeKrishnaUtt(cdText, 1.05);
         qSpeak(cdUtt);
       }
     }
@@ -3580,6 +3582,9 @@ function openSettings() {
   togSet("tog-auto-reel", cfg.autoReelOn !== false);
   togSet("tog-manache", cfg.manacheShlokOn !== false);
   togSet("tog-goal-voice-appreciation", cfg.goalAppreciationVoiceOn !== false);
+  togSet("tog-show-diet-card", cfg.showDietCardOnMain === true);
+  togSet("tog-diet-reminders", cfg.dietRemindersOn !== false && cfg.dietNotifOn !== false);
+  togSet("tog-water-reminders", cfg.waterRemindersOn !== false);
   const alEl = document.getElementById("cfg-appreciation-lang");
   if (alEl) alEl.value = cfg.voiceAppreciationLang || "auto";
   const unEl = document.getElementById("cfg-user-name"); if(unEl) unEl.value = cfg.userName || "Vaibhav";
@@ -3620,6 +3625,10 @@ function closeSettings() {
   cfg.goalAppreciationVoiceOn = togGet("tog-goal-voice-appreciation");
   const alEl2 = document.getElementById("cfg-appreciation-lang");
   if (alEl2) cfg.voiceAppreciationLang = alEl2.value;
+  cfg.showDietCardOnMain = togGet("tog-show-diet-card");
+  cfg.dietRemindersOn = togGet("tog-diet-reminders");
+  cfg.dietNotifOn = cfg.dietRemindersOn;
+  cfg.waterRemindersOn = togGet("tog-water-reminders");
   const unEl2 = document.getElementById("cfg-user-name"); if(unEl2) cfg.userName = unEl2.value.trim() || "Vaibhav";
   const uwEl2 = document.getElementById("cfg-user-weight"); if(uwEl2) cfg.userWeight = Math.max(30, Math.min(250, parseInt(uwEl2.value) || 66));
   const bsEl2 = document.getElementById("cfg-bottle-size"); if(bsEl2) cfg.bottleMl = parseInt(bsEl2.value) || 1000;
@@ -3632,6 +3641,8 @@ function closeSettings() {
   voiceMuted      = !cfg.voiceOn;
   scheduleAlarm();   // reschedule with new time
   scheduleAyurvedicDietNotifications(); // reschedule diet notifications
+  scheduleWaterIntakeReminders(); // reschedule water notifications
+  if (typeof updateDietPlanButtonLockUI === "function") updateDietPlanButtonLockUI();
   cfg.chartDays = parseInt(document.getElementById("cfg-chart-days").value) || 21;
   cfg.chartMode = document.getElementById("cfg-chart-mode").value || "bar";
   saveAll(); render();
@@ -3647,10 +3658,38 @@ function toggleSettingKey(id, e) {
   if (!el) return;
   el.classList.toggle("on");
   try { if (typeof vib === "function") vib(25); } catch(err){}
+
+  // Instant reactive UI sync for diet & water toggles
+  if (id === "tog-show-diet-card") {
+    if (typeof cfg !== "undefined") {
+      cfg.showDietCardOnMain = el.classList.contains("on");
+      if (typeof saveAll === "function") saveAll();
+    }
+    if (typeof updateDietPlanButtonLockUI === "function") {
+      updateDietPlanButtonLockUI();
+    }
+  } else if (id === "tog-diet-reminders") {
+    if (typeof cfg !== "undefined") {
+      cfg.dietRemindersOn = el.classList.contains("on");
+      cfg.dietNotifOn = cfg.dietRemindersOn;
+      if (typeof saveAll === "function") saveAll();
+    }
+    if (typeof scheduleAyurvedicDietNotifications === "function") {
+      scheduleAyurvedicDietNotifications();
+    }
+  } else if (id === "tog-water-reminders") {
+    if (typeof cfg !== "undefined") {
+      cfg.waterRemindersOn = el.classList.contains("on");
+      if (typeof saveAll === "function") saveAll();
+    }
+    if (typeof scheduleWaterIntakeReminders === "function") {
+      scheduleWaterIntakeReminders();
+    }
+  }
 }
 window.toggleSettingKey = toggleSettingKey;
 
-["tog-voice","tog-mantras","tog-breath","tog-auto","tog-prana","tog-alarm","tog-daytime-notif","tog-auto-reel","tog-auto-phase","tog-pose-anim","tog-goal-voice-appreciation"].forEach(id => {
+["tog-voice","tog-mantras","tog-breath","tog-auto","tog-prana","tog-alarm","tog-daytime-notif","tog-auto-reel","tog-auto-phase","tog-pose-anim","tog-goal-voice-appreciation","tog-show-diet-card","tog-diet-reminders","tog-water-reminders"].forEach(id => {
   const el = document.getElementById(id);
   if (el) {
     el.onclick = function(e) { toggleSettingKey(id, e); };
@@ -3873,7 +3912,7 @@ if ("serviceWorker" in navigator) {
   window.addEventListener("load", async () => {
     await autoCheckAndCleanPreviousInstallations();
     try {
-      const reg = await navigator.serviceWorker.register("sw.js");
+      const reg = await navigator.serviceWorker.register("./sw.js", { scope: "./" });
       const showBanner = () => {
         const b = document.getElementById("upd-banner");
         if(b) b.classList.add("show");
@@ -4221,43 +4260,99 @@ function scheduleAlarm() {
 }
 
 function _tryAndroidAlarm(h, m) {
-  const hour = parseInt(h !== undefined ? h : (cfg.alarmHour || 5));
-  const min  = parseInt(m !== undefined ? m : (cfg.alarmMinute || 0));
-  const name = cfg.userName || "Vaibhav";
-  const label = "Suryasarthi 108 - " + name;
+  let hour = parseInt(h !== undefined ? h : (typeof cfg !== "undefined" && cfg.alarmHour !== undefined ? cfg.alarmHour : 5), 10);
+  let min  = parseInt(m !== undefined ? m : (typeof cfg !== "undefined" && cfg.alarmMinute !== undefined ? cfg.alarmMinute : 0), 10);
+  if (isNaN(hour) || hour < 0 || hour > 23) hour = 5;
+  if (isNaN(min) || min < 0 || min > 59) min = 0;
+
   const timeStr = String(hour).padStart(2, '0') + ":" + String(min).padStart(2, '0');
+  const name = (typeof cfg !== "undefined" && cfg.userName) ? cfg.userName : "Vaibhav";
 
-  // Primary SET_ALARM Intent
-  const intentSet = `intent:#Intent;action=android.intent.action.SET_ALARM;i.android.intent.extra.alarm.HOUR=${hour};i.android.intent.extra.alarm.MINUTES=${min};S.android.intent.extra.alarm.MESSAGE=${encodeURIComponent(label)};B.android.intent.extra.alarm.SKIP_UI=false;end`;
+  // Sync to cfg and save immediately
+  if (typeof cfg !== "undefined") {
+    cfg.alarmHour = hour;
+    cfg.alarmMinute = min;
+    cfg.alarmOn = true;
+    if (typeof togSet === "function") togSet("tog-alarm", true);
+    if (typeof saveAll === "function") saveAll();
+  }
+  if (typeof scheduleAlarm === "function") scheduleAlarm();
 
-  // Secondary SHOW_ALARMS Intent (Opens Clock app directly)
-  const intentShow = `intent:#Intent;action=android.intent.action.SHOW_ALARMS;end`;
-
-  // Legacy intent:// format
-  const intentLegacy = `intent://alarm/#Intent;action=android.intent.action.SET_ALARM;extra.android.intent.extra.alarm.HOUR=${hour};extra.android.intent.extra.alarm.MINUTES=${min};extra.android.intent.extra.alarm.MESSAGE=${encodeURIComponent(label)};extra.android.intent.extra.alarm.SKIP_UI=false;end`;
-
-  // Update in-page status info (no thread-blocking alert!)
+  // Status feedback in app
   const infoEl = document.getElementById("cfg-voice-info");
   if (infoEl) {
-    infoEl.textContent = "⏰ Opening Clock app for " + timeStr + " (" + label + ")…";
+    infoEl.textContent = "⏰ Daily alarm scheduled for " + timeStr + " · Opening Clock…";
     infoEl.style.color = "var(--acc-lt)";
   }
+  if (typeof setStatus === "function") {
+    setStatus("⏰ Daily alarm scheduled for " + timeStr);
+  }
 
-  // Trigger direct intent navigation synchronously
-  try {
-    window.location.href = intentSet;
-  } catch (e1) {
-    try {
-      window.location.href = intentShow;
-    } catch (e2) {
+  const isAndroid = /Android/i.test(navigator.userAgent || "");
+  if (isAndroid) {
+    // Primary: Standard Android SET_ALARM Intent with DEFAULT category
+    const intentSet = `intent:#Intent;action=android.intent.action.SET_ALARM;category=android.intent.category.DEFAULT;i.android.intent.extra.alarm.HOUR=${hour};i.android.intent.extra.alarm.MINUTES=${min};S.android.intent.extra.alarm.MESSAGE=Surya%20Sarthi;B.android.intent.extra.alarm.SKIP_UI=false;end`;
+    
+    // Secondary Fallback: SHOW_ALARMS (Universal across all Android Clock apps)
+    const intentShow = `intent:#Intent;action=android.intent.action.SHOW_ALARMS;category=android.intent.category.DEFAULT;end`;
+
+    const launchIntent = (url) => {
       try {
-        window.location.href = intentLegacy;
-      } catch (e3) {
-        console.warn("Android Clock intent navigation unavailable.");
+        const a = document.createElement("a");
+        a.href = url;
+        a.target = "_top";
+        a.rel = "noopener noreferrer";
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(() => { if (a.parentNode) a.parentNode.removeChild(a); }, 400);
+      } catch (e) {
+        console.warn("[Alarm] Intent launch notice:", e);
       }
-    }
+    };
+
+    launchIntent(intentSet);
+
+    // Watch for window blur; if page stays focused after 400ms, try SHOW_ALARMS
+    let appBlurred = false;
+    const blurHandler = () => { appBlurred = true; };
+    window.addEventListener("blur", blurHandler, { once: true });
+
+    setTimeout(() => {
+      window.removeEventListener("blur", blurHandler);
+      if (!appBlurred && document.visibilityState === "visible") {
+        console.log("[Alarm] Trying universal SHOW_ALARMS intent...");
+        launchIntent(intentShow);
+      }
+    }, 400);
+  } else {
+    alert("⏰ Daily Motivational Alarm is scheduled for " + timeStr + " in Surya Sarthi!\n\nThe app will remind you with sacred Bhagavad Gita wisdom and mantras.");
   }
 }
+
+function triggerSetAndroidAlarm(btn) {
+  const timeInput = document.getElementById("cfg-alarm-time");
+  let h = 5, m = 0;
+  if (timeInput && timeInput.value) {
+    const parts = timeInput.value.split(":").map(Number);
+    h = isNaN(parts[0]) ? 5 : parts[0];
+    m = isNaN(parts[1]) ? 0 : parts[1];
+  }
+  _tryAndroidAlarm(h, m);
+
+  if (btn) {
+    const orig = btn.textContent;
+    const timeStr = String(h).padStart(2, "0") + ":" + String(m).padStart(2, "0");
+    btn.textContent = `✓ Alarm Set (${timeStr})`;
+    btn.style.background = "rgba(16, 185, 129, 0.3)";
+    btn.style.color = "#34D399";
+    setTimeout(() => {
+      btn.textContent = orig;
+      btn.style.background = "";
+      btn.style.color = "";
+    }, 3500);
+  }
+}
+window.triggerSetAndroidAlarm = triggerSetAndroidAlarm;
 
 function cancelAlarm() {
   if(_alarmTimeout) { clearTimeout(_alarmTimeout); _alarmTimeout = null; }

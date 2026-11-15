@@ -140,6 +140,9 @@ function openSettings() {
       togSet("tog-auto-reel", cfg.autoReelOn !== false);
       togSet("tog-manache", cfg.manacheShlokOn !== false);
       togSet("tog-goal-voice-appreciation", cfg.goalAppreciationVoiceOn !== false);
+      togSet("tog-show-diet-card", cfg.showDietCardOnMain === true);
+      togSet("tog-diet-reminders", cfg.dietRemindersOn !== false && cfg.dietNotifOn !== false);
+      togSet("tog-water-reminders", cfg.waterRemindersOn !== false);
       const alEl = document.getElementById("cfg-appreciation-lang");
       if (alEl) alEl.value = cfg.voiceAppreciationLang || "auto";
 
@@ -223,6 +226,11 @@ function closeSettings() {
       const alEl2 = document.getElementById("cfg-appreciation-lang");
       if (alEl2) cfg.voiceAppreciationLang = alEl2.value;
 
+      cfg.showDietCardOnMain = togGet("tog-show-diet-card");
+      cfg.dietRemindersOn = togGet("tog-diet-reminders");
+      cfg.dietNotifOn = cfg.dietRemindersOn;
+      cfg.waterRemindersOn = togGet("tog-water-reminders");
+
       const unEl2 = document.getElementById("cfg-user-name"); if(unEl2) cfg.userName = unEl2.value.trim() || "Vaibhav";
       const uwEl2 = document.getElementById("cfg-user-weight"); if(uwEl2) cfg.userWeight = Math.max(30, Math.min(250, parseInt(uwEl2.value) || 66));
       const bsEl2 = document.getElementById("cfg-bottle-size"); if(bsEl2) cfg.bottleMl = parseInt(bsEl2.value) || 1000;
@@ -244,6 +252,8 @@ function closeSettings() {
 
     if (typeof scheduleAlarm === "function") scheduleAlarm();
     if (typeof scheduleAyurvedicDietNotifications === "function") scheduleAyurvedicDietNotifications();
+    if (typeof scheduleWaterIntakeReminders === "function") scheduleWaterIntakeReminders();
+    if (typeof updateDietPlanButtonLockUI === "function") updateDietPlanButtonLockUI();
 
     if (typeof saveAll === "function") saveAll(); else if (typeof window.saveAll === "function") window.saveAll();
     if (typeof render === "function") render(); else if (typeof window.render === "function") window.render();
