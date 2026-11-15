@@ -4,7 +4,7 @@
 <head>
   <script>
     window.__errors = [];
-    window.onerror = function(msg, url, line, col, err) {
+    window.onerror = function (msg, url, line, col, err) {
       var msgStr = (err && err.message) ? err.message : String(msg || '');
       // Suppress opaque cross-origin / file:// protocol / browser extension "Script error."
       if (msgStr.toLowerCase().indexOf('script error') !== -1 || (!line && !url)) {
@@ -45,7 +45,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet"
-    href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;700;800&family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@700;900&family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=DM+Serif+Display:ital@0;1&family=Epilogue:wght@600;800;900&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@700;800&family=Manrope:wght@600;800&family=Marcellus&family=Noto+Sans+Devanagari:wght@700;900&family=Outfit:wght@400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Plus+Jakarta+Sans:wght@500;600;700;800;900&family=Rozha+One&family=Sora:wght@600;700;800&family=Space+Grotesk:wght@600;700;800&family=Syne:wght@700;800;900&family=Yatra+One&display=swap">>
+    href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;700;800&family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@700;900&family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=DM+Serif+Display:ital@0;1&family=Epilogue:wght@600;800;900&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@700;800&family=Manrope:wght@600;800&family=Marcellus&family=Noto+Sans+Devanagari:wght@700;900&family=Outfit:wght@400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Plus+Jakarta+Sans:wght@500;600;700;800;900&family=Rozha+One&family=Sora:wght@600;700;800&family=Space+Grotesk:wght@600;700;800&family=Syne:wght@700;800;900&family=Yatra+One&display=swap">
+  >
   <link rel="manifest" href="manifest.json">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
   <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
@@ -55,7 +56,6 @@
   <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
   <link rel="apple-touch-icon" href="icon-192.png">
   <style>
-    
     /* ═══════════════════════════════════════════════════════════════
        12 PRO FITNESS & WELLNESS THEMES — DEFAULTS & ARCHITECTURES
        Default: 🪷 3. Vaikuntha Amrita (Imperial Amethyst & Violet)
@@ -436,36 +436,49 @@
       font-family: var(--font-head, 'Marcellus', serif) !important;
       color: var(--acc-lt) !important;
     }
+
     .hdr-sub {
       color: var(--acc) !important;
     }
+
     .mantra-deva {
       font-family: var(--font-head, 'Marcellus', serif) !important;
       color: var(--gold-lt) !important;
     }
+
     .mantra-roman {
       font-family: var(--font-head, 'Marcellus', serif) !important;
       color: var(--sec-lt) !important;
     }
+
     .mantra-mean {
       color: var(--txt2) !important;
     }
-    .stat .val, .time-card .tval, .cal-card .cval, #cur-pace {
+
+    .stat .val,
+    .time-card .tval,
+    .cal-card .cval,
+    #cur-pace {
       font-family: var(--font-nums, 'Outfit', sans-serif) !important;
       color: var(--txt) !important;
     }
+
     .stat .lbl {
       color: var(--muted) !important;
     }
+
     .stat.hi .val {
       color: var(--acc-lt) !important;
     }
+
     .stat.hi .lbl {
       color: var(--acc-lt) !important;
     }
+
     #r-pose {
       font-family: var(--font-head, 'Marcellus', serif) !important;
     }
+
     #r-breath {
       font-family: var(--font-nums, 'Outfit', sans-serif) !important;
     }
@@ -509,6 +522,7 @@
     :root.theme-swarna_mandir .hdr-t {
       color: #9A3412 !important;
     }
+
     :root.theme-light .hdr-sub,
     :root.theme-swarna_mandir .hdr-sub {
       color: #B45309 !important;
@@ -520,11 +534,13 @@
       border: 1.5px solid #0891B2 !important;
       box-shadow: 0 2px 10px rgba(8, 145, 178, 0.12) !important;
     }
+
     :root.theme-light .stat.stat-today .lbl,
     :root.theme-swarna_mandir .stat.stat-today .lbl {
       color: #0E7490 !important;
       font-weight: 800 !important;
     }
+
     :root.theme-light .stat.stat-today .val,
     :root.theme-swarna_mandir .stat.stat-today .val {
       color: #0891B2 !important;
@@ -538,11 +554,14 @@
       border: 1.5px solid #D97706 !important;
       box-shadow: 0 2px 12px rgba(217, 119, 6, 0.16) !important;
     }
+
     :root.theme-light .stat.hi .lbl,
     :root.theme-swarna_mandir .stat.hi .lbl {
-      color: #92400E !important; /* Deep rich Amber-900, 10:1 AAA contrast! */
+      color: #92400E !important;
+      /* Deep rich Amber-900, 10:1 AAA contrast! */
       font-weight: 900 !important;
     }
+
     :root.theme-light .stat.hi .val,
     :root.theme-swarna_mandir .stat.hi .val {
       color: #B45309 !important;
@@ -555,11 +574,13 @@
       border: 1.5px solid #059669 !important;
       box-shadow: 0 2px 10px rgba(5, 150, 105, 0.12) !important;
     }
+
     :root.theme-light .stat.stat-streak .lbl,
     :root.theme-swarna_mandir .stat.stat-streak .lbl {
       color: #047857 !important;
       font-weight: 800 !important;
     }
+
     :root.theme-light .stat.stat-streak .val,
     :root.theme-swarna_mandir .stat.stat-streak .val {
       color: #059669 !important;
@@ -572,11 +593,13 @@
       border: 1.5px solid #7C3AED !important;
       box-shadow: 0 2px 10px rgba(124, 58, 237, 0.12) !important;
     }
+
     :root.theme-light .stat.stat-total .lbl,
     :root.theme-swarna_mandir .stat.stat-total .lbl {
       color: #6D28D9 !important;
       font-weight: 800 !important;
     }
+
     :root.theme-light .stat.stat-total .val,
     :root.theme-swarna_mandir .stat.stat-total .val {
       color: #7C3AED !important;
@@ -588,6 +611,7 @@
       background: linear-gradient(135deg, rgba(14, 165, 233, 0.14), rgba(255, 255, 255, 0.85)) !important;
       border-color: #0284C7 !important;
     }
+
     :root.theme-light .time-card .tval,
     :root.theme-swarna_mandir .time-card .tval {
       color: #0369A1 !important;
@@ -597,9 +621,11 @@
     /* Pose Circle & Pose Title: Fixes the invisible white text */
     :root.theme-light .pose-name,
     :root.theme-swarna_mandir .pose-name {
-      color: #0F172A !important; /* Bold deep slate, crystal clear! */
+      color: #0F172A !important;
+      /* Bold deep slate, crystal clear! */
       font-weight: 900 !important;
     }
+
     :root.theme-light .pose-breath,
     :root.theme-swarna_mandir .pose-breath {
       background: rgba(14, 165, 233, 0.15) !important;
@@ -607,18 +633,21 @@
       color: #0369A1 !important;
       font-weight: 800 !important;
     }
+
     :root.theme-light .pose-breath.inhale,
     :root.theme-swarna_mandir .pose-breath.inhale {
       background: rgba(2, 132, 199, 0.15) !important;
       border-color: #0284C7 !important;
       color: #0369A1 !important;
     }
+
     :root.theme-light .pose-breath.hold,
     :root.theme-swarna_mandir .pose-breath.hold {
       background: rgba(217, 119, 6, 0.15) !important;
       border-color: #D97706 !important;
       color: #92400E !important;
     }
+
     :root.theme-light .pose-breath.exhale,
     :root.theme-swarna_mandir .pose-breath.exhale {
       background: rgba(234, 88, 12, 0.15) !important;
@@ -629,13 +658,16 @@
     /* Sacred Mantras in Light Mode */
     :root.theme-light #r-devanagari,
     :root.theme-swarna_mandir #r-devanagari {
-      color: #9A3412 !important; /* Sacred terracotta sunrise */
+      color: #9A3412 !important;
+      /* Sacred terracotta sunrise */
       font-weight: 900 !important;
     }
+
     :root.theme-light #r-mantra,
     :root.theme-swarna_mandir #r-mantra {
       color: #B45309 !important;
     }
+
     :root.theme-light #r-meaning,
     :root.theme-swarna_mandir #r-meaning {
       color: #475569 !important;
@@ -647,6 +679,7 @@
       color: #0284C7 !important;
       font-weight: 800 !important;
     }
+
     :root.theme-light .spd,
     :root.theme-swarna_mandir .spd {
       background: #FEF3C7 !important;
@@ -654,11 +687,13 @@
       color: #B45309 !important;
       box-shadow: 0 2px 8px rgba(217, 119, 6, 0.2) !important;
     }
+
     :root.theme-light .spd:hover,
     :root.theme-swarna_mandir .spd:hover {
       background: #FDE68A !important;
       color: #92400E !important;
     }
+
     :root.theme-light .spd-v,
     :root.theme-swarna_mandir .spd-v {
       color: #92400E !important;
@@ -673,6 +708,7 @@
       border: 1.5px solid rgba(16, 185, 129, 0.35) !important;
       box-shadow: 0 4px 16px rgba(16, 185, 129, 0.08) !important;
     }
+
     :root.theme-light #btn-view-diet-plan,
     :root.theme-swarna_mandir #btn-view-diet-plan {
       background: rgba(16, 185, 129, 0.15) !important;
@@ -686,6 +722,7 @@
       background: var(--drawer-bg);
       box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.15);
     }
+
     :root.theme-light .ov-box,
     :root.theme-swarna_mandir .ov-box {
       background: var(--modal-card-bg) !important;
@@ -693,6 +730,7 @@
       box-shadow: 0 16px 50px rgba(0, 0, 0, 0.12) !important;
       color: var(--txt) !important;
     }
+
     :root.theme-light input,
     :root.theme-light select,
     :root.theme-swarna_mandir input,
@@ -701,6 +739,7 @@
       border-color: var(--input-bdr) !important;
       color: var(--input-txt) !important;
     }
+
     :root.theme-light .dr-close,
     :root.theme-light .gear,
     :root.theme-swarna_mandir .dr-close,
@@ -1023,7 +1062,7 @@
       justify-content: center;
     }
 
-    .ring-wrap > svg {
+    .ring-wrap>svg {
       position: absolute;
       top: 0;
       left: 0;
@@ -1108,6 +1147,7 @@
         transform: scale(0.97) translateY(1px);
         filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.45));
       }
+
       100% {
         transform: scale(1.06) translateY(-2px);
         filter: drop-shadow(0 0 15px rgba(56, 189, 248, 0.85));
@@ -1124,6 +1164,7 @@
         transform: scale(1.04) translateY(-1px);
         filter: drop-shadow(0 0 14px rgba(245, 158, 11, 0.75));
       }
+
       100% {
         transform: scale(0.96) translateY(2px);
         filter: drop-shadow(0 0 6px rgba(245, 158, 11, 0.4));
@@ -1136,10 +1177,13 @@
     }
 
     @keyframes poseBreathHold {
-      0%, 100% {
+
+      0%,
+      100% {
         transform: scale(1.0);
         filter: drop-shadow(0 0 8px rgba(52, 211, 153, 0.5));
       }
+
       50% {
         transform: scale(1.03);
         filter: drop-shadow(0 0 15px rgba(52, 211, 153, 0.85));
@@ -1156,6 +1200,7 @@
         opacity: 0.25;
         transform: scale(0.82);
       }
+
       100% {
         opacity: 1;
         transform: scale(1.0);
@@ -1361,9 +1406,20 @@
     }
 
     @keyframes phaseGlowPulse {
-      0% { transform: scale(1); box-shadow: 0 0 8px rgba(245, 158, 11, 0.3); }
-      50% { transform: scale(1.03); box-shadow: 0 0 16px rgba(245, 158, 11, 0.6); }
-      100% { transform: scale(1); box-shadow: 0 0 8px rgba(245, 158, 11, 0.3); }
+      0% {
+        transform: scale(1);
+        box-shadow: 0 0 8px rgba(245, 158, 11, 0.3);
+      }
+
+      50% {
+        transform: scale(1.03);
+        box-shadow: 0 0 16px rgba(245, 158, 11, 0.6);
+      }
+
+      100% {
+        transform: scale(1);
+        box-shadow: 0 0 8px rgba(245, 158, 11, 0.3);
+      }
     }
 
     @keyframes sunNotifBlink {
@@ -1751,6 +1807,7 @@
       backdrop-filter: blur(20px);
       padding: 1rem;
     }
+
     .ms-break-card {
       width: 100%;
       max-width: 480px;
@@ -1767,6 +1824,7 @@
       text-align: left;
       position: relative;
     }
+
     .ms-break-header {
       display: flex;
       align-items: center;
@@ -1774,11 +1832,13 @@
       border-bottom: 1px solid rgba(255, 255, 255, 0.08);
       padding-bottom: 0.65rem;
     }
+
     .ms-om-symbol {
       font-size: 34px;
       line-height: 1;
       filter: drop-shadow(0 0 10px rgba(245, 158, 11, 0.6));
     }
+
     .ms-badge-label {
       font-size: 11px;
       font-weight: 700;
@@ -1786,6 +1846,7 @@
       letter-spacing: 0.5px;
       text-transform: uppercase;
     }
+
     .ms-main-title {
       font-size: 20px !important;
       font-weight: 900 !important;
@@ -1793,11 +1854,13 @@
       margin: 2px 0 0 0 !important;
       letter-spacing: 0.3px;
     }
+
     .ms-break-sub {
       font-size: 12px;
       color: #94A3B8;
       margin-top: 2px;
     }
+
     .ms-singer-bar {
       display: flex;
       align-items: center;
@@ -1807,11 +1870,13 @@
       border-radius: 14px;
       padding: 0.6rem 0.8rem;
     }
+
     .ms-singer-badge {
       display: flex;
       align-items: center;
       gap: 0.7rem;
     }
+
     .ms-singer-avatar {
       width: 38px;
       height: 38px;
@@ -1823,10 +1888,12 @@
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
       flex-shrink: 0;
     }
+
     .ms-singer-info {
       display: flex;
       flex-direction: column;
     }
+
     .ms-singer-title {
       font-size: 13.5px;
       color: #F1F5F9;
@@ -1834,6 +1901,7 @@
       align-items: center;
       gap: 6px;
     }
+
     .ms-singer-tag {
       font-size: 10px;
       background: rgba(245, 158, 11, 0.2);
@@ -1842,37 +1910,76 @@
       border-radius: 6px;
       font-weight: 700;
     }
+
     .ms-singer-sub {
       font-size: 11px;
       color: #94A3B8;
       margin-top: 1px;
     }
+
     .ms-tanpura-equalizer {
       display: flex;
       align-items: flex-end;
       gap: 3px;
       height: 22px;
     }
+
     .ms-tanpura-equalizer .ms-bar {
       width: 3px;
       background: #F59E0B;
       border-radius: 2px;
       animation: msWave 1.2s infinite ease-in-out;
     }
-    .ms-tanpura-equalizer .b1 { height: 8px; animation-delay: 0.1s; }
-    .ms-tanpura-equalizer .b2 { height: 16px; animation-delay: 0.3s; }
-    .ms-tanpura-equalizer .b3 { height: 22px; animation-delay: 0.5s; }
-    .ms-tanpura-equalizer .b4 { height: 12px; animation-delay: 0.2s; }
-    .ms-tanpura-equalizer .b5 { height: 18px; animation-delay: 0.4s; }
-    .ms-tanpura-equalizer .b6 { height: 10px; animation-delay: 0.15s; }
-    @keyframes msWave {
-      0%, 100% { height: 6px; opacity: 0.5; }
-      50% { height: 22px; opacity: 1; }
+
+    .ms-tanpura-equalizer .b1 {
+      height: 8px;
+      animation-delay: 0.1s;
     }
+
+    .ms-tanpura-equalizer .b2 {
+      height: 16px;
+      animation-delay: 0.3s;
+    }
+
+    .ms-tanpura-equalizer .b3 {
+      height: 22px;
+      animation-delay: 0.5s;
+    }
+
+    .ms-tanpura-equalizer .b4 {
+      height: 12px;
+      animation-delay: 0.2s;
+    }
+
+    .ms-tanpura-equalizer .b5 {
+      height: 18px;
+      animation-delay: 0.4s;
+    }
+
+    .ms-tanpura-equalizer .b6 {
+      height: 10px;
+      animation-delay: 0.15s;
+    }
+
+    @keyframes msWave {
+
+      0%,
+      100% {
+        height: 6px;
+        opacity: 0.5;
+      }
+
+      50% {
+        height: 22px;
+        opacity: 1;
+      }
+    }
+
     .ms-singer-switchers {
       display: flex;
       gap: 0.5rem;
     }
+
     .ms-pill-btn {
       flex: 1;
       background: rgba(255, 255, 255, 0.05);
@@ -1889,12 +1996,14 @@
       justify-content: center;
       gap: 5px;
     }
+
     .ms-pill-btn.active {
       background: linear-gradient(135deg, rgba(245, 158, 11, 0.25), rgba(217, 119, 6, 0.35));
       border-color: #F59E0B;
       color: #FDE68A;
       box-shadow: 0 0 10px rgba(245, 158, 11, 0.3);
     }
+
     .ms-shloka-box {
       background: rgba(0, 0, 0, 0.38);
       border: 1px solid rgba(245, 158, 11, 0.25);
@@ -1904,6 +2013,7 @@
       flex-direction: column;
       gap: 0.65rem;
     }
+
     .ms-shloka-top {
       display: flex;
       align-items: center;
@@ -1911,22 +2021,26 @@
       border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
       padding-bottom: 0.4rem;
     }
+
     .ms-shloka-num-badge {
       font-size: 13px;
       font-weight: 800;
       color: #FBBF24;
       letter-spacing: 0.5px;
     }
+
     .ms-shloka-theme {
       font-size: 11px;
       color: #94A3B8;
       font-weight: 600;
     }
+
     .ms-shloka-lines {
       display: flex;
       flex-direction: column;
       gap: 0.3rem;
     }
+
     .ms-line {
       font-size: 16px;
       line-height: 1.55;
@@ -1936,6 +2050,7 @@
       border-radius: 6px;
       transition: all 0.25s ease;
     }
+
     .ms-line.active-line {
       background: rgba(245, 158, 11, 0.22);
       color: #FDE68A;
@@ -1944,6 +2059,7 @@
       text-shadow: 0 0 14px rgba(245, 158, 11, 0.6);
       transform: translateX(2px);
     }
+
     .ms-meanings {
       border-top: 1px solid rgba(255, 255, 255, 0.08);
       padding-top: 0.55rem;
@@ -1951,17 +2067,20 @@
       flex-direction: column;
       gap: 0.25rem;
     }
+
     .ms-meaning-mr {
       font-size: 12px;
       line-height: 1.5;
       color: #E2E8F0;
     }
+
     .ms-meaning-en {
       font-size: 11px;
       line-height: 1.4;
       color: #94A3B8;
       font-style: italic;
     }
+
     .ms-auto-banner {
       background: rgba(16, 185, 129, 0.08);
       border: 1px solid rgba(16, 185, 129, 0.25);
@@ -1971,6 +2090,7 @@
       flex-direction: column;
       gap: 0.4rem;
     }
+
     .ms-auto-msg {
       font-size: 12px;
       color: #A7F3D0;
@@ -1979,6 +2099,7 @@
       gap: 6px;
       font-weight: 600;
     }
+
     .ms-pulse-dot {
       width: 8px;
       height: 8px;
@@ -1987,10 +2108,21 @@
       animation: msPulse 1.2s infinite;
       flex-shrink: 0;
     }
+
     @keyframes msPulse {
-      0%, 100% { opacity: 0.3; transform: scale(0.85); }
-      50% { opacity: 1; transform: scale(1.25); }
+
+      0%,
+      100% {
+        opacity: 0.3;
+        transform: scale(0.85);
+      }
+
+      50% {
+        opacity: 1;
+        transform: scale(1.25);
+      }
     }
+
     .ms-prog-track {
       width: 100%;
       height: 4px;
@@ -1998,17 +2130,20 @@
       border-radius: 2px;
       overflow: hidden;
     }
+
     .ms-prog-fill {
       height: 100%;
       width: 0%;
       background: linear-gradient(90deg, #10B981, #F59E0B);
       transition: width 0.8s ease;
     }
+
     .ms-actions {
       display: flex;
       gap: 0.6rem;
       margin-top: 0.1rem;
     }
+
     .ms-btn-primary {
       flex: 2;
       background: linear-gradient(135deg, #F59E0B, #D97706);
@@ -2025,9 +2160,11 @@
       align-items: center;
       justify-content: center;
     }
+
     .ms-btn-primary:active {
       transform: scale(0.98);
     }
+
     .ms-btn-secondary {
       flex: 1;
       background: rgba(255, 255, 255, 0.08);
@@ -2067,7 +2204,12 @@
       display: flex !important;
     }
 
-    .prana-header, .prana-title-block, .prana-bars, .prana-time-rem, .prana-ctrl, .prana-stage-wrap {
+    .prana-header,
+    .prana-title-block,
+    .prana-bars,
+    .prana-time-rem,
+    .prana-ctrl,
+    .prana-stage-wrap {
       position: relative;
       z-index: 1;
     }
@@ -2312,6 +2454,7 @@
       width: 100%;
       text-align: center;
     }
+
     .prana-action-badge {
       display: inline-flex;
       align-items: center;
@@ -2321,27 +2464,31 @@
       font-size: 14.5px;
       font-weight: 900;
       letter-spacing: 0.3px;
-      box-shadow: 0 4px 14px rgba(0,0,0,0.3);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
       transition: all 0.3s ease;
     }
+
     .phase-inhale .prana-action-badge {
       background: linear-gradient(135deg, rgba(6, 182, 212, 0.25), rgba(16, 185, 129, 0.3));
       border: 1.5px solid #10B981;
       color: #34D399;
       box-shadow: 0 0 16px rgba(16, 185, 129, 0.4);
     }
+
     .phase-hold .prana-action-badge {
       background: var(--acc-dim);
       border: 1.5px solid var(--acc);
       color: var(--acc-lt);
       box-shadow: 0 0 16px var(--acc-dim);
     }
+
     .phase-exhale .prana-action-badge {
       background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(239, 68, 68, 0.25));
       border: 1.5px solid var(--sec);
       color: var(--sec-lt);
       box-shadow: 0 0 16px rgba(239, 68, 68, 0.3);
     }
+
     .phase-neutral .prana-action-badge {
       background: var(--surf2);
       border: 1.5px solid var(--bdr);
@@ -2363,16 +2510,19 @@
       margin: 4px auto;
       transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.4s ease, box-shadow 0.4s ease;
     }
+
     .phase-inhale .prana-visual-breath-circle {
       border-color: #10B981;
       box-shadow: 0 0 28px rgba(16, 185, 129, 0.5);
       animation: pranaInhalePulse 4s ease-in-out infinite alternate;
     }
+
     .phase-hold .prana-visual-breath-circle {
       border-color: var(--acc);
       box-shadow: 0 0 32px var(--acc-dim);
       animation: pranaHoldAura 2s ease-in-out infinite alternate;
     }
+
     .phase-exhale .prana-visual-breath-circle {
       border-color: var(--sec);
       box-shadow: 0 0 25px rgba(239, 68, 68, 0.4);
@@ -2380,16 +2530,35 @@
     }
 
     @keyframes pranaInhalePulse {
-      0% { transform: scale(0.95); }
-      100% { transform: scale(1.12); }
+      0% {
+        transform: scale(0.95);
+      }
+
+      100% {
+        transform: scale(1.12);
+      }
     }
+
     @keyframes pranaHoldAura {
-      0% { transform: scale(1.10); filter: brightness(1); }
-      100% { transform: scale(1.12); filter: brightness(1.2); }
+      0% {
+        transform: scale(1.10);
+        filter: brightness(1);
+      }
+
+      100% {
+        transform: scale(1.12);
+        filter: brightness(1.2);
+      }
     }
+
     @keyframes pranaExhaleContract {
-      0% { transform: scale(1.12); }
-      100% { transform: scale(0.92); }
+      0% {
+        transform: scale(1.12);
+      }
+
+      100% {
+        transform: scale(0.92);
+      }
     }
 
     .pbc-count {
@@ -2400,6 +2569,7 @@
       font-variant-numeric: tabular-nums;
       text-shadow: 0 0 10px var(--acc-dim);
     }
+
     .pbc-progress-track {
       width: 60px;
       height: 4px;
@@ -2409,15 +2579,25 @@
       overflow: hidden;
       margin-top: 4px;
     }
+
     .pbc-progress-fill {
       height: 100%;
       background: var(--acc);
       border-radius: 4px;
       transition: width 0.3s ease;
     }
-    .phase-inhale .pbc-progress-fill { background: #34D399; }
-    .phase-hold .pbc-progress-fill { background: var(--acc); }
-    .phase-exhale .pbc-progress-fill { background: var(--sec); }
+
+    .phase-inhale .pbc-progress-fill {
+      background: #34D399;
+    }
+
+    .phase-hold .pbc-progress-fill {
+      background: var(--acc);
+    }
+
+    .phase-exhale .pbc-progress-fill {
+      background: var(--sec);
+    }
 
     .prana-breath-cue-card {
       background: rgba(0, 0, 0, 0.2) !important;
@@ -2430,18 +2610,31 @@
       box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
       transition: all 0.3s ease;
     }
+
     .prana-breath-cue-card.pbcc-concise {
       background: rgba(0, 0, 0, 0.15) !important;
       border-color: rgba(255, 255, 255, 0.1) !important;
       padding: 5px 12px;
     }
+
     .circle-pulse-prep {
       animation: pranaPrepPulse 1.8s ease-in-out infinite;
     }
+
     @keyframes pranaPrepPulse {
-      0%, 100% { transform: scale(1); box-shadow: 0 0 12px var(--acc-dim); }
-      50% { transform: scale(1.05); box-shadow: 0 0 24px var(--acc-dim); }
+
+      0%,
+      100% {
+        transform: scale(1);
+        box-shadow: 0 0 12px var(--acc-dim);
+      }
+
+      50% {
+        transform: scale(1.05);
+        box-shadow: 0 0 24px var(--acc-dim);
+      }
     }
+
     .pbcc-text {
       font-size: 11.5px;
       font-weight: 700;
@@ -2506,6 +2699,7 @@
       justify-content: center;
       gap: 6px;
     }
+
     /* ═══ end pranayama ═══ */
 
     /* ── settings drawer ── */
@@ -2803,8 +2997,10 @@
 
 <body>
   <!-- Sacred Lord Hanuman Watermark (Stationary, Non-moving on scroll, Increased Majestic Size, Fully Visible Behind Content) -->
-  <div id="hanuman-watermark" aria-hidden="true" style="position:fixed;top:0;left:0;right:0;bottom:0;width:100vw;height:100vh;pointer-events:none;z-index:0;display:flex;align-items:center;justify-content:center;opacity:0.22;filter:contrast(120%);">
-    <img src="hanuman_watermark.png" alt="" style="max-width:96%;max-height:88vh;width:auto;height:auto;object-fit:contain;filter:drop-shadow(0 0 2px rgba(255,255,255,0.85)) drop-shadow(0 0 24px rgba(245,158,11,0.4));">
+  <div id="hanuman-watermark" aria-hidden="true"
+    style="position:fixed;top:0;left:0;right:0;bottom:0;width:100vw;height:100vh;pointer-events:none;z-index:0;display:flex;align-items:center;justify-content:center;opacity:0.22;filter:contrast(120%);">
+    <img src="hanuman_watermark.png" alt=""
+      style="max-width:96%;max-height:88vh;width:auto;height:auto;object-fit:contain;filter:drop-shadow(0 0 2px rgba(255,255,255,0.85)) drop-shadow(0 0 24px rgba(245,158,11,0.4));">
   </div>
   <div class="app">
 
@@ -2814,8 +3010,10 @@
         <img id="header-smiling-sun-icon" src="icon-192.png" alt="Surya Sarthi Inner Harmony"
           style="width:42px;height:42px;border-radius:12px;border:1.8px solid #FBBF24;box-shadow:0 0 16px rgba(251,191,36,0.55);object-fit:cover;flex-shrink:0;">
         <div>
-          <div class="prog-name" id="prog-name" style="font-size:15px;letter-spacing:.04em;line-height:1.1;font-weight:900">SURYASARTHI 108</div>
-          <div style="font-size:9.5px;font-weight:800;color:#FBBF24;letter-spacing:.12em;text-transform:uppercase">INNER HARMONY</div>
+          <div class="prog-name" id="prog-name"
+            style="font-size:15px;letter-spacing:.04em;line-height:1.1;font-weight:900">SURYASARTHI 108</div>
+          <div style="font-size:9.5px;font-weight:800;color:#FBBF24;letter-spacing:.12em;text-transform:uppercase">INNER
+            HARMONY</div>
         </div>
       </div>
       <div style="display:flex;align-items:center;gap:6px">
@@ -2827,7 +3025,8 @@
           style="font-size:10px;font-weight:800;color:var(--acc-lt);background:var(--acc-dim);border:1px solid var(--acc);padding:4px 8px;border-radius:12px;cursor:pointer;white-space:nowrap;">
           🎁 7-Day Trial
         </div>
-        <button id="header-install-btn" onclick="installPwa()" aria-label="Install App" title="Install App (Offline)" style="display:none;background:rgba(245,158,11,0.2);border:1.5px solid var(--acc);color:var(--acc-lt);font-size:12px;font-weight:900;padding:5px 9px;border-radius:12px;cursor:pointer;white-space:nowrap;align-items:center;gap:4px;">
+        <button id="header-install-btn" onclick="installPwa()" aria-label="Install App" title="Install App (Offline)"
+          style="display:none;background:rgba(245,158,11,0.2);border:1.5px solid var(--acc);color:var(--acc-lt);font-size:12px;font-weight:900;padding:5px 9px;border-radius:12px;cursor:pointer;white-space:nowrap;align-items:center;gap:4px;">
           📲 Install
         </button>
         <button class="gear" id="settings-btn" onclick="openSettings()" aria-label="Settings">
@@ -2931,14 +3130,16 @@
     </div>
 
     <!-- Quick Ayurvedic Diet & Hydration Card (Hidden by default; visible for 10 min after goal completion OR during Ayurvedic meal windows) -->
-    <div id="card-view-diet-plan" onclick="handleDietPlanClick(event)" style="display:none;background:linear-gradient(135deg,rgba(245,158,11,0.14),rgba(56,189,248,0.12));border:1.2px solid var(--bdr);border-radius:14px;padding:10px 12px;margin:8px auto 6px auto;cursor:pointer;backdrop-filter:blur(12px)">
+    <div id="card-view-diet-plan" onclick="handleDietPlanClick(event)"
+      style="display:none;background:linear-gradient(135deg,rgba(245,158,11,0.14),rgba(56,189,248,0.12));border:1.2px solid var(--bdr);border-radius:14px;padding:10px 12px;margin:8px auto 6px auto;cursor:pointer;backdrop-filter:blur(12px)">
       <!-- Full Diet Info Header -->
       <div id="diet-card-info-header"
         style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
         <div style="display:flex;align-items:center;gap:8px">
           <span style="font-size:18px" id="diet-card-main-icon">🥗</span>
           <div>
-            <div style="font-size:12px;font-weight:800;color:var(--txt)" id="diet-card-title">Today's Ayurvedic Diet &amp; Hydration</div>
+            <div style="font-size:12px;font-weight:800;color:var(--txt)" id="diet-card-title">Today's Ayurvedic Diet
+              &amp; Hydration</div>
             <div style="font-size:10px;font-weight:700;color:var(--acc-lt)" id="card-water-quick-status">💧 0 / 3
               Bottles logged (2.8 L Goal)</div>
           </div>
@@ -3040,7 +3241,8 @@
     <!-- Quick Avatar Gender Switcher (Female / Male Yogi) -->
     <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin:6px auto 4px auto;">
       <span style="font-size:11px;color:var(--txt2);font-weight:700;">Avatar:</span>
-      <button id="avatar-toggle-btn" onclick="toggleAvatarGender()" style="background:var(--surf2);border:1.5px solid var(--bdr);border-radius:14px;padding:3px 12px;font-size:11.5px;font-weight:700;color:var(--gold-lt);cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all .2s ease;">
+      <button id="avatar-toggle-btn" onclick="toggleAvatarGender()"
+        style="background:var(--surf2);border:1.5px solid var(--bdr);border-radius:14px;padding:3px 12px;font-size:11.5px;font-weight:700;color:var(--gold-lt);cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all .2s ease;">
         <span id="avatar-gender-icon">🧘‍♀️</span> <span id="avatar-gender-label">Female Yogi</span>
       </button>
     </div>
@@ -3087,20 +3289,22 @@
       <div class="chart-wrap" id="chart-wrap"></div>
     </div>
 
-  <!-- Manual Pranayama start -->
-  <button class="prana-manual-btn" id="prana-start-btn">
-    🌬 Start Pranayama
-  </button>
+    <!-- Manual Pranayama start -->
+    <button class="prana-manual-btn" id="prana-start-btn">
+      🌬 Start Pranayama
+    </button>
 
-  <!-- Workout Reel Action Button -->
-  <button id="btn-open-reel" onclick="handleOpenReelClick()"
-    style="width:100%;margin-top:6px;padding:12px;border-radius:14px;background:linear-gradient(135deg,rgba(37,211,102,0.2),rgba(18,140,126,0.3));border:1.5px solid #25D366;color:#25D366;font-size:13.5px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;font-family:inherit;box-shadow:0 0 15px rgba(37,211,102,0.25)">
-    🎬 Download / Share Workout Reel <span style="font-size:11px;background:#25D366;color:#111B21;padding:2px 7px;border-radius:10px;font-weight:900">30s HD Reel</span>
-  </button>
+    <!-- Workout Reel Action Button -->
+    <button id="btn-open-reel" onclick="handleOpenReelClick()"
+      style="width:100%;margin-top:6px;padding:12px;border-radius:14px;background:linear-gradient(135deg,rgba(37,211,102,0.2),rgba(18,140,126,0.3));border:1.5px solid #25D366;color:#25D366;font-size:13.5px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;font-family:inherit;box-shadow:0 0 15px rgba(37,211,102,0.25)">
+      🎬 Download / Share Workout Reel <span
+        style="font-size:11px;background:#25D366;color:#111B21;padding:2px 7px;border-radius:10px;font-weight:900">30s
+        HD Reel</span>
+    </button>
 
-  <footer>
-    <p id="status">Data saved on this device</p>
-  </footer>
+    <footer>
+      <p id="status">Data saved on this device</p>
+    </footer>
   </div>
 
   <!-- Break overlay (Manache Shlok Sanctuary & Mindful Rest) -->
@@ -3135,10 +3339,12 @@
 
       <!-- Singer Switcher Pills -->
       <div class="ms-singer-switchers">
-        <button type="button" class="ms-pill-btn active" id="manache-pill-lata" onclick="if(window.ManacheShlokEngine) window.ManacheShlokEngine.switchSinger('lata')">
+        <button type="button" class="ms-pill-btn active" id="manache-pill-lata"
+          onclick="if(window.ManacheShlokEngine) window.ManacheShlokEngine.switchSinger('lata')">
           🪷 लता मंगेशकर
         </button>
-        <button type="button" class="ms-pill-btn" id="manache-pill-suresh" onclick="if(window.ManacheShlokEngine) window.ManacheShlokEngine.switchSinger('suresh')">
+        <button type="button" class="ms-pill-btn" id="manache-pill-suresh"
+          onclick="if(window.ManacheShlokEngine) window.ManacheShlokEngine.switchSinger('suresh')">
           🕉️ सुरेश वाडकर
         </button>
       </div>
@@ -3159,8 +3365,11 @@
 
         <!-- Marathi & English Meaning -->
         <div class="ms-meanings">
-          <div class="ms-meaning-mr" id="manache-meaning-mr">सर्व सद्गुणांचे अधिपती श्री गणेश, जे निर्गुण परब्रह्माचे मूळ स्वरूप आहेत, व चारही वाणींची जननी श्री शारदा मातेला नमन करून, अनंत अशा प्रभू श्रीरामांच्या भक्तिमार्गावर चालूया.</div>
-          <div class="ms-meaning-en" id="manache-meaning-en">Saluting Lord Ganesha, source of all virtues, and Goddess Sharada, source of speech, let us walk the infinite path of devotion.</div>
+          <div class="ms-meaning-mr" id="manache-meaning-mr">सर्व सद्गुणांचे अधिपती श्री गणेश, जे निर्गुण परब्रह्माचे
+            मूळ स्वरूप आहेत, व चारही वाणींची जननी श्री शारदा मातेला नमन करून, अनंत अशा प्रभू श्रीरामांच्या भक्तिमार्गावर
+            चालूया.</div>
+          <div class="ms-meaning-en" id="manache-meaning-en">Saluting Lord Ganesha, source of all virtues, and Goddess
+            Sharada, source of speech, let us walk the infinite path of devotion.</div>
         </div>
       </div>
 
@@ -3177,10 +3386,12 @@
 
       <!-- Action Buttons -->
       <div class="ms-actions">
-        <button type="button" class="ms-btn-primary" id="break-ok" onclick="if(window.continueAfterBreak) window.continueAfterBreak(); else if(window.ManacheShlokEngine) window.ManacheShlokEngine.autoContinueNextSets();">
+        <button type="button" class="ms-btn-primary" id="break-ok"
+          onclick="if(window.continueAfterBreak) window.continueAfterBreak(); else if(window.ManacheShlokEngine) window.ManacheShlokEngine.autoContinueNextSets();">
           ▶️ Start Next Set Now (पुढील फेरी)
         </button>
-        <button type="button" class="ms-btn-secondary" id="break-replay-btn" onclick="if(window.ManacheShlokEngine) window.ManacheShlokEngine.replayCurrentShloka()">
+        <button type="button" class="ms-btn-secondary" id="break-replay-btn"
+          onclick="if(window.ManacheShlokEngine) window.ManacheShlokEngine.replayCurrentShloka()">
           🔁 Replay (पुन्हा ऐका)
         </button>
       </div>
@@ -3211,81 +3422,84 @@
   <div class="prana-ov" id="prana-ov">
 
     <!-- Sacred Lord Hanuman Watermark inside Pranayama Screen (100% Stationary, Full Figure Visible Behind Text Across All Pranayamas) -->
-    <div id="prana-hanuman-watermark" aria-hidden="true" style="position:absolute;top:0;left:0;right:0;bottom:0;width:100%;height:100%;pointer-events:none;z-index:0;display:flex;align-items:center;justify-content:center;opacity:0.38;filter:contrast(125%);">
-      <img src="hanuman_watermark.png" alt="" style="max-width:96%;max-height:88vh;width:auto;height:auto;object-fit:contain;filter:drop-shadow(0 0 2px rgba(255,255,255,0.85)) drop-shadow(0 0 24px rgba(245,158,11,0.45));">
+    <div id="prana-hanuman-watermark" aria-hidden="true"
+      style="position:absolute;top:0;left:0;right:0;bottom:0;width:100%;height:100%;pointer-events:none;z-index:0;display:flex;align-items:center;justify-content:center;opacity:0.38;filter:contrast(125%);">
+      <img src="hanuman_watermark.png" alt=""
+        style="max-width:96%;max-height:88vh;width:auto;height:auto;object-fit:contain;filter:drop-shadow(0 0 2px rgba(255,255,255,0.85)) drop-shadow(0 0 24px rgba(245,158,11,0.45));">
     </div>
 
     <!-- Scrollable content wrapper: Hanuman stays frozen in background while text scrolls -->
-    <div class="prana-scroll-content" style="position:relative;z-index:1;width:100%;height:100%;overflow-y:auto;display:flex;flex-direction:column;align-items:center;gap:.8rem;padding:env(safe-area-inset-top, 1.2rem) 1rem env(safe-area-inset-bottom, 1rem);-webkit-overflow-scrolling:touch;">
+    <div class="prana-scroll-content"
+      style="position:relative;z-index:1;width:100%;height:100%;overflow-y:auto;display:flex;flex-direction:column;align-items:center;gap:.8rem;padding:env(safe-area-inset-top, 1.2rem) 1rem env(safe-area-inset-bottom, 1rem);-webkit-overflow-scrolling:touch;">
 
-    <!-- Top bar -->
-    <div class="prana-header">
-      <span class="prana-badge" id="prana-phase-num">Practice 1 of 6</span>
-      <span class="prana-label">🌬 Pranayama</span>
-      <button class="prana-close-x" id="prana-close-btn">✕</button>
-    </div>
-
-    <!-- Practice name (Hindi + English) -->
-    <div class="prana-title-block">
-      <span class="prana-name-hi" id="prana-title-hi">दीर्घ श्वसन</span>
-      <div class="prana-name-en" id="prana-title">Deep Breathing</div>
-      <div class="prana-desc-txt" id="prana-desc">Slow deep belly breaths</div>
-    </div>
-
-    <!-- Relocated Middle Section: Classical Yoga & Ayurvedic Guide Button (Above Round Information) -->
-    <button id="btn-prana-guide" onclick="handlePranaGuideClick()"
-      style="width:100%;max-width:420px;margin:8px 0;background:linear-gradient(135deg,rgba(29,184,127,0.2),rgba(15,80,55,0.3));border:1px solid var(--acc);color:var(--acc-lt);font-size:11px;font-weight:800;padding:8px 12px;border-radius:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:all .2s ease">
-      📖 Classical Yoga &amp; Ayurvedic Guide <span id="prana-guide-lock-icon">🔓</span>
-    </button>
-
-    <!-- Today's Pranayama & Total Lifetime Pranayama Time Cards (Translucent to showcase Lord Hanuman) -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;max-width:420px;margin:4px 0 10px 0;">
-      <div
-        style="background:rgba(0,0,0,0.22);border:1px solid rgba(255,255,255,0.14);border-radius:12px;padding:8px 10px;text-align:center;">
-        <div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em">
-          Today's Pranayama</div>
-        <div style="font-size:16px;font-weight:800;color:var(--acc);margin-top:2px;" id="prana-time-today">0s</div>
+      <!-- Top bar -->
+      <div class="prana-header">
+        <span class="prana-badge" id="prana-phase-num">Practice 1 of 6</span>
+        <span class="prana-label">🌬 Pranayama</span>
+        <button class="prana-close-x" id="prana-close-btn">✕</button>
       </div>
-      <div
-        style="background:rgba(0,0,0,0.22);border:1px solid rgba(255,255,255,0.14);border-radius:12px;padding:8px 10px;text-align:center;">
-        <div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em">
-          Total Pranayama</div>
-        <div style="font-size:16px;font-weight:800;color:var(--acc-lt);margin-top:2px;" id="prana-time-total">0s</div>
-      </div>
-    </div>
 
-    <!-- Phase + Total progress bars -->
-    <div class="prana-bars">
-      <div class="pbar-row">
-        <div class="pbar-lbl">Phase</div>
-        <div class="pbar-track">
-          <div class="pbar-fill" id="prana-phase-bar"></div>
+      <!-- Practice name (Hindi + English) -->
+      <div class="prana-title-block">
+        <span class="prana-name-hi" id="prana-title-hi">दीर्घ श्वसन</span>
+        <div class="prana-name-en" id="prana-title">Deep Breathing</div>
+        <div class="prana-desc-txt" id="prana-desc">Slow deep belly breaths</div>
+      </div>
+
+      <!-- Relocated Middle Section: Classical Yoga & Ayurvedic Guide Button (Above Round Information) -->
+      <button id="btn-prana-guide" onclick="handlePranaGuideClick()"
+        style="width:100%;max-width:420px;margin:8px 0;background:linear-gradient(135deg,rgba(29,184,127,0.2),rgba(15,80,55,0.3));border:1px solid var(--acc);color:var(--acc-lt);font-size:11px;font-weight:800;padding:8px 12px;border-radius:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:all .2s ease">
+        📖 Classical Yoga &amp; Ayurvedic Guide <span id="prana-guide-lock-icon">🔓</span>
+      </button>
+
+      <!-- Today's Pranayama & Total Lifetime Pranayama Time Cards (Translucent to showcase Lord Hanuman) -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;max-width:420px;margin:4px 0 10px 0;">
+        <div
+          style="background:rgba(0,0,0,0.22);border:1px solid rgba(255,255,255,0.14);border-radius:12px;padding:8px 10px;text-align:center;">
+          <div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em">
+            Today's Pranayama</div>
+          <div style="font-size:16px;font-weight:800;color:var(--acc);margin-top:2px;" id="prana-time-today">0s</div>
+        </div>
+        <div
+          style="background:rgba(0,0,0,0.22);border:1px solid rgba(255,255,255,0.14);border-radius:12px;padding:8px 10px;text-align:center;">
+          <div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em">
+            Total Pranayama</div>
+          <div style="font-size:16px;font-weight:800;color:var(--acc-lt);margin-top:2px;" id="prana-time-total">0s</div>
         </div>
       </div>
-      <div class="pbar-row">
-        <div class="pbar-lbl">Total</div>
-        <div class="pbar-track">
-          <div class="pbar-fill total" id="prana-total-bar"></div>
+
+      <!-- Phase + Total progress bars -->
+      <div class="prana-bars">
+        <div class="pbar-row">
+          <div class="pbar-lbl">Phase</div>
+          <div class="pbar-track">
+            <div class="pbar-fill" id="prana-phase-bar"></div>
+          </div>
+        </div>
+        <div class="pbar-row">
+          <div class="pbar-lbl">Total</div>
+          <div class="pbar-track">
+            <div class="pbar-fill total" id="prana-total-bar"></div>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- Step instruction card — main focus area -->
-    <div class="prana-step-card">
-      <div class="prana-step-badge" id="prana-step-num">Step 1</div>
-      <div class="prana-step-txt" id="prana-step">
-        Sit comfortably with spine erect. Close your eyes.
+      <!-- Step instruction card — main focus area -->
+      <div class="prana-step-card">
+        <div class="prana-step-badge" id="prana-step-num">Step 1</div>
+        <div class="prana-step-txt" id="prana-step">
+          Sit comfortably with spine erect. Close your eyes.
+        </div>
       </div>
-    </div>
 
-    <!-- Time remaining -->
-    <div class="prana-time-rem" id="prana-time-rem">–</div>
+      <!-- Time remaining -->
+      <div class="prana-time-rem" id="prana-time-rem">–</div>
 
-    <!-- Controls -->
-    <div class="prana-ctrl">
-      <button class="prana-btn pause-btn" id="prana-pause-btn">⏸ Pause</button>
-      <button class="prana-btn skip-btn" id="prana-skip-btn">Skip ▶▶</button>
-    </div>
+      <!-- Controls -->
+      <div class="prana-ctrl">
+        <button class="prana-btn pause-btn" id="prana-pause-btn">⏸ Pause</button>
+        <button class="prana-btn skip-btn" id="prana-skip-btn">Skip ▶▶</button>
+      </div>
 
     </div>
   </div>
@@ -3444,17 +3658,21 @@
       </div>
 
       <!-- Quick Install PWA App Button -->
-      <button id="pwa-install-btn" onclick="installPwa()" style="width:100%;margin:4px 0 6px 0;background:linear-gradient(135deg,#F59E0B 0%,#D97706 100%);color:#070B14;font-size:13px;font-weight:900;padding:10px 14px;border:none;border-radius:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 16px rgba(245,158,11,0.35);">
+      <button id="pwa-install-btn" onclick="installPwa()"
+        style="width:100%;margin:4px 0 6px 0;background:linear-gradient(135deg,#F59E0B 0%,#D97706 100%);color:#070B14;font-size:13px;font-weight:900;padding:10px 14px;border:none;border-radius:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 16px rgba(245,158,11,0.35);">
         📲 Install Surya Sarthi App (Offline Ready)
       </button>
 
       <!-- Current User Badge -->
-      <div id="cfg-user-badge" style="display:none;background:rgba(6,182,212,0.15);border:1.5px solid #06B6D4;border-radius:10px;padding:9px 12px;font-size:12px;margin:4px 0 8px 0;line-height:1.4"></div>
+      <div id="cfg-user-badge"
+        style="display:none;background:rgba(6,182,212,0.15);border:1.5px solid #06B6D4;border-radius:10px;padding:9px 12px;font-size:12px;margin:4px 0 8px 0;line-height:1.4">
+      </div>
 
       <!-- App Theme & System Colors -->
       <div class="srow divider">
         <label>🎨 Theme &amp; Background</label>
-        <select id="cfg-theme" style="background:var(--surf2);border:1px solid var(--bdr);color:var(--txt);border-radius:9px;padding:6px 10px;font-size:12px;font-weight:700">
+        <select id="cfg-theme"
+          style="background:var(--surf2);border:1px solid var(--bdr);color:var(--txt);border-radius:9px;padding:6px 10px;font-size:12px;font-weight:700">
           <option value="vaikuntha_amrita">🪷 3. Vaikuntha Amrita (Imperial Amethyst &amp; Violet) — Default</option>
           <option value="surya_tejas">🔥 1. Surya Tejas (Sacred Saffron Fire)</option>
           <option value="samudra_lapis">🌊 2. Samudra Manthan (Royal Lapis Lazuli &amp; Indigo)</option>
@@ -3505,15 +3723,20 @@
         </label>
         <button class="tog on" id="tog-manache" onclick="toggleSettingKey('tog-manache', event)"></button>
       </div>
-      <div class="srow" style="background:rgba(245,158,11,0.06);border:1px dashed rgba(245,158,11,0.3);border-radius:12px;padding:10px;margin-top:-4px">
+      <div class="srow"
+        style="background:rgba(245,158,11,0.06);border:1px dashed rgba(245,158,11,0.3);border-radius:12px;padding:10px;margin-top:-4px">
         <div style="font-size:11.5px;font-weight:800;color:var(--acc-lt);margin-bottom:6px">
           🎧 Play Sample of Shloka (नमुना ऐका):
         </div>
         <div style="display:flex;gap:8px">
-          <button type="button" onclick="if(typeof playManacheShlokSample==='function') playManacheShlokSample('lata'); else if(window.ManacheShlokEngine) window.ManacheShlokEngine.playSample('lata');" style="flex:1;background:linear-gradient(135deg,#FF8F00,#E65100);color:#FFF;border:none;border-radius:8px;padding:8px 6px;font-size:12px;font-weight:800;cursor:pointer;box-shadow:0 2px 8px rgba(245,158,11,0.3)">
+          <button type="button"
+            onclick="if(typeof playManacheShlokSample==='function') playManacheShlokSample('lata'); else if(window.ManacheShlokEngine) window.ManacheShlokEngine.playSample('lata');"
+            style="flex:1;background:linear-gradient(135deg,#FF8F00,#E65100);color:#FFF;border:none;border-radius:8px;padding:8px 6px;font-size:12px;font-weight:800;cursor:pointer;box-shadow:0 2px 8px rgba(245,158,11,0.3)">
             🪷 लता मंगेशकर
           </button>
-          <button type="button" onclick="if(typeof playManacheShlokSample==='function') playManacheShlokSample('suresh'); else if(window.ManacheShlokEngine) window.ManacheShlokEngine.playSample('suresh');" style="flex:1;background:linear-gradient(135deg,#0284C7,#0D9488);color:#FFF;border:none;border-radius:8px;padding:8px 6px;font-size:12px;font-weight:800;cursor:pointer;box-shadow:0 2px 8px rgba(6,182,212,0.3)">
+          <button type="button"
+            onclick="if(typeof playManacheShlokSample==='function') playManacheShlokSample('suresh'); else if(window.ManacheShlokEngine) window.ManacheShlokEngine.playSample('suresh');"
+            style="flex:1;background:linear-gradient(135deg,#0284C7,#0D9488);color:#FFF;border:none;border-radius:8px;padding:8px 6px;font-size:12px;font-weight:800;cursor:pointer;box-shadow:0 2px 8px rgba(6,182,212,0.3)">
             🕉️ सुरेश वाडकर
           </button>
         </div>
@@ -3554,10 +3777,20 @@
         <label style="cursor:pointer">🌬 Speak Inhale / Exhale cue</label>
         <button class="tog on" id="tog-breath" onclick="toggleSettingKey('tog-breath', event)"></button>
       </div>
+      <div class="srow" id="row-cfg-breath-lang">
+        <label>🌬 Breath Voice Language (श्वास सूचना भाषा)</label>
+        <select id="cfg-breath-lang" onchange="if(typeof cfg!=='undefined'){cfg.breathLang=this.value;if(typeof saveAll==='function')saveAll();}" style="background:var(--surf2);border:1px solid var(--bdr);
+        color:var(--txt);border-radius:8px;padding:6px 8px;font-size:13px">
+          <option value="en">English (Inhale / Hold / Exhale)</option>
+          <option value="hi">हिंदी (श्वास लें / रोकें / छोड़ें)</option>
+          <option value="mr">मराठी (श्वास घ्या / रोखा / सोडा)</option>
+        </select>
+      </div>
 
       <div class="srow" onclick="toggleSettingKey('tog-goal-voice-appreciation', event)" style="cursor:pointer">
         <label style="cursor:pointer">🏆 Speak Goal Appreciation &amp; Details</label>
-        <button class="tog on" id="tog-goal-voice-appreciation" onclick="toggleSettingKey('tog-goal-voice-appreciation', event)"></button>
+        <button class="tog on" id="tog-goal-voice-appreciation"
+          onclick="toggleSettingKey('tog-goal-voice-appreciation', event)"></button>
       </div>
       <div class="srow">
         <label>🎙️ Appreciation Voice Language</label>
@@ -3613,12 +3846,15 @@
         </div>
       </div>
       <!-- ═══ AYURVEDIC DIET & HYDRATION SETTINGS ═══ -->
-      <div style="margin:14px 0 10px 0;padding:12px 14px;background:linear-gradient(135deg,rgba(245,158,11,0.08),rgba(16,185,129,0.06));border:1.2px solid rgba(245,158,11,0.28);border-radius:14px">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,0.08)">
+      <div
+        style="margin:14px 0 10px 0;padding:12px 14px;background:linear-gradient(135deg,rgba(245,158,11,0.08),rgba(16,185,129,0.06));border:1.2px solid rgba(245,158,11,0.28);border-radius:14px">
+        <div
+          style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,0.08)">
           <div style="font-size:13px;font-weight:900;color:var(--txt);display:flex;align-items:center;gap:6px">
             🥗 <span>Ayurvedic Diet &amp; Hydration</span>
           </div>
-          <button type="button" onclick="event.stopPropagation(); showDietModal()" style="background:rgba(16,185,129,0.2);border:1px solid #10B981;color:#34D399;font-size:11px;font-weight:800;padding:5px 10px;border-radius:8px;cursor:pointer">
+          <button type="button" onclick="event.stopPropagation(); showDietModal()"
+            style="background:rgba(16,185,129,0.2);border:1px solid #10B981;color:#34D399;font-size:11px;font-weight:800;padding:5px 10px;border-radius:8px;cursor:pointer">
             Open Diet Guide ↗
           </button>
         </div>
@@ -3627,7 +3863,8 @@
         <div class="srow" style="margin-bottom:10px" onclick="toggleSettingKey('tog-show-diet-card', event)">
           <label style="cursor:pointer;font-size:12px;font-weight:700">
             📱 Show Diet Card on Main Screen<br>
-            <small style="font-size:10px;color:var(--txt2);font-weight:400">Keep OFF to hide tab from home · Turn ON to display</small>
+            <small style="font-size:10px;color:var(--txt2);font-weight:400">Keep OFF to hide tab from home · Turn ON to
+              display</small>
           </label>
           <button class="tog" id="tog-show-diet-card" onclick="toggleSettingKey('tog-show-diet-card', event)"></button>
         </div>
@@ -3636,18 +3873,22 @@
         <div class="srow" style="margin-bottom:10px" onclick="toggleSettingKey('tog-diet-reminders', event)">
           <label style="cursor:pointer;font-size:12px;font-weight:700">
             🔔 Ayurvedic Meal Window Reminders<br>
-            <small style="font-size:10px;color:var(--txt2);font-weight:400">Alerts for breakfast, lunch &amp; 7:30 PM dinner cutoff</small>
+            <small style="font-size:10px;color:var(--txt2);font-weight:400">Alerts for breakfast, lunch &amp; 7:30 PM
+              dinner cutoff</small>
           </label>
-          <button class="tog on" id="tog-diet-reminders" onclick="toggleSettingKey('tog-diet-reminders', event)"></button>
+          <button class="tog on" id="tog-diet-reminders"
+            onclick="toggleSettingKey('tog-diet-reminders', event)"></button>
         </div>
 
         <!-- Setting 3: Water Hydration Reminders -->
         <div class="srow" style="margin-bottom:10px" onclick="toggleSettingKey('tog-water-reminders', event)">
           <label style="cursor:pointer;font-size:12px;font-weight:700">
             💧 Water Drinking Reminders<br>
-            <small style="font-size:10px;color:var(--txt2);font-weight:400">Gentle reminders to reach your daily hydration goal</small>
+            <small style="font-size:10px;color:var(--txt2);font-weight:400">Gentle reminders to reach your daily
+              hydration goal</small>
           </label>
-          <button class="tog on" id="tog-water-reminders" onclick="toggleSettingKey('tog-water-reminders', event)"></button>
+          <button class="tog on" id="tog-water-reminders"
+            onclick="toggleSettingKey('tog-water-reminders', event)"></button>
         </div>
 
         <!-- Bottle size & Diet preference -->
@@ -3690,7 +3931,8 @@
         </button>
       </div>
       <div class="srow">
-        <label>⏰ Device Clock Alarm<br><small style="font-size:10px;color:var(--txt2);font-weight:400">Syncs pre-filled alarm with your phone's Clock app</small></label>
+        <label>⏰ Device Clock Alarm<br><small style="font-size:10px;color:var(--txt2);font-weight:400">Syncs pre-filled
+            alarm with your phone's Clock app</small></label>
         <button type="button" id="btn-set-android-alarm" onclick="triggerSetAndroidAlarm(this)"
           style="background:linear-gradient(135deg,#0284C7,#0D9488);border:none;color:#FFF;border-radius:8px;padding:7px 12px;font-size:11px;font-weight:800;cursor:pointer;white-space:nowrap;box-shadow:0 2px 8px rgba(6,182,212,0.3)">
           Set Android Alarm
@@ -3767,14 +4009,16 @@
       <!-- Admin Portal & User Logout Rows -->
       <div class="srow divider" id="cfg-admin-row">
         <label style="color:#FBBF24">👑 System Admin Portal</label>
-        <button id="cfg-admin-btn" style="display:none;background:linear-gradient(135deg,#F59E0B,#D97706);color:#000;border:none;border-radius:9px;padding:7px 14px;font-size:12px;font-weight:900;cursor:pointer">
+        <button id="cfg-admin-btn"
+          style="display:none;background:linear-gradient(135deg,#F59E0B,#D97706);color:#000;border:none;border-radius:9px;padding:7px 14px;font-size:12px;font-weight:900;cursor:pointer">
           👑 Open Admin
         </button>
       </div>
 
       <div class="srow divider" id="cfg-logout-row">
         <label style="color:#94A3B8">User Session</label>
-        <button id="cfg-logout-btn" style="background:rgba(148,163,184,0.15);border:1px solid #64748B;color:#E2E8F0;border-radius:9px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer">
+        <button id="cfg-logout-btn"
+          style="background:rgba(148,163,184,0.15);border:1px solid #64748B;color:#E2E8F0;border-radius:9px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer">
           🚪 Switch / Log Out
         </button>
       </div>
@@ -3882,536 +4126,605 @@
 
   <!-- Ayurvedic Diet & Hydration Modal -->
   <div class="ov" id="diet-modal" style="display:none;z-index:10000">
-        <div class="ov-box"
-          style="max-width:440px;text-align:left;position:relative;background:linear-gradient(145deg, rgba(23,35,58,0.98), rgba(12,19,33,0.99));border:1.8px solid var(--acc);border-radius:22px;padding:18px;box-shadow:0 16px 45px rgba(0,0,0,0.85);max-height:88vh;overflow-y:auto;backdrop-filter:blur(20px)">
-          <!-- Header -->
-          <div
-            style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;border-bottom:1.5px solid var(--bdr);padding-bottom:10px">
-            <div style="display:flex;align-items:center;gap:10px">
-              <span style="font-size:28px" id="diet-modal-icon">🥗</span>
-              <div>
-                <div style="font-size:16px;font-weight:900;color:var(--txt);letter-spacing:.02em">Ayurvedic Diet &amp;
-                  Hydration</div>
-                <div style="font-size:11px;font-weight:800;color:var(--acc-lt)" id="diet-user-greeting">Namaste Vaibhav!
-                  🙏</div>
-              </div>
-            </div>
-            <button onclick="closeDietModal()"
-              style="background:none;border:none;color:var(--txt2);font-size:22px;cursor:pointer;padding:4px">✕</button>
-          </div>
-
-          <!-- Sacred Vedic Shloka Banner -->
-          <div
-            style="background:linear-gradient(135deg,rgba(245,158,11,0.18),rgba(249,115,22,0.12));border:1.5px solid var(--acc);border-radius:16px;padding:12px;margin-bottom:12px;text-align:center;box-shadow:0 4px 16px rgba(245,158,11,0.2)">
-            <div
-              style="font-family:'Noto Sans Devanagari','Outfit',sans-serif;font-size:15px;font-weight:900;color:var(--acc-lt);line-height:1.45;letter-spacing:.03em;text-shadow:0 0 10px rgba(251,191,36,0.4)">
-              अन्नं ब्रह्म रसो विष्णुर्भोक्ता देवो महेश्वरः ।<br>शरीरमाद्यं खलु धर्मसाधनम् ॥
-            </div>
-            <div style="font-size:10px;color:var(--txt2);margin-top:6px;font-style:italic;line-height:1.4">
-              "Food is Brahma (creator), its essence is Vishnu (sustainer), and the enjoyer is Shiva. Maintain the
-              physical body as the sacred vessel of Dharma."
-            </div>
-            <div
-              style="margin-top:8px;padding-top:6px;border-top:1px dashed rgba(245,158,11,0.3);font-size:11px;font-weight:800;color:var(--acc-lt);display:flex;align-items:center;justify-content:center;gap:6px"
-              id="diet-prep-date-header">
-              📅 Date: Loading... · Advance Meal &amp; Hydration Prep Timetable
-            </div>
-          </div>
-
-          <!-- Strict After 7:30 PM Dinner Cut-off Warning Banner (Visible if current time is after 7:30 PM) -->
-          <div id="diet-dinner-cutoff-alert" style="display:none;background:linear-gradient(135deg,rgba(239,68,68,0.22),rgba(245,158,11,0.18));border:1.6px solid #EF4444;border-radius:14px;padding:12px;margin-bottom:12px;box-shadow:0 4px 16px rgba(239,68,68,0.25)">
-            <div style="font-size:12px;font-weight:900;color:#F87171;display:flex;align-items:center;gap:6px;margin-bottom:4px">
-              <span>⛔ AYURVEDIC NIGHT CUT-OFF: NO DINNER AFTER 7:30 PM!</span>
-            </div>
-            <div style="font-size:11px;color:var(--txt);line-height:1.45">
-              <strong>Jatharagni (digestive fire) cools down rapidly after sunset.</strong> Classical Ayurveda strictly prohibits eating solid or heavy meals after 7:30 PM. Late eating creates <em>'Ama'</em> (toxic, undigested metabolic residues) which clogs bodily channels (<em>Srotas</em>), slows metabolism, and ruins sleep quality.
-            </div>
-            <div style="font-size:10px;color:var(--gold-lt);margin-top:6px;font-weight:800;background:rgba(0,0,0,0.25);padding:5px 8px;border-radius:6px">
-              🌿 <strong>Ayurvedic Recommendation:</strong> If feeling hungry now, drink only warm boiled water, CCF tea (Cumin-Coriander-Fennel), or wait for bedtime Golden Turmeric Milk at 9:00 PM.
-            </div>
-          </div>
-
-          <!-- Classical Ayurvedic Dinacharya Meal Timing Table -->
-          <div style="background:var(--surf2);border:1.2px solid var(--bdr);border-radius:14px;padding:10px 12px;margin-bottom:12px">
-            <div style="font-size:11px;font-weight:900;color:var(--acc-lt);margin-bottom:6px;display:flex;align-items:center;justify-content:space-between">
-              <span>🕰️ SACRED AYURVEDIC DINACHARYA MEAL SCHEDULE</span>
-              <span style="font-size:9px;color:var(--txt2);font-weight:600">Jatharagni Cycle</span>
-            </div>
-            <div style="display:grid;grid-template-columns:1fr;gap:5px;font-size:10.5px">
-              <div style="display:flex;justify-content:space-between;align-items:center;background:rgba(245,158,11,0.08);padding:5px 8px;border-radius:8px">
-                <span>🥣 <strong>Pratahkal (Breakfast):</strong> 7:00 – 8:30 AM</span>
-                <span style="color:var(--acc-lt);font-weight:800;font-size:9.5px">Kindle Agni (Light)</span>
-              </div>
-              <div style="display:flex;justify-content:space-between;align-items:center;background:rgba(16,185,129,0.08);padding:5px 8px;border-radius:8px">
-                <span>🍲 <strong>Madhyahna (Lunch):</strong> 12:00 – 1:30 PM</span>
-                <span style="color:#34D399;font-weight:900;font-size:9.5px">Peak Agni (Main Meal)</span>
-              </div>
-              <div style="display:flex;justify-content:space-between;align-items:center;background:rgba(56,189,248,0.08);padding:5px 8px;border-radius:8px">
-                <span>🍵 <strong>Sandhyakal (Evening Sip):</strong> 4:30 – 5:30 PM</span>
-                <span style="color:#38BDF8;font-weight:800;font-size:9.5px">Herbal Tea &amp; Seeds</span>
-              </div>
-              <div style="display:flex;justify-content:space-between;align-items:center;background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.3);padding:5px 8px;border-radius:8px">
-                <span>🌙 <strong>Ratri Aahar (Dinner):</strong> 6:30 – 7:30 PM</span>
-                <span style="color:#F87171;font-weight:900;font-size:9.5px">⛔ FINISH BY 7:30 PM</span>
-              </div>
-              <div style="display:flex;justify-content:space-between;align-items:center;background:rgba(168,85,247,0.08);padding:5px 8px;border-radius:8px">
-                <span>🥛 <strong>Ojas Rasayana (Bedtime):</strong> 9:00 – 9:45 PM</span>
-                <span style="color:#C084FC;font-weight:800;font-size:9.5px">Turmeric Golden Milk</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Dynamic Today's Surya Namaskara Performance & Calorie Impact Banner -->
-          <div id="diet-workout-summary-card"
-            style="background:linear-gradient(135deg,rgba(56,189,248,0.12),rgba(245,158,11,0.14));border:1.5px solid var(--sec);border-radius:16px;padding:12px;margin-bottom:14px;box-shadow:0 4px 16px rgba(0,0,0,0.3)">
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-              <div style="font-size:11px;font-weight:900;color:var(--sec-lt);text-transform:uppercase;display:flex;align-items:center;gap:6px">
-                ⚡ TODAY'S SURYA NAMASKARA PERFORMANCE
-              </div>
-              <div style="font-size:10px;font-weight:800;color:var(--gold-lt)" id="diet-summary-date">Today</div>
-            </div>
-            <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px;text-align:center;">
-              <div style="background:var(--surf2);border-radius:10px;padding:7px 4px">
-                <div style="font-size:9px;color:var(--txt2);font-weight:700">SETS DONE</div>
-                <div style="font-size:13px;font-weight:900;color:var(--sec-lt)" id="diet-stat-sets">0</div>
-              </div>
-              <div style="background:var(--surf2);border-radius:10px;padding:7px 4px">
-                <div style="font-size:9px;color:var(--txt2);font-weight:700">PRACTICE TIME</div>
-                <div style="font-size:13px;font-weight:900;color:var(--txt)" id="diet-stat-time">0m 00s</div>
-              </div>
-              <div style="background:var(--surf2);border-radius:10px;padding:7px 4px">
-                <div style="font-size:9px;color:var(--txt2);font-weight:700">ACTIVE BURN</div>
-                <div style="font-size:13px;font-weight:900;color:#FF6B6B" id="diet-stat-burn">0 kcal</div>
-              </div>
-              <div style="background:var(--surf2);border-radius:10px;padding:7px 4px">
-                <div style="font-size:9px;color:var(--txt2);font-weight:700">WATER NEEDED</div>
-                <div style="font-size:13px;font-weight:900;color:#38BDF8" id="diet-stat-water">2.5 L</div>
-              </div>
-            </div>
-            <div style="font-size:10.5px;color:var(--txt2);margin-top:8px;line-height:1.4" id="diet-stat-impact-note">
-              🔥 <em>Based on your active session burning <strong>0 kcal</strong>, your hydration is calibrated to <strong>2.5L</strong> and protein intake target is optimized to repair muscle fibers.</em>
-            </div>
-          </div>
-
-          <!-- 7-Day Ayurvedic Rotation Menu Nav Tabs -->
-          <div style="margin-bottom:14px">
-            <div style="font-size:11px;font-weight:900;color:var(--acc-lt);margin-bottom:6px;display:flex;align-items:center;justify-content:space-between">
-              <span>📅 7-DAY ROTATING AYURVEDIC MENU</span>
-              <span style="font-size:9.5px;color:var(--txt2);font-weight:600">Tap day to view</span>
-            </div>
-            <div id="diet-day-nav" style="display:flex;gap:5px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none;-webkit-overflow-scrolling:touch;">
-              <!-- Mon-Sun tabs populated by JS -->
-            </div>
-          </div>
-
-          <!-- Personalized Weight Loss & Calorie Banner -->
-          <div
-            style="background:linear-gradient(135deg,rgba(255,107,107,0.12),rgba(255,159,67,0.12));border:1px solid rgba(255,107,107,0.35);border-radius:14px;padding:12px;margin-bottom:14px">
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-              <div style="font-size:11px;font-weight:900;color:#FF6B6B;display:flex;align-items:center;gap:6px">
-                🔥 FIT &amp; HEALTHY WEIGHT LOSS TARGET
-              </div>
-              <div style="font-size:11px;font-weight:800;color:var(--txt2)" id="diet-weight-val">Weight: 66 kg</div>
-            </div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;text-align:center">
-              <div style="background:var(--surf2);border-radius:10px;padding:8px">
-                <div style="font-size:10px;color:var(--txt2);font-weight:700">Today's Active Burn</div>
-                <div style="font-size:15px;font-weight:900;color:#FF6B6B" id="diet-burned-val">0 kcal</div>
-              </div>
-              <div style="background:var(--surf2);border-radius:10px;padding:8px">
-                <div style="font-size:10px;color:var(--txt2);font-weight:700">Recommended Daily Intake</div>
-                <div style="font-size:15px;font-weight:900;color:#FF9F43" id="diet-intake-target-val">1,500 kcal/day
-                </div>
-              </div>
-            </div>
-            <div style="font-size:10px;color:var(--txt2);margin-top:6px;text-align:center" id="diet-deficit-note">
-              🎯 Designed with 500 kcal daily deficit for healthy ~0.5 kg/week fat loss.
-            </div>
-          </div>
-
-          <!-- 4-Macronutrient & Fiber Breakdown Row -->
-          <div style="font-size:11px;font-weight:900;color:var(--acc-lt);margin-bottom:6px">🥗 DAILY MACRONUTRIENT
-            BREAKDOWN</div>
-          <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px;margin-bottom:14px">
-            <!-- Protein Card -->
-            <div
-              style="background:rgba(255,215,0,0.1);border:1px solid rgba(255,215,0,0.3);border-radius:12px;padding:8px 4px;text-align:center">
-              <div style="font-size:16px;margin-bottom:2px">🥩</div>
-              <div style="font-size:9px;font-weight:800;color:var(--muted);text-transform:uppercase">Protein</div>
-              <div style="font-size:13px;font-weight:900;color:#FFD700" id="diet-protein-val">91g</div>
-            </div>
-            <!-- Carbs Card -->
-            <div
-              style="background:rgba(255,159,67,0.1);border:1px solid rgba(255,159,67,0.3);border-radius:12px;padding:8px 4px;text-align:center">
-              <div style="font-size:16px;margin-bottom:2px">🌾</div>
-              <div style="font-size:9px;font-weight:800;color:var(--muted);text-transform:uppercase">Carbs</div>
-              <div style="font-size:13px;font-weight:900;color:#FF9F43" id="diet-carbs-val">178g</div>
-            </div>
-            <!-- Healthy Fats Card -->
-            <div
-              style="background:rgba(74,222,128,0.1);border:1px solid rgba(74,222,128,0.3);border-radius:12px;padding:8px 4px;text-align:center">
-              <div style="font-size:16px;margin-bottom:2px">🥑</div>
-              <div style="font-size:9px;font-weight:800;color:var(--muted);text-transform:uppercase">Healthy Fats</div>
-              <div style="font-size:13px;font-weight:900;color:#4ADE80" id="diet-fats-val">44g</div>
-            </div>
-            <!-- Fiber Card -->
-            <div
-              style="background:rgba(56,189,248,0.1);border:1px solid rgba(56,189,248,0.3);border-radius:12px;padding:8px 4px;text-align:center">
-              <div style="font-size:16px;margin-bottom:2px">🥦</div>
-              <div style="font-size:9px;font-weight:800;color:var(--muted);text-transform:uppercase">Fiber</div>
-              <div style="font-size:13px;font-weight:900;color:#38BDF8" id="diet-fiber-val">32g</div>
-            </div>
-          </div>
-
-          <!-- Water Hydration Tracker Card -->
-          <div
-            style="background:linear-gradient(135deg,rgba(29,184,127,0.15),rgba(15,80,55,0.25));border:1px solid var(--acc);border-radius:16px;padding:12px;margin-bottom:14px">
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
-              <div style="font-size:12px;font-weight:900;color:var(--acc-lt)">💧 HYDRATION TRACKER</div>
-              <div style="font-size:12px;font-weight:900;color:var(--txt)" id="water-progress-text">0 / 11 Glasses</div>
-            </div>
-            <div style="font-size:10px;font-weight:700;color:var(--txt2);margin-bottom:6px" id="water-remaining-text">
-              Target: <span id="diet-water-val">2.8 L</span> <span id="diet-water-glasses">(11 Glasses)</span>
-            </div>
-            <div style="background:var(--surf2);height:8px;border-radius:4px;overflow:hidden;margin-bottom:8px">
-              <div id="water-progress-bar"
-                style="background:linear-gradient(90deg,var(--acc-lt),#5DE0A8);height:100%;width:0%;transition:width .3s ease">
-              </div>
-            </div>
-
-            <!-- Celebratory Goal Badge -->
-            <div id="water-goal-badge"
-              style="display:none;background:rgba(255,215,0,0.15);border:1px solid #FFD700;border-radius:10px;padding:6px 10px;margin-bottom:8px;font-size:11px;font-weight:900;color:#FFD700;text-align:center">
-              🎉 100% Hydration Goal Completed! Excellent Work!
-            </div>
-
-            <!-- Bottle / Container Selection Row -->
-            <div
-              style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;background:rgba(0,0,0,0.15);padding:6px 10px;border-radius:10px">
-              <label style="font-size:10px;font-weight:800;color:var(--acc-lt)">🍾 Container Size:</label>
-              <select id="modal-bottle-size" onchange="changeWaterBottleSize(this.value)"
-                style="background:var(--surf2);border:1px solid var(--bdr);color:var(--txt);border-radius:6px;padding:3px 6px;font-size:11px;font-weight:700">
-                <option value="250">🥤 Glass (250 ml)</option>
-                <option value="300">🍾 Small Bottle (300 ml)</option>
-                <option value="500">🍶 Medium Bottle (500 ml / 0.5 L)</option>
-                <option value="750">🚴 Sports Bottle (750 ml / 0.75 L)</option>
-                <option value="1000" selected>🍾 1 Liter Bottle (1000 ml / 1 L)</option>
-              </select>
-            </div>
-
-            <div style="display:flex;align-items:center;justify-content:space-between">
-              <div style="font-size:10px;color:var(--txt2)" id="diet-sets-count">Based on 66kg &amp; 0 Sets</div>
-              <button onclick="logWaterGlass()"
-                style="background:var(--acc);color:#06231A;border:none;border-radius:8px;padding:6px 12px;font-size:11px;font-weight:900;cursor:pointer;display:flex;align-items:center;gap:4px">
-                <span id="log-water-btn-text">💧 +1 Bottle (1 L) Confirmed</span>
-              </button>
-            </div>
-          </div>
-
-          <!-- Plan Filter Pills -->
-          <div style="display:flex;gap:6px;margin-bottom:12px">
-            <button id="diet-tab-both" onclick="switchDietTab('both')"
-              style="flex:1;background:var(--acc-dim);border:1px solid var(--acc);color:var(--acc-lt);border-radius:10px;padding:6px;font-size:11px;font-weight:800;cursor:pointer">
-              🥗 Show Both
-            </button>
-            <button id="diet-tab-veg" onclick="switchDietTab('veg')"
-              style="flex:1;background:var(--surf2);border:1px solid var(--bdr);color:var(--txt2);border-radius:10px;padding:6px;font-size:11px;font-weight:800;cursor:pointer">
-              🌱 Veg Only
-            </button>
-            <button id="diet-tab-nonveg" onclick="switchDietTab('nonveg')"
-              style="flex:1;background:var(--surf2);border:1px solid var(--bdr);color:var(--txt2);border-radius:10px;padding:6px;font-size:11px;font-weight:800;cursor:pointer">
-              🍗 Non-Veg Only
-            </button>
-          </div>
-
-          <!-- Full Day Text Plan Container (Breakfast, Lunch, Dinner) -->
-          <div id="diet-full-day-container" style="display:grid;gap:12px;margin-bottom:14px">
-            <!-- Dynamic Meal Cards (Breakfast, Lunch, Dinner) populated by app.js -->
-          </div>
-
-          <!-- Verified Rating Tag -->
-          <div
-            style="display:flex;align-items:center;justify-content:center;gap:6px;font-size:11px;font-weight:800;color:#FFD700;margin-bottom:14px;background:rgba(255,215,0,0.08);padding:6px;border-radius:10px">
-            <span>★ 4.9+ Rating Verified Professional Ayurveda Ahara Guidelines</span>
-          </div>
-
-          <!-- Interactive Auto-Reminder Controls Box -->
-          <div
-            style="background:var(--surf);border:1px solid var(--bdr);border-radius:16px;padding:12px;margin-bottom:14px">
-            <div
-              style="font-size:11px;font-weight:900;color:var(--acc-lt);margin-bottom:8px;display:flex;align-items:center;gap:6px">
-              ⚙️ AUTO-REMINDER CONTROLS
-            </div>
-            <div style="display:grid;gap:8px">
-              <!-- Meal Reminders Toggle -->
-              <div style="display:flex;align-items:center;justify-content:space-between">
-                <span style="font-size:11px;font-weight:700;color:var(--txt)">🥗 Ayurvedic Meal Reminders (7:00 AM, 12:00 PM, 4:30 PM, 6:30 PM &amp; 7:30 PM Cut-off)</span>
-                <button id="tog-modal-diet-notif" onclick="toggleModalReminder('diet')" class="tog"
-                  style="width:40px;height:22px">
-                  <span class="tog-knob"></span>
-                </button>
-              </div>
-              <!-- Water Reminders Toggle -->
-              <div style="display:flex;align-items:center;justify-content:space-between">
-                <span style="font-size:11px;font-weight:700;color:var(--txt)">💧 2-Hourly Water Hydration
-                  Reminders</span>
-                <button id="tog-modal-water-notif" onclick="toggleModalReminder('water')" class="tog"
-                  style="width:40px;height:22px">
-                  <span class="tog-knob"></span>
-                </button>
-              </div>
-              <!-- Post-Goal Auto-Popup Toggle -->
-              <div style="display:flex;align-items:center;justify-content:space-between">
-                <span style="font-size:11px;font-weight:700;color:var(--txt)">🎯 Auto-Show Diet Card Post Workout</span>
-                <button id="tog-modal-postgoal-notif" onclick="toggleModalReminder('postgoal')" class="tog"
-                  style="width:40px;height:22px">
-                  <span class="tog-knob"></span>
-                </button>
-              </div>
-            </div>
-            <div style="font-size:10px;color:var(--txt2);margin-top:8px;line-height:1.4">
-              💡 <strong>Note:</strong> Turning OFF reminders applies for today only. The system automatically resets
-              reminders back to <strong>ON</strong> tomorrow for smooth daily tracking.
-            </div>
-          </div>
-
-          <!-- Action Buttons -->
-          <div style="display:flex;flex-direction:column;gap:8px">
-            <button onclick="speakCurrentDietNotification()"
-              style="background:var(--surf2);border:1px solid var(--acc);color:var(--acc-lt);border-radius:12px;padding:10px;font-size:13px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px">
-              🔊 Listen Personalized Voice Advice
-            </button>
-            <button onclick="closeDietModal()"
-              style="background:linear-gradient(135deg,var(--acc-dim),var(--acc));color:#EEF5F0;border:none;border-radius:12px;padding:11px;font-size:13px;font-weight:900;cursor:pointer">
-              ✓ Got It, Thank You!
-            </button>
+    <div class="ov-box"
+      style="max-width:440px;text-align:left;position:relative;background:linear-gradient(145deg, rgba(23,35,58,0.98), rgba(12,19,33,0.99));border:1.8px solid var(--acc);border-radius:22px;padding:18px;box-shadow:0 16px 45px rgba(0,0,0,0.85);max-height:88vh;overflow-y:auto;backdrop-filter:blur(20px)">
+      <!-- Header -->
+      <div
+        style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;border-bottom:1.5px solid var(--bdr);padding-bottom:10px">
+        <div style="display:flex;align-items:center;gap:10px">
+          <span style="font-size:28px" id="diet-modal-icon">🥗</span>
+          <div>
+            <div style="font-size:16px;font-weight:900;color:var(--txt);letter-spacing:.02em">Ayurvedic Diet &amp;
+              Hydration</div>
+            <div style="font-size:11px;font-weight:800;color:var(--acc-lt)" id="diet-user-greeting">Namaste Vaibhav!
+              🙏</div>
           </div>
         </div>
+        <button onclick="closeDietModal()"
+          style="background:none;border:none;color:var(--txt2);font-size:22px;cursor:pointer;padding:4px">✕</button>
       </div>
 
-      <!-- Classical Yoga & Ayurvedic Pranayama Standards Modal -->
-      <div class="ov" id="prana-guide-modal"
-        style="z-index:210;padding:1rem;overflow-y:auto;justify-content:flex-start;">
+      <!-- Sacred Vedic Shloka Banner -->
+      <div
+        style="background:linear-gradient(135deg,rgba(245,158,11,0.18),rgba(249,115,22,0.12));border:1.5px solid var(--acc);border-radius:16px;padding:12px;margin-bottom:12px;text-align:center;box-shadow:0 4px 16px rgba(245,158,11,0.2)">
         <div
-          style="background:var(--surf);border:1px solid var(--acc);border-radius:20px;padding:16px;width:100%;max-width:480px;margin:auto;">
+          style="font-family:'Noto Sans Devanagari','Outfit',sans-serif;font-size:15px;font-weight:900;color:var(--acc-lt);line-height:1.45;letter-spacing:.03em;text-shadow:0 0 10px rgba(251,191,36,0.4)">
+          अन्नं ब्रह्म रसो विष्णुर्भोक्ता देवो महेश्वरः ।<br>शरीरमाद्यं खलु धर्मसाधनम् ॥
+        </div>
+        <div style="font-size:10px;color:var(--txt2);margin-top:6px;font-style:italic;line-height:1.4">
+          "Food is Brahma (creator), its essence is Vishnu (sustainer), and the enjoyer is Shiva. Maintain the
+          physical body as the sacred vessel of Dharma."
+        </div>
+        <div
+          style="margin-top:8px;padding-top:6px;border-top:1px dashed rgba(245,158,11,0.3);font-size:11px;font-weight:800;color:var(--acc-lt);display:flex;align-items:center;justify-content:center;gap:6px"
+          id="diet-prep-date-header">
+          📅 Date: Loading... · Advance Meal &amp; Hydration Prep Timetable
+        </div>
+      </div>
+
+      <!-- Strict After 7:30 PM Dinner Cut-off Warning Banner (Visible if current time is after 7:30 PM) -->
+      <div id="diet-dinner-cutoff-alert"
+        style="display:none;background:linear-gradient(135deg,rgba(239,68,68,0.22),rgba(245,158,11,0.18));border:1.6px solid #EF4444;border-radius:14px;padding:12px;margin-bottom:12px;box-shadow:0 4px 16px rgba(239,68,68,0.25)">
+        <div
+          style="font-size:12px;font-weight:900;color:#F87171;display:flex;align-items:center;gap:6px;margin-bottom:4px">
+          <span>⛔ AYURVEDIC NIGHT CUT-OFF: NO DINNER AFTER 7:30 PM!</span>
+        </div>
+        <div style="font-size:11px;color:var(--txt);line-height:1.45">
+          <strong>Jatharagni (digestive fire) cools down rapidly after sunset.</strong> Classical Ayurveda strictly
+          prohibits eating solid or heavy meals after 7:30 PM. Late eating creates <em>'Ama'</em> (toxic, undigested
+          metabolic residues) which clogs bodily channels (<em>Srotas</em>), slows metabolism, and ruins sleep quality.
+        </div>
+        <div
+          style="font-size:10px;color:var(--gold-lt);margin-top:6px;font-weight:800;background:rgba(0,0,0,0.25);padding:5px 8px;border-radius:6px">
+          🌿 <strong>Ayurvedic Recommendation:</strong> If feeling hungry now, drink only warm boiled water, CCF tea
+          (Cumin-Coriander-Fennel), or wait for bedtime Golden Turmeric Milk at 9:00 PM.
+        </div>
+      </div>
+
+      <!-- Classical Ayurvedic Dinacharya Meal Timing Table -->
+      <div
+        style="background:var(--surf2);border:1.2px solid var(--bdr);border-radius:14px;padding:10px 12px;margin-bottom:12px">
+        <div
+          style="font-size:11px;font-weight:900;color:var(--acc-lt);margin-bottom:6px;display:flex;align-items:center;justify-content:space-between">
+          <span>🕰️ SACRED AYURVEDIC DINACHARYA MEAL SCHEDULE</span>
+          <span style="font-size:9px;color:var(--txt2);font-weight:600">Jatharagni Cycle</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr;gap:5px;font-size:10.5px">
           <div
-            style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;border-bottom:1px solid var(--bdr);padding-bottom:10px;gap:8px;">
-            <div style="font-size:13px;font-weight:900;color:var(--acc-lt);" id="guide-modal-title">📜 Classical Yoga
-              &amp; Ayurveda Standards</div>
-            <button id="guide-voice-btn" onclick="toggleGuideVoice()"
-              style="background:var(--acc-dim);border:1px solid var(--acc);color:var(--acc-lt);font-size:10px;font-weight:800;padding:4px 8px;border-radius:8px;cursor:pointer;display:flex;align-items:center;gap:4px;white-space:nowrap">
-              🔊 Listen Voice Guide
+            style="display:flex;justify-content:space-between;align-items:center;background:rgba(245,158,11,0.08);padding:5px 8px;border-radius:8px">
+            <span>🥣 <strong>Pratahkal (Breakfast):</strong> 7:00 – 8:30 AM</span>
+            <span style="color:var(--acc-lt);font-weight:800;font-size:9.5px">Kindle Agni (Light)</span>
+          </div>
+          <div
+            style="display:flex;justify-content:space-between;align-items:center;background:rgba(16,185,129,0.08);padding:5px 8px;border-radius:8px">
+            <span>🍲 <strong>Madhyahna (Lunch):</strong> 12:00 – 1:30 PM</span>
+            <span style="color:#34D399;font-weight:900;font-size:9.5px">Peak Agni (Main Meal)</span>
+          </div>
+          <div
+            style="display:flex;justify-content:space-between;align-items:center;background:rgba(56,189,248,0.08);padding:5px 8px;border-radius:8px">
+            <span>🍵 <strong>Sandhyakal (Evening Sip):</strong> 4:30 – 5:30 PM</span>
+            <span style="color:#38BDF8;font-weight:800;font-size:9.5px">Herbal Tea &amp; Seeds</span>
+          </div>
+          <div
+            style="display:flex;justify-content:space-between;align-items:center;background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.3);padding:5px 8px;border-radius:8px">
+            <span>🌙 <strong>Ratri Aahar (Dinner):</strong> 6:30 – 7:30 PM</span>
+            <span style="color:#F87171;font-weight:900;font-size:9.5px">⛔ FINISH BY 7:30 PM</span>
+          </div>
+          <div
+            style="display:flex;justify-content:space-between;align-items:center;background:rgba(168,85,247,0.08);padding:5px 8px;border-radius:8px">
+            <span>🥛 <strong>Ojas Rasayana (Bedtime):</strong> 9:00 – 9:45 PM</span>
+            <span style="color:#C084FC;font-weight:800;font-size:9.5px">Turmeric Golden Milk</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dynamic Today's Surya Namaskara Performance & Calorie Impact Banner -->
+      <div id="diet-workout-summary-card"
+        style="background:linear-gradient(135deg,rgba(56,189,248,0.12),rgba(245,158,11,0.14));border:1.5px solid var(--sec);border-radius:16px;padding:12px;margin-bottom:14px;box-shadow:0 4px 16px rgba(0,0,0,0.3)">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+          <div
+            style="font-size:11px;font-weight:900;color:var(--sec-lt);text-transform:uppercase;display:flex;align-items:center;gap:6px">
+            ⚡ TODAY'S SURYA NAMASKARA PERFORMANCE
+          </div>
+          <div style="font-size:10px;font-weight:800;color:var(--gold-lt)" id="diet-summary-date">Today</div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px;text-align:center;">
+          <div style="background:var(--surf2);border-radius:10px;padding:7px 4px">
+            <div style="font-size:9px;color:var(--txt2);font-weight:700">SETS DONE</div>
+            <div style="font-size:13px;font-weight:900;color:var(--sec-lt)" id="diet-stat-sets">0</div>
+          </div>
+          <div style="background:var(--surf2);border-radius:10px;padding:7px 4px">
+            <div style="font-size:9px;color:var(--txt2);font-weight:700">PRACTICE TIME</div>
+            <div style="font-size:13px;font-weight:900;color:var(--txt)" id="diet-stat-time">0m 00s</div>
+          </div>
+          <div style="background:var(--surf2);border-radius:10px;padding:7px 4px">
+            <div style="font-size:9px;color:var(--txt2);font-weight:700">ACTIVE BURN</div>
+            <div style="font-size:13px;font-weight:900;color:#FF6B6B" id="diet-stat-burn">0 kcal</div>
+          </div>
+          <div style="background:var(--surf2);border-radius:10px;padding:7px 4px">
+            <div style="font-size:9px;color:var(--txt2);font-weight:700">WATER NEEDED</div>
+            <div style="font-size:13px;font-weight:900;color:#38BDF8" id="diet-stat-water">2.5 L</div>
+          </div>
+        </div>
+        <div style="font-size:10.5px;color:var(--txt2);margin-top:8px;line-height:1.4" id="diet-stat-impact-note">
+          🔥 <em>Based on your active session burning <strong>0 kcal</strong>, your hydration is calibrated to
+            <strong>2.5L</strong> and protein intake target is optimized to repair muscle fibers.</em>
+        </div>
+      </div>
+
+      <!-- 7-Day Ayurvedic Rotation Menu Nav Tabs -->
+      <div style="margin-bottom:14px">
+        <div
+          style="font-size:11px;font-weight:900;color:var(--acc-lt);margin-bottom:6px;display:flex;align-items:center;justify-content:space-between">
+          <span>📅 7-DAY ROTATING AYURVEDIC MENU</span>
+          <span style="font-size:9.5px;color:var(--txt2);font-weight:600">Tap day to view</span>
+        </div>
+        <div id="diet-day-nav"
+          style="display:flex;gap:5px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none;-webkit-overflow-scrolling:touch;">
+          <!-- Mon-Sun tabs populated by JS -->
+        </div>
+      </div>
+
+      <!-- Personalized Weight Loss & Calorie Banner -->
+      <div
+        style="background:linear-gradient(135deg,rgba(255,107,107,0.12),rgba(255,159,67,0.12));border:1px solid rgba(255,107,107,0.35);border-radius:14px;padding:12px;margin-bottom:14px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+          <div style="font-size:11px;font-weight:900;color:#FF6B6B;display:flex;align-items:center;gap:6px">
+            🔥 FIT &amp; HEALTHY WEIGHT LOSS TARGET
+          </div>
+          <div style="font-size:11px;font-weight:800;color:var(--txt2)" id="diet-weight-val">Weight: 66 kg</div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;text-align:center">
+          <div style="background:var(--surf2);border-radius:10px;padding:8px">
+            <div style="font-size:10px;color:var(--txt2);font-weight:700">Today's Active Burn</div>
+            <div style="font-size:15px;font-weight:900;color:#FF6B6B" id="diet-burned-val">0 kcal</div>
+          </div>
+          <div style="background:var(--surf2);border-radius:10px;padding:8px">
+            <div style="font-size:10px;color:var(--txt2);font-weight:700">Recommended Daily Intake</div>
+            <div style="font-size:15px;font-weight:900;color:#FF9F43" id="diet-intake-target-val">1,500 kcal/day
+            </div>
+          </div>
+        </div>
+        <div style="font-size:10px;color:var(--txt2);margin-top:6px;text-align:center" id="diet-deficit-note">
+          🎯 Designed with 500 kcal daily deficit for healthy ~0.5 kg/week fat loss.
+        </div>
+      </div>
+
+      <!-- 4-Macronutrient & Fiber Breakdown Row -->
+      <div style="font-size:11px;font-weight:900;color:var(--acc-lt);margin-bottom:6px">🥗 DAILY MACRONUTRIENT
+        BREAKDOWN</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px;margin-bottom:14px">
+        <!-- Protein Card -->
+        <div
+          style="background:rgba(255,215,0,0.1);border:1px solid rgba(255,215,0,0.3);border-radius:12px;padding:8px 4px;text-align:center">
+          <div style="font-size:16px;margin-bottom:2px">🥩</div>
+          <div style="font-size:9px;font-weight:800;color:var(--muted);text-transform:uppercase">Protein</div>
+          <div style="font-size:13px;font-weight:900;color:#FFD700" id="diet-protein-val">91g</div>
+        </div>
+        <!-- Carbs Card -->
+        <div
+          style="background:rgba(255,159,67,0.1);border:1px solid rgba(255,159,67,0.3);border-radius:12px;padding:8px 4px;text-align:center">
+          <div style="font-size:16px;margin-bottom:2px">🌾</div>
+          <div style="font-size:9px;font-weight:800;color:var(--muted);text-transform:uppercase">Carbs</div>
+          <div style="font-size:13px;font-weight:900;color:#FF9F43" id="diet-carbs-val">178g</div>
+        </div>
+        <!-- Healthy Fats Card -->
+        <div
+          style="background:rgba(74,222,128,0.1);border:1px solid rgba(74,222,128,0.3);border-radius:12px;padding:8px 4px;text-align:center">
+          <div style="font-size:16px;margin-bottom:2px">🥑</div>
+          <div style="font-size:9px;font-weight:800;color:var(--muted);text-transform:uppercase">Healthy Fats</div>
+          <div style="font-size:13px;font-weight:900;color:#4ADE80" id="diet-fats-val">44g</div>
+        </div>
+        <!-- Fiber Card -->
+        <div
+          style="background:rgba(56,189,248,0.1);border:1px solid rgba(56,189,248,0.3);border-radius:12px;padding:8px 4px;text-align:center">
+          <div style="font-size:16px;margin-bottom:2px">🥦</div>
+          <div style="font-size:9px;font-weight:800;color:var(--muted);text-transform:uppercase">Fiber</div>
+          <div style="font-size:13px;font-weight:900;color:#38BDF8" id="diet-fiber-val">32g</div>
+        </div>
+      </div>
+
+      <!-- Water Hydration Tracker Card -->
+      <div
+        style="background:linear-gradient(135deg,rgba(29,184,127,0.15),rgba(15,80,55,0.25));border:1px solid var(--acc);border-radius:16px;padding:12px;margin-bottom:14px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+          <div style="font-size:12px;font-weight:900;color:var(--acc-lt)">💧 HYDRATION TRACKER</div>
+          <div style="font-size:12px;font-weight:900;color:var(--txt)" id="water-progress-text">0 / 11 Glasses</div>
+        </div>
+        <div style="font-size:10px;font-weight:700;color:var(--txt2);margin-bottom:6px" id="water-remaining-text">
+          Target: <span id="diet-water-val">2.8 L</span> <span id="diet-water-glasses">(11 Glasses)</span>
+        </div>
+        <div style="background:var(--surf2);height:8px;border-radius:4px;overflow:hidden;margin-bottom:8px">
+          <div id="water-progress-bar"
+            style="background:linear-gradient(90deg,var(--acc-lt),#5DE0A8);height:100%;width:0%;transition:width .3s ease">
+          </div>
+        </div>
+
+        <!-- Celebratory Goal Badge -->
+        <div id="water-goal-badge"
+          style="display:none;background:rgba(255,215,0,0.15);border:1px solid #FFD700;border-radius:10px;padding:6px 10px;margin-bottom:8px;font-size:11px;font-weight:900;color:#FFD700;text-align:center">
+          🎉 100% Hydration Goal Completed! Excellent Work!
+        </div>
+
+        <!-- Bottle / Container Selection Row -->
+        <div
+          style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;background:rgba(0,0,0,0.15);padding:6px 10px;border-radius:10px">
+          <label style="font-size:10px;font-weight:800;color:var(--acc-lt)">🍾 Container Size:</label>
+          <select id="modal-bottle-size" onchange="changeWaterBottleSize(this.value)"
+            style="background:var(--surf2);border:1px solid var(--bdr);color:var(--txt);border-radius:6px;padding:3px 6px;font-size:11px;font-weight:700">
+            <option value="250">🥤 Glass (250 ml)</option>
+            <option value="300">🍾 Small Bottle (300 ml)</option>
+            <option value="500">🍶 Medium Bottle (500 ml / 0.5 L)</option>
+            <option value="750">🚴 Sports Bottle (750 ml / 0.75 L)</option>
+            <option value="1000" selected>🍾 1 Liter Bottle (1000 ml / 1 L)</option>
+          </select>
+        </div>
+
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <div style="font-size:10px;color:var(--txt2)" id="diet-sets-count">Based on 66kg &amp; 0 Sets</div>
+          <button onclick="logWaterGlass()"
+            style="background:var(--acc);color:#06231A;border:none;border-radius:8px;padding:6px 12px;font-size:11px;font-weight:900;cursor:pointer;display:flex;align-items:center;gap:4px">
+            <span id="log-water-btn-text">💧 +1 Bottle (1 L) Confirmed</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Plan Filter Pills -->
+      <div style="display:flex;gap:6px;margin-bottom:12px">
+        <button id="diet-tab-both" onclick="switchDietTab('both')"
+          style="flex:1;background:var(--acc-dim);border:1px solid var(--acc);color:var(--acc-lt);border-radius:10px;padding:6px;font-size:11px;font-weight:800;cursor:pointer">
+          🥗 Show Both
+        </button>
+        <button id="diet-tab-veg" onclick="switchDietTab('veg')"
+          style="flex:1;background:var(--surf2);border:1px solid var(--bdr);color:var(--txt2);border-radius:10px;padding:6px;font-size:11px;font-weight:800;cursor:pointer">
+          🌱 Veg Only
+        </button>
+        <button id="diet-tab-nonveg" onclick="switchDietTab('nonveg')"
+          style="flex:1;background:var(--surf2);border:1px solid var(--bdr);color:var(--txt2);border-radius:10px;padding:6px;font-size:11px;font-weight:800;cursor:pointer">
+          🍗 Non-Veg Only
+        </button>
+      </div>
+
+      <!-- Full Day Text Plan Container (Breakfast, Lunch, Dinner) -->
+      <div id="diet-full-day-container" style="display:grid;gap:12px;margin-bottom:14px">
+        <!-- Dynamic Meal Cards (Breakfast, Lunch, Dinner) populated by app.js -->
+      </div>
+
+      <!-- Verified Rating Tag -->
+      <div
+        style="display:flex;align-items:center;justify-content:center;gap:6px;font-size:11px;font-weight:800;color:#FFD700;margin-bottom:14px;background:rgba(255,215,0,0.08);padding:6px;border-radius:10px">
+        <span>★ 4.9+ Rating Verified Professional Ayurveda Ahara Guidelines</span>
+      </div>
+
+      <!-- Interactive Auto-Reminder Controls Box -->
+      <div
+        style="background:var(--surf);border:1px solid var(--bdr);border-radius:16px;padding:12px;margin-bottom:14px">
+        <div
+          style="font-size:11px;font-weight:900;color:var(--acc-lt);margin-bottom:8px;display:flex;align-items:center;gap:6px">
+          ⚙️ AUTO-REMINDER CONTROLS
+        </div>
+        <div style="display:grid;gap:8px">
+          <!-- Meal Reminders Toggle -->
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <span style="font-size:11px;font-weight:700;color:var(--txt)">🥗 Ayurvedic Meal Reminders (7:00 AM, 12:00
+              PM, 4:30 PM, 6:30 PM &amp; 7:30 PM Cut-off)</span>
+            <button id="tog-modal-diet-notif" onclick="toggleModalReminder('diet')" class="tog"
+              style="width:40px;height:22px">
+              <span class="tog-knob"></span>
             </button>
-            <button onclick="closePranaGuideModal()"
-              style="background:none;border:none;color:var(--txt2);font-size:18px;cursor:pointer;padding:0 4px">✕</button>
           </div>
-          <div id="guide-modal-content"
-            style="max-height:70vh;overflow-y:auto;font-size:11px;color:var(--txt);line-height:1.5;display:grid;gap:12px;padding-right:4px;">
-            <!-- Populated dynamically by app.js -->
+          <!-- Water Reminders Toggle -->
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <span style="font-size:11px;font-weight:700;color:var(--txt)">💧 2-Hourly Water Hydration
+              Reminders</span>
+            <button id="tog-modal-water-notif" onclick="toggleModalReminder('water')" class="tog"
+              style="width:40px;height:22px">
+              <span class="tog-knob"></span>
+            </button>
           </div>
+          <!-- Post-Goal Auto-Popup Toggle -->
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <span style="font-size:11px;font-weight:700;color:var(--txt)">🎯 Auto-Show Diet Card Post Workout</span>
+            <button id="tog-modal-postgoal-notif" onclick="toggleModalReminder('postgoal')" class="tog"
+              style="width:40px;height:22px">
+              <span class="tog-knob"></span>
+            </button>
+          </div>
+        </div>
+        <div style="font-size:10px;color:var(--txt2);margin-top:8px;line-height:1.4">
+          💡 <strong>Note:</strong> Turning OFF reminders applies for today only. The system automatically resets
+          reminders back to <strong>ON</strong> tomorrow for smooth daily tracking.
         </div>
       </div>
 
-
-
-<!-- Social Media Reel Preview Modal -->
-<div class="ov" id="reel-social-modal" style="z-index:10000;background:rgba(7,11,20,0.92);backdrop-filter:blur(16px)">
-  <div class="ov-box" style="max-width:380px;width:100%;text-align:center;position:relative;background:linear-gradient(145deg, #111B21, #0C1317);border:1.8px solid #25D366;border-radius:22px;padding:18px;box-shadow:0 16px 45px rgba(0,0,0,0.85)">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-      <div style="font-size:15px;font-weight:900;color:#25D366;display:flex;align-items:center;gap:6px">
-        <span>✨ Workout Reel Ready!</span>
+      <!-- Action Buttons -->
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <button onclick="speakCurrentDietNotification()"
+          style="background:var(--surf2);border:1px solid var(--acc);color:var(--acc-lt);border-radius:12px;padding:10px;font-size:13px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px">
+          🔊 Listen Personalized Voice Advice
+        </button>
+        <button onclick="closeDietModal()"
+          style="background:linear-gradient(135deg,var(--acc-dim),var(--acc));color:#EEF5F0;border:none;border-radius:12px;padding:11px;font-size:13px;font-weight:900;cursor:pointer">
+          ✓ Got It, Thank You!
+        </button>
       </div>
-      <button onclick="closeReelSocialModal()" style="background:none;border:none;color:#AEBAC1;font-size:20px;cursor:pointer">✕</button>
-    </div>
-    <div style="font-size:11.5px;color:var(--txt2);margin-bottom:12px;font-weight:600" id="reel-modal-subtitle">
-      Auto-Captured Today's Goal Completion &amp; Voice Appreciation Highlight Reel!
-    </div>
-    <video id="reel-video-preview" controls autoplay loop playsinline style="width:100%;max-height:300px;border-radius:14px;border:1.5px solid #25D366;background:#000;margin-bottom:14px;box-shadow:0 4px 16px rgba(37,211,102,0.2)"></video>
-    <img id="reel-image-preview" alt="Workout Reel Card" style="display:none;width:100%;max-height:320px;object-fit:contain;border-radius:14px;border:1.5px solid #25D366;background:#000;margin-bottom:14px;box-shadow:0 4px 16px rgba(37,211,102,0.2)" />
-    <div style="display:flex;flex-direction:column;gap:8px">
-      <button id="btn-share-reel" onclick="shareReelToSocialMedia()" style="background:linear-gradient(135deg,#25D366,#128C7E);color:#111B21;border:none;border-radius:12px;padding:12px;font-size:14px;font-weight:900;cursor:pointer;box-shadow:0 4px 15px rgba(37,211,102,0.4);display:flex;align-items:center;justify-content:center;gap:6px">
-        📲 Share Reel to WhatsApp Status
-      </button>
-      <button id="btn-download-reel" onclick="downloadReelVideo()" style="background:var(--surf2);border:1px solid var(--bdr);color:var(--txt);border-radius:12px;padding:10px;font-size:12.5px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px">
-        📥 Save Reel to Gallery / Device
-      </button>
     </div>
   </div>
-</div>
 
-<!-- Reel Generation Confirmation Popup Modal -->
-<div class="ov" id="reel-confirm-modal" style="z-index:10005;background:rgba(6,13,10,0.92);backdrop-filter:blur(16px)">
-  <div class="ov-box" style="max-width:360px;width:90%;text-align:center;position:relative;background:linear-gradient(145deg,#132A1C,#0B1710);border:1.8px solid #34D399;border-radius:22px;padding:22px 18px;box-shadow:0 16px 45px rgba(0,0,0,0.85);color:#fff">
-    <div style="font-size:42px;margin-bottom:8px" id="reel-confirm-icon">🎉</div>
-    <h3 style="font-size:18px;font-weight:900;color:#FBBF24;margin-bottom:8px" id="reel-confirm-title">Workout Reel Generated!</h3>
-    <p style="font-size:13px;color:#D1D5DB;line-height:1.45;margin-bottom:18px" id="reel-confirm-msg">
-      🎯 Today's Goal Completed: Mastered! Your 30-second 9:16 HD Reel is ready to share.
-    </p>
-    <div style="display:flex;flex-direction:column;gap:10px">
-      <button onclick="confirmOpenReelPreview()" style="background:linear-gradient(135deg,#34D399,#059669);color:#060D0A;border:none;border-radius:12px;padding:12px;font-size:14px;font-weight:900;cursor:pointer;box-shadow:0 4px 15px rgba(52,211,153,0.35);display:flex;align-items:center;justify-content:center;gap:6px">
-        🎬 Preview &amp; Share Reel Now
-      </button>
-      <button onclick="confirmDownloadReelDirect()" style="background:rgba(255,255,255,0.08);border:1px solid rgba(52,211,153,0.4);color:#34D399;border-radius:12px;padding:10px;font-size:13px;font-weight:800;cursor:pointer">
-        📥 Save Video to Gallery
-      </button>
-      <button onclick="closeReelConfirmModal()" style="background:none;border:none;color:#9CA3AF;font-size:12px;font-weight:700;cursor:pointer;padding:4px;margin-top:2px">
-        ✕ Close (Save for Later)
-      </button>
+  <!-- Classical Yoga & Ayurvedic Pranayama Standards Modal -->
+  <div class="ov" id="prana-guide-modal" style="z-index:210;padding:1rem;overflow-y:auto;justify-content:flex-start;">
+    <div
+      style="background:var(--surf);border:1px solid var(--acc);border-radius:20px;padding:16px;width:100%;max-width:480px;margin:auto;">
+      <div
+        style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;border-bottom:1px solid var(--bdr);padding-bottom:10px;gap:8px;">
+        <div style="font-size:13px;font-weight:900;color:var(--acc-lt);" id="guide-modal-title">📜 Classical Yoga
+          &amp; Ayurveda Standards</div>
+        <button id="guide-voice-btn" onclick="toggleGuideVoice()"
+          style="background:var(--acc-dim);border:1px solid var(--acc);color:var(--acc-lt);font-size:10px;font-weight:800;padding:4px 8px;border-radius:8px;cursor:pointer;display:flex;align-items:center;gap:4px;white-space:nowrap">
+          🔊 Listen Voice Guide
+        </button>
+        <button onclick="closePranaGuideModal()"
+          style="background:none;border:none;color:var(--txt2);font-size:18px;cursor:pointer;padding:0 4px">✕</button>
+      </div>
+      <div id="guide-modal-content"
+        style="max-height:70vh;overflow-y:auto;font-size:11px;color:var(--txt);line-height:1.5;display:grid;gap:12px;padding-right:4px;">
+        <!-- Populated dynamically by app.js -->
+      </div>
     </div>
   </div>
-</div>
 
-<!-- Multi-User Authentication & Onboarding Modal -->
-<div class="ov" id="auth-modal" style="z-index:99999;background:rgba(6,13,10,0.94);backdrop-filter:blur(18px);display:none;align-items:center;justify-content:center;">
-  <div class="ov-box" style="max-width:390px;width:92%;background:linear-gradient(145deg,#132A1C,#0B1710);border:1.8px solid #F59E0B;border-radius:24px;padding:24px 20px;box-shadow:0 16px 50px rgba(0,0,0,0.9);color:#fff;text-align:center;">
-    
-    <div style="font-size:36px;margin-bottom:4px">☀️</div>
-    <h2 style="font-family:'Outfit','Noto Sans Devanagari',sans-serif;font-size:20px;font-weight:900;background:linear-gradient(135deg,#FBBF24,#F97316);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:2px">
-      SURYASARTHI 108
-    </h2>
-    <div style="font-size:11.5px;color:#93C5FD;font-weight:600;margin-bottom:14px">
-      Vedic Health · Surya Namaskara · Privacy-First
+
+
+  <!-- Social Media Reel Preview Modal -->
+  <div class="ov" id="reel-social-modal" style="z-index:10000;background:rgba(7,11,20,0.92);backdrop-filter:blur(16px)">
+    <div class="ov-box"
+      style="max-width:380px;width:100%;text-align:center;position:relative;background:linear-gradient(145deg, #111B21, #0C1317);border:1.8px solid #25D366;border-radius:22px;padding:18px;box-shadow:0 16px 45px rgba(0,0,0,0.85)">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <div style="font-size:15px;font-weight:900;color:#25D366;display:flex;align-items:center;gap:6px">
+          <span>✨ Workout Reel Ready!</span>
+        </div>
+        <button onclick="closeReelSocialModal()"
+          style="background:none;border:none;color:#AEBAC1;font-size:20px;cursor:pointer">✕</button>
+      </div>
+      <div style="font-size:11.5px;color:var(--txt2);margin-bottom:12px;font-weight:600" id="reel-modal-subtitle">
+        Auto-Captured Today's Goal Completion &amp; Voice Appreciation Highlight Reel!
+      </div>
+      <video id="reel-video-preview" controls autoplay loop playsinline
+        style="width:100%;max-height:300px;border-radius:14px;border:1.5px solid #25D366;background:#000;margin-bottom:14px;box-shadow:0 4px 16px rgba(37,211,102,0.2)"></video>
+      <img id="reel-image-preview" alt="Workout Reel Card"
+        style="display:none;width:100%;max-height:320px;object-fit:contain;border-radius:14px;border:1.5px solid #25D366;background:#000;margin-bottom:14px;box-shadow:0 4px 16px rgba(37,211,102,0.2)" />
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <button id="btn-share-reel" onclick="shareReelToSocialMedia()"
+          style="background:linear-gradient(135deg,#25D366,#128C7E);color:#111B21;border:none;border-radius:12px;padding:12px;font-size:14px;font-weight:900;cursor:pointer;box-shadow:0 4px 15px rgba(37,211,102,0.4);display:flex;align-items:center;justify-content:center;gap:6px">
+          📲 Share Reel to WhatsApp Status
+        </button>
+        <button id="btn-download-reel" onclick="downloadReelVideo()"
+          style="background:var(--surf2);border:1px solid var(--bdr);color:var(--txt);border-radius:12px;padding:10px;font-size:12.5px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px">
+          📥 Save Reel to Gallery / Device
+        </button>
+      </div>
     </div>
-
-    <!-- Privacy Banner -->
-    <div style="background:rgba(16,185,129,0.15);border:1px solid #10B981;border-radius:10px;padding:8px 10px;font-size:11px;color:#6EE7B7;line-height:1.4;margin-bottom:14px;text-align:left">
-      🔒 <strong>Strict Privacy Isolated</strong>: Your workout routines, streaks, and water logs are stored in your private profile and never shared with other users.
-    </div>
-
-    <!-- Tab Selector: Register vs Login -->
-    <div style="display:flex;background:rgba(15,23,42,0.8);border-radius:12px;padding:3px;margin-bottom:14px;border:1px solid rgba(96,165,250,0.2)">
-      <button id="auth-tab-reg" onclick="switchAuthTab('reg')" style="flex:1;background:linear-gradient(135deg,#F59E0B,#D97706);color:#000;border:none;border-radius:9px;padding:8px;font-size:12px;font-weight:800;cursor:pointer">
-        ✨ Create Profile
-      </button>
-      <button id="auth-tab-login" onclick="switchAuthTab('login')" style="flex:1;background:none;color:#93C5FD;border:none;border-radius:9px;padding:8px;font-size:12px;font-weight:700;cursor:pointer">
-        🔑 Sign In
-      </button>
-    </div>
-
-    <!-- Error Message Banner -->
-    <div id="auth-error-msg" style="display:none;background:rgba(239,68,68,0.2);border:1px solid #EF4444;color:#FCA5A5;border-radius:8px;padding:7px 10px;font-size:11.5px;margin-bottom:12px;text-align:left"></div>
-
-    <!-- Form: Registration -->
-    <form id="auth-reg-form" onsubmit="handleRegister(event)" style="display:flex;flex-direction:column;gap:10px;text-align:left">
-      <div>
-        <label style="font-size:11px;font-weight:700;color:#93C5FD;display:block;margin-bottom:4px">Your Full Name</label>
-        <input type="text" id="auth-reg-name" placeholder="e.g. Vaibhav" style="width:100%;background:rgba(15,23,42,0.8);border:1px solid rgba(96,165,250,0.3);border-radius:10px;padding:10px;color:#fff;font-size:13px;outline:none" required />
-      </div>
-      <div>
-        <label style="font-size:11px;font-weight:700;color:#93C5FD;display:block;margin-bottom:4px">Choose Username</label>
-        <input type="text" id="auth-reg-username" placeholder="e.g. vaibhav" style="width:100%;background:rgba(15,23,42,0.8);border:1px solid rgba(96,165,250,0.3);border-radius:10px;padding:10px;color:#fff;font-size:13px;outline:none" required />
-      </div>
-      <div>
-        <label style="font-size:11px;font-weight:700;color:#93C5FD;display:block;margin-bottom:4px">Password / PIN</label>
-        <input type="password" id="auth-reg-password" placeholder="••••••••" style="width:100%;background:rgba(15,23,42,0.8);border:1px solid rgba(96,165,250,0.3);border-radius:10px;padding:10px;color:#fff;font-size:13px;outline:none" required />
-      </div>
-      <button type="submit" style="margin-top:6px;background:linear-gradient(135deg,#34D399,#059669);color:#060D0A;border:none;border-radius:12px;padding:12px;font-size:14px;font-weight:900;cursor:pointer;box-shadow:0 4px 15px rgba(52,211,153,0.35)">
-        ✨ Create My Profile &amp; Start
-      </button>
-    </form>
-
-    <!-- Form: Login -->
-    <form id="auth-login-form" onsubmit="handleLogin(event)" style="display:none;flex-direction:column;gap:10px;text-align:left">
-      <div>
-        <label style="font-size:11px;font-weight:700;color:#93C5FD;display:block;margin-bottom:4px">Username</label>
-        <input type="text" id="auth-login-username" placeholder="e.g. vaibhav or admin" style="width:100%;background:rgba(15,23,42,0.8);border:1px solid rgba(96,165,250,0.3);border-radius:10px;padding:10px;color:#fff;font-size:13px;outline:none" />
-      </div>
-      <div>
-        <label style="font-size:11px;font-weight:700;color:#93C5FD;display:block;margin-bottom:4px">Password</label>
-        <input type="password" id="auth-login-password" placeholder="••••••••" style="width:100%;background:rgba(15,23,42,0.8);border:1px solid rgba(96,165,250,0.3);border-radius:10px;padding:10px;color:#fff;font-size:13px;outline:none" />
-      </div>
-      <button type="submit" style="margin-top:6px;background:linear-gradient(135deg,#F59E0B,#D97706);color:#000;border:none;border-radius:12px;padding:12px;font-size:14px;font-weight:900;cursor:pointer;box-shadow:0 4px 15px rgba(245,158,11,0.35)">
-        🔑 Sign In to My Account
-      </button>
-      <div style="font-size:10.5px;color:#94A3B8;text-align:center;margin-top:4px">
-        Admin can sign in with admin credentials to access system portal.
-      </div>
-    </form>
-
-    <!-- Guest / Offline practice bypass -->
-    <button onclick="closeAuthModal()" style="margin-top:12px;background:none;border:none;color:#94A3B8;font-size:11.5px;font-weight:600;cursor:pointer;text-decoration:underline">
-      Continue as Local Guest (Offline)
-    </button>
   </div>
-</div>
 
-<!-- Admin Dashboard Portal Modal -->
-<div class="ov" id="admin-dashboard-modal" style="z-index:99999;background:rgba(7,11,20,0.95);backdrop-filter:blur(18px);display:none;align-items:center;justify-content:center;">
-  <div class="ov-box" style="max-width:540px;width:95%;background:linear-gradient(145deg,#0F172A,#070B14);border:2px solid #F59E0B;border-radius:24px;padding:22px 20px;box-shadow:0 16px 50px rgba(0,0,0,0.9);color:#fff;max-height:88vh;overflow-y:auto">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
-      <div style="display:flex;align-items:center;gap:8px">
-        <span style="font-size:22px">👑</span>
+  <!-- Reel Generation Confirmation Popup Modal -->
+  <div class="ov" id="reel-confirm-modal"
+    style="z-index:10005;background:rgba(6,13,10,0.92);backdrop-filter:blur(16px)">
+    <div class="ov-box"
+      style="max-width:360px;width:90%;text-align:center;position:relative;background:linear-gradient(145deg,#132A1C,#0B1710);border:1.8px solid #34D399;border-radius:22px;padding:22px 18px;box-shadow:0 16px 45px rgba(0,0,0,0.85);color:#fff">
+      <div style="font-size:42px;margin-bottom:8px" id="reel-confirm-icon">🎉</div>
+      <h3 style="font-size:18px;font-weight:900;color:#FBBF24;margin-bottom:8px" id="reel-confirm-title">Workout Reel
+        Generated!</h3>
+      <p style="font-size:13px;color:#D1D5DB;line-height:1.45;margin-bottom:18px" id="reel-confirm-msg">
+        🎯 Today's Goal Completed: Mastered! Your 30-second 9:16 HD Reel is ready to share.
+      </p>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <button onclick="confirmOpenReelPreview()"
+          style="background:linear-gradient(135deg,#34D399,#059669);color:#060D0A;border:none;border-radius:12px;padding:12px;font-size:14px;font-weight:900;cursor:pointer;box-shadow:0 4px 15px rgba(52,211,153,0.35);display:flex;align-items:center;justify-content:center;gap:6px">
+          🎬 Preview &amp; Share Reel Now
+        </button>
+        <button onclick="confirmDownloadReelDirect()"
+          style="background:rgba(255,255,255,0.08);border:1px solid rgba(52,211,153,0.4);color:#34D399;border-radius:12px;padding:10px;font-size:13px;font-weight:800;cursor:pointer">
+          📥 Save Video to Gallery
+        </button>
+        <button onclick="closeReelConfirmModal()"
+          style="background:none;border:none;color:#9CA3AF;font-size:12px;font-weight:700;cursor:pointer;padding:4px;margin-top:2px">
+          ✕ Close (Save for Later)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Multi-User Authentication & Onboarding Modal -->
+  <div class="ov" id="auth-modal"
+    style="z-index:99999;background:rgba(6,13,10,0.94);backdrop-filter:blur(18px);display:none;align-items:center;justify-content:center;">
+    <div class="ov-box"
+      style="max-width:390px;width:92%;background:linear-gradient(145deg,#132A1C,#0B1710);border:1.8px solid #F59E0B;border-radius:24px;padding:24px 20px;box-shadow:0 16px 50px rgba(0,0,0,0.9);color:#fff;text-align:center;">
+
+      <div style="font-size:36px;margin-bottom:4px">☀️</div>
+      <h2
+        style="font-family:'Outfit','Noto Sans Devanagari',sans-serif;font-size:20px;font-weight:900;background:linear-gradient(135deg,#FBBF24,#F97316);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:2px">
+        SURYASARTHI 108
+      </h2>
+      <div style="font-size:11.5px;color:#93C5FD;font-weight:600;margin-bottom:14px">
+        Vedic Health · Surya Namaskara · Privacy-First
+      </div>
+
+      <!-- Privacy Banner -->
+      <div
+        style="background:rgba(16,185,129,0.15);border:1px solid #10B981;border-radius:10px;padding:8px 10px;font-size:11px;color:#6EE7B7;line-height:1.4;margin-bottom:14px;text-align:left">
+        🔒 <strong>Strict Privacy Isolated</strong>: Your workout routines, streaks, and water logs are stored in your
+        private profile and never shared with other users.
+      </div>
+
+      <!-- Tab Selector: Register vs Login -->
+      <div
+        style="display:flex;background:rgba(15,23,42,0.8);border-radius:12px;padding:3px;margin-bottom:14px;border:1px solid rgba(96,165,250,0.2)">
+        <button id="auth-tab-reg" onclick="switchAuthTab('reg')"
+          style="flex:1;background:linear-gradient(135deg,#F59E0B,#D97706);color:#000;border:none;border-radius:9px;padding:8px;font-size:12px;font-weight:800;cursor:pointer">
+          ✨ Create Profile
+        </button>
+        <button id="auth-tab-login" onclick="switchAuthTab('login')"
+          style="flex:1;background:none;color:#93C5FD;border:none;border-radius:9px;padding:8px;font-size:12px;font-weight:700;cursor:pointer">
+          🔑 Sign In
+        </button>
+      </div>
+
+      <!-- Error Message Banner -->
+      <div id="auth-error-msg"
+        style="display:none;background:rgba(239,68,68,0.2);border:1px solid #EF4444;color:#FCA5A5;border-radius:8px;padding:7px 10px;font-size:11.5px;margin-bottom:12px;text-align:left">
+      </div>
+
+      <!-- Form: Registration -->
+      <form id="auth-reg-form" onsubmit="handleRegister(event)"
+        style="display:flex;flex-direction:column;gap:10px;text-align:left">
         <div>
-          <h3 style="font-size:16px;font-weight:900;color:#FBBF24;margin:0">SURYASARTHI ADMIN PORTAL</h3>
-          <div style="font-size:10.5px;color:#93C5FD">System-Wide Health &amp; User Practice Management</div>
+          <label style="font-size:11px;font-weight:700;color:#93C5FD;display:block;margin-bottom:4px">Your Full
+            Name</label>
+          <input type="text" id="auth-reg-name" placeholder="e.g. Vaibhav"
+            style="width:100%;background:rgba(15,23,42,0.8);border:1px solid rgba(96,165,250,0.3);border-radius:10px;padding:10px;color:#fff;font-size:13px;outline:none"
+            required />
         </div>
-      </div>
-      <button onclick="closeAdminPortal()" style="background:none;border:none;color:#94A3B8;font-size:22px;cursor:pointer">✕</button>
-    </div>
+        <div>
+          <label style="font-size:11px;font-weight:700;color:#93C5FD;display:block;margin-bottom:4px">Choose
+            Username</label>
+          <input type="text" id="auth-reg-username" placeholder="e.g. vaibhav"
+            style="width:100%;background:rgba(15,23,42,0.8);border:1px solid rgba(96,165,250,0.3);border-radius:10px;padding:10px;color:#fff;font-size:13px;outline:none"
+            required />
+        </div>
+        <div>
+          <label style="font-size:11px;font-weight:700;color:#93C5FD;display:block;margin-bottom:4px">Password /
+            PIN</label>
+          <input type="password" id="auth-reg-password" placeholder="••••••••"
+            style="width:100%;background:rgba(15,23,42,0.8);border:1px solid rgba(96,165,250,0.3);border-radius:10px;padding:10px;color:#fff;font-size:13px;outline:none"
+            required />
+        </div>
+        <button type="submit"
+          style="margin-top:6px;background:linear-gradient(135deg,#34D399,#059669);color:#060D0A;border:none;border-radius:12px;padding:12px;font-size:14px;font-weight:900;cursor:pointer;box-shadow:0 4px 15px rgba(52,211,153,0.35)">
+          ✨ Create My Profile &amp; Start
+        </button>
+      </form>
 
-    <!-- Admin Metric Cards -->
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px">
-      <div style="background:rgba(30,41,59,0.7);border:1px solid #38BDF8;border-radius:12px;padding:10px;text-align:center">
-        <div style="font-size:10px;color:#7DD3FC;font-weight:800;text-transform:uppercase">Registered Users</div>
-        <div id="admin-stat-users" style="font-size:20px;font-weight:900;color:#38BDF8;margin-top:2px">0</div>
-      </div>
-      <div style="background:rgba(30,41,59,0.7);border:1px solid #10B981;border-radius:12px;padding:10px;text-align:center">
-        <div style="font-size:10px;color:#6EE7B7;font-weight:800;text-transform:uppercase">Total Lifetime Sets</div>
-        <div id="admin-stat-sets" style="font-size:20px;font-weight:900;color:#34D399;margin-top:2px">0</div>
-      </div>
-      <div style="background:rgba(30,41,59,0.7);border:1px solid #A855F7;border-radius:12px;padding:10px;text-align:center">
-        <div style="font-size:10px;color:#D8B4FE;font-weight:800;text-transform:uppercase">Workout Logs</div>
-        <div id="admin-stat-logs" style="font-size:20px;font-weight:900;color:#C084FC;margin-top:2px">0</div>
-      </div>
-    </div>
+      <!-- Form: Login -->
+      <form id="auth-login-form" onsubmit="handleLogin(event)"
+        style="display:none;flex-direction:column;gap:10px;text-align:left">
+        <div>
+          <label style="font-size:11px;font-weight:700;color:#93C5FD;display:block;margin-bottom:4px">Username</label>
+          <input type="text" id="auth-login-username" placeholder="e.g. vaibhav or admin"
+            style="width:100%;background:rgba(15,23,42,0.8);border:1px solid rgba(96,165,250,0.3);border-radius:10px;padding:10px;color:#fff;font-size:13px;outline:none" />
+        </div>
+        <div>
+          <label style="font-size:11px;font-weight:700;color:#93C5FD;display:block;margin-bottom:4px">Password</label>
+          <input type="password" id="auth-login-password" placeholder="••••••••"
+            style="width:100%;background:rgba(15,23,42,0.8);border:1px solid rgba(96,165,250,0.3);border-radius:10px;padding:10px;color:#fff;font-size:13px;outline:none" />
+        </div>
+        <button type="submit"
+          style="margin-top:6px;background:linear-gradient(135deg,#F59E0B,#D97706);color:#000;border:none;border-radius:12px;padding:12px;font-size:14px;font-weight:900;cursor:pointer;box-shadow:0 4px 15px rgba(245,158,11,0.35)">
+          🔑 Sign In to My Account
+        </button>
+        <div style="font-size:10.5px;color:#94A3B8;text-align:center;margin-top:4px">
+          Admin can sign in with admin credentials to access system portal.
+        </div>
+      </form>
 
-    <!-- Registered Users Table -->
-    <div style="font-size:12px;font-weight:800;color:#FBBF24;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center">
-      <span>👥 User Records &amp; Activity</span>
-      <span style="font-size:10px;color:#94A3B8">(Privacy preserved: Users cannot see each other)</span>
-    </div>
-    <div style="overflow-x:auto;background:rgba(15,23,42,0.8);border:1px solid rgba(96,165,250,0.2);border-radius:12px;margin-bottom:14px">
-      <table style="width:100%;border-collapse:collapse;text-align:left">
-        <thead>
-          <tr style="background:rgba(30,41,59,0.8);border-bottom:1.5px solid rgba(96,165,250,0.3);font-size:11px;color:#93C5FD">
-            <th style="padding:8px 6px">User</th>
-            <th style="padding:8px 6px;text-align:center">Role</th>
-            <th style="padding:8px 6px;text-align:center">Sets</th>
-            <th style="padding:8px 6px;text-align:center">Days</th>
-            <th style="padding:8px 6px;text-align:center">Last Active</th>
-          </tr>
-        </thead>
-        <tbody id="admin-users-table-body">
-          <tr><td colspan="5" style="text-align:center;padding:14px;color:#94A3B8;font-size:11px">Loading user records...</td></tr>
-        </tbody>
-      </table>
-    </div>
-
-    <!-- Admin Action Buttons -->
-    <div style="display:flex;gap:8px">
-      <a href="/api/backup" target="_blank" download style="flex:1;text-decoration:none;background:linear-gradient(135deg,#38BDF8,#0284C7);color:#070B14;border-radius:10px;padding:10px;font-size:12px;font-weight:900;text-align:center;display:flex;align-items:center;justify-content:center;gap:6px">
-        💾 Download SQLite Database
-      </a>
-      <button onclick="closeAdminPortal()" style="background:var(--surf2);border:1px solid var(--bdr);color:#CBD5E1;border-radius:10px;padding:10px 16px;font-size:12px;font-weight:700;cursor:pointer">
-        Close
+      <!-- Guest / Offline practice bypass -->
+      <button onclick="closeAuthModal()"
+        style="margin-top:12px;background:none;border:none;color:#94A3B8;font-size:11.5px;font-weight:600;cursor:pointer;text-decoration:underline">
+        Continue as Local Guest (Offline)
       </button>
     </div>
   </div>
-</div>
 
-<script>
+  <!-- Admin Dashboard Portal Modal -->
+  <div class="ov" id="admin-dashboard-modal"
+    style="z-index:99999;background:rgba(7,11,20,0.95);backdrop-filter:blur(18px);display:none;align-items:center;justify-content:center;">
+    <div class="ov-box"
+      style="max-width:540px;width:95%;background:linear-gradient(145deg,#0F172A,#070B14);border:2px solid #F59E0B;border-radius:24px;padding:22px 20px;box-shadow:0 16px 50px rgba(0,0,0,0.9);color:#fff;max-height:88vh;overflow-y:auto">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:22px">👑</span>
+          <div>
+            <h3 style="font-size:16px;font-weight:900;color:#FBBF24;margin:0">SURYASARTHI ADMIN PORTAL</h3>
+            <div style="font-size:10.5px;color:#93C5FD">System-Wide Health &amp; User Practice Management</div>
+          </div>
+        </div>
+        <button onclick="closeAdminPortal()"
+          style="background:none;border:none;color:#94A3B8;font-size:22px;cursor:pointer">✕</button>
+      </div>
+
+      <!-- Admin Metric Cards -->
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px">
+        <div
+          style="background:rgba(30,41,59,0.7);border:1px solid #38BDF8;border-radius:12px;padding:10px;text-align:center">
+          <div style="font-size:10px;color:#7DD3FC;font-weight:800;text-transform:uppercase">Registered Users</div>
+          <div id="admin-stat-users" style="font-size:20px;font-weight:900;color:#38BDF8;margin-top:2px">0</div>
+        </div>
+        <div
+          style="background:rgba(30,41,59,0.7);border:1px solid #10B981;border-radius:12px;padding:10px;text-align:center">
+          <div style="font-size:10px;color:#6EE7B7;font-weight:800;text-transform:uppercase">Total Lifetime Sets</div>
+          <div id="admin-stat-sets" style="font-size:20px;font-weight:900;color:#34D399;margin-top:2px">0</div>
+        </div>
+        <div
+          style="background:rgba(30,41,59,0.7);border:1px solid #A855F7;border-radius:12px;padding:10px;text-align:center">
+          <div style="font-size:10px;color:#D8B4FE;font-weight:800;text-transform:uppercase">Workout Logs</div>
+          <div id="admin-stat-logs" style="font-size:20px;font-weight:900;color:#C084FC;margin-top:2px">0</div>
+        </div>
+      </div>
+
+      <!-- Registered Users Table -->
+      <div
+        style="font-size:12px;font-weight:800;color:#FBBF24;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center">
+        <span>👥 User Records &amp; Activity</span>
+        <span style="font-size:10px;color:#94A3B8">(Privacy preserved: Users cannot see each other)</span>
+      </div>
+      <div
+        style="overflow-x:auto;background:rgba(15,23,42,0.8);border:1px solid rgba(96,165,250,0.2);border-radius:12px;margin-bottom:14px">
+        <table style="width:100%;border-collapse:collapse;text-align:left">
+          <thead>
+            <tr
+              style="background:rgba(30,41,59,0.8);border-bottom:1.5px solid rgba(96,165,250,0.3);font-size:11px;color:#93C5FD">
+              <th style="padding:8px 6px">User</th>
+              <th style="padding:8px 6px;text-align:center">Role</th>
+              <th style="padding:8px 6px;text-align:center">Sets</th>
+              <th style="padding:8px 6px;text-align:center">Days</th>
+              <th style="padding:8px 6px;text-align:center">Last Active</th>
+            </tr>
+          </thead>
+          <tbody id="admin-users-table-body">
+            <tr>
+              <td colspan="5" style="text-align:center;padding:14px;color:#94A3B8;font-size:11px">Loading user
+                records...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Admin Action Buttons -->
+      <div style="display:flex;gap:8px">
+        <a href="/api/backup" target="_blank" download
+          style="flex:1;text-decoration:none;background:linear-gradient(135deg,#38BDF8,#0284C7);color:#070B14;border-radius:10px;padding:10px;font-size:12px;font-weight:900;text-align:center;display:flex;align-items:center;justify-content:center;gap:6px">
+          💾 Download SQLite Database
+        </a>
+        <button onclick="closeAdminPortal()"
+          style="background:var(--surf2);border:1px solid var(--bdr);color:#CBD5E1;border-radius:10px;padding:10px 16px;font-size:12px;font-weight:700;cursor:pointer">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
 function switchAuthTab(tab) {
   const regForm = document.getElementById("auth-reg-form");
-  const loginForm = document.getElementById("auth-login-form");
-  const tabReg = document.getElementById("auth-tab-reg");
-  const tabLogin = document.getElementById("auth-tab-login");
-  const errEl = document.getElementById("auth-error-msg");
+  const loginForm =        ument.getElementById("auth-login-form");
+  const tabReg = document.getElementById(      uth-tab-r        ;
+  const tabLogin = document.getElementById("aut        b-login");
+  const errEl = document.getElemen        d("auth-error-msg");
   if (errEl) errEl.style.display = "none";
 
   if (tab === "login") {
-    if (regForm) regForm.style.display = "none";
+    if (regForm) regForm        le.display = "none";
     if (loginForm) loginForm.style.display = "flex";
-    if (tabLogin) { tabLogin.style.background = "linear-gradient(135deg,#F59E0B,#D97706)"; tabLogin.style.color = "#000"; }
+    if (tabLog      )     { tabLogin.stkground = "linear-gradient(135deg,#F59E0B,#D97706)"; tabLogin.style.color = "#000"; }
     if (tabReg) { tabReg.style.background = "none"; tabReg.style.color = "#93C5FD"; }
   } else {
     if (loginForm) loginForm.style.display = "none";
@@ -4420,38 +4733,47 @@ function switchAuthTab(tab) {
     if (tabLogin) { tabLogin.style.background = "none"; tabLogin.style.color = "#93C5FD"; }
   }
 }
-</script>
+  </script>
 
 
   <!-- Smart PWA Installation & Clean Reset Assistant Modal -->
-  <div class="ov" id="pwa-install-modal" style="display:none;z-index:99999;background:rgba(0,0,0,0.85);backdrop-filter:blur(14px);position:fixed;inset:0;align-items:center;justify-content:center;padding:16px;">
-    <div style="background:var(--modal-card-bg, #0F172A);border:1.5px solid var(--acc, #F59E0B);border-radius:24px;width:100%;max-width:390px;padding:22px 20px;display:flex;flex-direction:column;gap:14px;box-shadow:0 12px 48px rgba(0,0,0,0.7);position:relative;">
-      
+  <div class="ov" id="pwa-install-modal"
+    style="display:none;z-index:99999;background:rgba(0,0,0,0.85);backdrop-filter:blur(14px);position:fixed;inset:0;align-items:center;justify-content:center;padding:16px;">
+    <div
+      style="background:var(--modal-card-bg, #0F172A);border:1.5px solid var(--acc, #F59E0B);border-radius:24px;width:100%;max-width:390px;padding:22px 20px;display:flex;flex-direction:column;gap:14px;box-shadow:0 12px 48px rgba(0,0,0,0.7);position:relative;">
+
       <!-- Top header with close -->
       <div style="display:flex;align-items:center;justify-content:space-between;">
         <div style="display:flex;align-items:center;gap:10px;">
-          <img src="./icon-192.png" alt="Surya Sarthi Icon" style="width:38px;height:38px;border-radius:10px;object-fit:cover;border:1px solid rgba(255,255,255,0.2);">
+          <img src="./icon-192.png" alt="Surya Sarthi Icon"
+            style="width:38px;height:38px;border-radius:10px;object-fit:cover;border:1px solid rgba(255,255,255,0.2);">
           <div>
-            <div style="font-size:15px;font-weight:900;color:var(--txt, #FFF);line-height:1.2;">Install Surya Sarthi</div>
+            <div style="font-size:15px;font-weight:900;color:var(--txt, #FFF);line-height:1.2;">Install Surya Sarthi
+            </div>
             <div style="font-size:11px;color:var(--acc-lt, #FBBF24);font-weight:700;">100% Offline Vedic App</div>
           </div>
         </div>
-        <button onclick="closeInstallModal()" style="background:none;border:none;color:var(--txt2, #94A3B8);font-size:22px;font-weight:900;cursor:pointer;padding:4px;line-height:1;">✕</button>
+        <button onclick="closeInstallModal()"
+          style="background:none;border:none;color:var(--txt2, #94A3B8);font-size:22px;font-weight:900;cursor:pointer;padding:4px;line-height:1;">✕</button>
       </div>
 
       <!-- Status banner -->
-      <div id="pwa-modal-status-box" style="background:rgba(245,158,11,0.12);border:1px solid var(--acc, #F59E0B);border-radius:12px;padding:10px 12px;font-size:12px;color:var(--txt, #FFF);line-height:1.45;">
+      <div id="pwa-modal-status-box"
+        style="background:rgba(245,158,11,0.12);border:1px solid var(--acc, #F59E0B);border-radius:12px;padding:10px 12px;font-size:12px;color:var(--txt, #FFF);line-height:1.45;">
         Checking installation state...
       </div>
 
       <!-- Action 1: Direct 1-Click Install Button (When beforeinstallprompt is ready) -->
-      <button id="pwa-modal-direct-btn" onclick="executeNativeInstall()" style="display:none;width:100%;background:linear-gradient(135deg,#F59E0B,#D97706);color:#070B14;border:none;border-radius:14px;padding:12px;font-size:14px;font-weight:900;cursor:pointer;box-shadow:0 4px 18px rgba(245,158,11,0.4);align-items:center;justify-content:center;gap:8px;">
+      <button id="pwa-modal-direct-btn" onclick="executeNativeInstall()"
+        style="display:none;width:100%;background:linear-gradient(135deg,#F59E0B,#D97706);color:#070B14;border:none;border-radius:14px;padding:12px;font-size:14px;font-weight:900;cursor:pointer;box-shadow:0 4px 18px rgba(245,158,11,0.4);align-items:center;justify-content:center;gap:8px;">
         🚀 Tap to Install App Directly
       </button>
 
       <!-- Action 2: Visual 2-Step Android / Chrome Guide -->
-      <div id="pwa-modal-manual-guide" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:12px;font-size:12px;line-height:1.5;color:var(--txt, #FFF);">
-        <div style="font-weight:800;color:var(--acc-lt, #FBBF24);margin-bottom:6px;display:flex;align-items:center;gap:6px;">
+      <div id="pwa-modal-manual-guide"
+        style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:12px;font-size:12px;line-height:1.5;color:var(--txt, #FFF);">
+        <div
+          style="font-weight:800;color:var(--acc-lt, #FBBF24);margin-bottom:6px;display:flex;align-items:center;gap:6px;">
           <span>💡</span> In Chrome: Use "Create shortcut" or "Install"
         </div>
         <ol style="margin:0;padding-left:18px;color:var(--txt2, #CBD5E1);display:flex;flex-direction:column;gap:5px;">
@@ -4463,11 +4785,14 @@ function switchAuthTab(tab) {
       </div>
 
       <!-- Action 3: Deep Auto-Clean & Reset Previous Installation -->
-      <div style="border-top:1px solid rgba(255,255,255,0.1);padding-top:10px;display:flex;flex-direction:column;gap:6px;">
+      <div
+        style="border-top:1px solid rgba(255,255,255,0.1);padding-top:10px;display:flex;flex-direction:column;gap:6px;">
         <div style="font-size:11px;color:var(--muted, #94A3B8);line-height:1.35;">
-          Having trouble with an older version? This will clear stale caches and reset service workers for a fresh install:
+          Having trouble with an older version? This will clear stale caches and reset service workers for a fresh
+          install:
         </div>
-        <button onclick="resetAndCleanAppInstallation()" style="background:rgba(239,68,68,0.15);border:1.2px solid #EF4444;color:#FCA5A5;border-radius:12px;padding:9px 12px;font-size:12px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:all .2s;">
+        <button onclick="resetAndCleanAppInstallation()"
+          style="background:rgba(239,68,68,0.15);border:1.2px solid #EF4444;color:#FCA5A5;border-radius:12px;padding:9px 12px;font-size:12px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:all .2s;">
           🧹 Clean &amp; Reset Previous Installation
         </button>
       </div>
@@ -4475,13 +4800,13 @@ function switchAuthTab(tab) {
     </div>
   </div>
 
-<script src="surya-avatars.js"></script>
-<script src="gita-quotes.js"></script>
-<script src="ayurvedic-diet.js"></script>
-<script src="reel-generator.js"></script>
-<script src="manache-shlok.js"></script>
-<script src="settings-engine.js"></script>
-<script src="app.js"></script>
+  <script src="surya-avatars.js"></script>
+  <script src="gita-quotes.js"></script>
+  <script src="ayurvedic-diet.js"></script>
+  <script src="reel-generator.js"></script>
+  <script src="manache-shlok.js"></script>
+  <script src="settings-engine.js"></script>
+  <script src="app.js"></script>
 </body>
 
 </html>

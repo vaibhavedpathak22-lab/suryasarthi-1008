@@ -127,6 +127,8 @@ function openSettings() {
       togSet("tog-voice",   cfg.voiceOn !== false);
       togSet("tog-mantras", cfg.mantrasOn !== false);
       togSet("tog-breath",  cfg.breathOn !== false);
+      const blEl = document.getElementById("cfg-breath-lang");
+      if(blEl) blEl.value = cfg.breathLang || "en";
       togSet("tog-auto",    cfg.autoOn !== false);
       togSet("tog-prana",   cfg.pranayamaAuto !== false);
       togSet("tog-auto-phase", cfg.autoPaceMode !== false);
@@ -210,6 +212,8 @@ function closeSettings() {
       cfg.voiceOn          = togGet("tog-voice");
       cfg.mantrasOn        = togGet("tog-mantras");
       cfg.breathOn         = togGet("tog-breath");
+      const blEl = document.getElementById("cfg-breath-lang");
+      if(blEl) cfg.breathLang = blEl.value || "en";
       cfg.autoOn           = togGet("tog-auto");
       cfg.pranayamaAuto    = togGet("tog-prana");
       cfg.autoPaceMode     = togGet("tog-auto-phase");

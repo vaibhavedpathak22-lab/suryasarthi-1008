@@ -218,6 +218,7 @@ let cfg = {
   voiceOn       : true,
   mantrasOn     : true,
   breathOn      : true,
+  breathLang    : "en",
   autoOn        : true,
   poseSeconds   : 5,
   graceSeconds  : 10,
@@ -645,18 +646,24 @@ function saveAll() {
 }
 
 /* ── Voice ───────────────────────────────────────────────────── */
-let voices=[], hiVoice=null, breathVoice=null;
+let voices=[], hiVoice=null, breathVoice=null, mrVoice=null;
 
 function pickBestVoice() {
   try {
     voices = (typeof speechSynthesis !== "undefined" && speechSynthesis.getVoices) ? speechSynthesis.getVoices() : [];
     if (!voices || voices.length === 0) return;
 
+    mrVoice =
+      voices.find(v => v.lang === "mr-IN") ||
+      voices.find(v => v.lang && v.lang.startsWith("mr")) ||
+      null;
+
     hiVoice =
       voices.find(v=>v.lang==="sa-IN") ||
       voices.find(v=>v.lang==="hi-IN"&&v.localService) ||
       voices.find(v=>v.lang==="hi-IN") ||
       voices.find(v=>v.lang && v.lang.startsWith("hi")) ||
+      mrVoice ||
       voices.find(v=>v.lang && v.lang.startsWith("en-IN")) ||
       voices.find(v=>v.lang && v.lang.startsWith("en")) || null;
 
@@ -771,23 +778,40 @@ function findStepByMantra(text) {
   return STEPS.find(s => s.mantraD === text || s.mantra === text || s.pose === text) || null;
 }
 
+function getBreathCueByLang(breathText, lang) {
+  if (!breathText) return "";
+  const bLower = breathText.toLowerCase();
+  const l = (lang || (typeof cfg !== "undefined" ? (cfg.breathLang || cfg.pranaLang) : "en") || "en").toLowerCase();
+
+  if (l === "hi" || l.startsWith("hi")) {
+    if (bLower.includes("inhale")) return "श्वास लें";
+    if (bLower.includes("exhale")) return "श्वास छोड़ें";
+    if (bLower.includes("hold")) return "श्वास रोकें";
+  } else if (l === "mr" || l.startsWith("mr")) {
+    if (bLower.includes("inhale")) return "श्वास घ्या";
+    if (bLower.includes("exhale")) return "श्वास सोडा";
+    if (bLower.includes("hold")) return "श्वास रोखा";
+  } else {
+    // English default
+    if (bLower.includes("inhale")) return "Inhale";
+    if (bLower.includes("exhale")) return "Exhale";
+    if (bLower.includes("hold")) return "Hold";
+  }
+  return breathText;
+}
+
 // Unified, fluid utterance for pose instructions
 // Speaks breath cue (Inhale / Hold / Exhale) and Sanskrit mantra in one seamless, calm yogic voice
 function makePoseSpeechUtt(text, breath, sec, doBreath, doMantra) {
   const step = findStepByMantra(text);
   const s = (typeof sec === "number") ? sec : (typeof getPhasePoseSeconds === "function" ? getPhasePoseSeconds() : (cfg.poseSeconds || 3));
+  const bLang = (typeof cfg !== "undefined" ? (cfg.breathLang || cfg.pranaLang) : "en") || "en";
   const hasIndicVoice = hiVoice && (hiVoice.lang.startsWith("hi") || hiVoice.lang.startsWith("sa") || hiVoice.lang.startsWith("mr"));
 
-  let breathCue = breath || (step ? step.breath : "");
-  if (hasIndicVoice && breathCue) {
-    const bLower = breathCue.toLowerCase();
-    if (bLower.includes("inhale")) {
-      breathCue = "श्वास घ्या";
-    } else if (bLower.includes("exhale")) {
-      breathCue = "श्वास सोडा";
-    } else if (bLower.includes("hold")) {
-      breathCue = "श्वास रोखा";
-    }
+  let breathCue = "";
+  if (doBreath) {
+    const rawBreath = breath || (step ? step.breath : "");
+    breathCue = getBreathCueByLang(rawBreath, bLang);
   }
 
   const mantraCue = hasIndicVoice ? (step ? step.mantraD : text) : (step ? step.mantra : text);
@@ -805,13 +829,40 @@ function makePoseSpeechUtt(text, breath, sec, doBreath, doMantra) {
 
   const u = new SpeechSynthesisUtterance(speechText);
 
-  // Voice selection: prioritize hiVoice (handles both English breath cues and Sanskrit mantras) or breathVoice
-  const chosenVoice = (doMantra ? (hiVoice || breathVoice) : (breathVoice || hiVoice));
-  if (chosenVoice) {
-    u.voice = chosenVoice;
-    u.lang = chosenVoice.lang || (hasIndicVoice ? "hi-IN" : "en-IN");
+  // Voice selection according to user-selected language & cue combination:
+  if (!doMantra && bLang === "en") {
+    const chosenVoice = breathVoice || hiVoice;
+    if (chosenVoice) {
+      u.voice = chosenVoice;
+      u.lang = chosenVoice.lang || "en-IN";
+    } else {
+      u.lang = "en-IN";
+    }
+  } else if (bLang === "mr") {
+    const chosenVoice = (typeof mrVoice !== "undefined" && mrVoice) ? mrVoice : (hiVoice || breathVoice);
+    if (chosenVoice) {
+      u.voice = chosenVoice;
+      u.lang = (typeof mrVoice !== "undefined" && mrVoice) ? "mr-IN" : (chosenVoice.lang || "hi-IN");
+    } else {
+      u.lang = "mr-IN";
+    }
+  } else if (bLang === "hi") {
+    const chosenVoice = hiVoice || breathVoice;
+    if (chosenVoice) {
+      u.voice = chosenVoice;
+      u.lang = chosenVoice.lang || "hi-IN";
+    } else {
+      u.lang = "hi-IN";
+    }
   } else {
-    u.lang = hasIndicVoice ? "hi-IN" : "en-IN";
+    // English breath + Sanskrit mantra
+    const chosenVoice = hiVoice || breathVoice;
+    if (chosenVoice) {
+      u.voice = chosenVoice;
+      u.lang = chosenVoice.lang || (hasIndicVoice ? "hi-IN" : "en-IN");
+    } else {
+      u.lang = hasIndicVoice ? "hi-IN" : "en-IN";
+    }
   }
 
   // Check if this is a long mantra (Bhujangasana is 18 chars in Devanagari, 26 chars in Roman)
@@ -819,10 +870,6 @@ function makePoseSpeechUtt(text, breath, sec, doBreath, doMantra) {
 
   // Rate & Pitch calibration based on pose duration
   if (s <= 2.2) {
-    // 2s / pose: Must be articulate and brisk, yet calm and natural (never screechy, never chipmunk)
-    // Long mantra (Bhujangasana): rate 1.28 finishes in ~1.35s (leaves 650ms buffer!)
-    // Standard mantra: rate 1.20 finishes in ~1.10s (leaves 900ms buffer!)
-    // Breath only: rate 1.05 finishes in ~0.32s
     if (doBreath && doMantra) {
       u.rate = isLong ? 1.28 : 1.20;
     } else if (doBreath) {
@@ -830,9 +877,8 @@ function makePoseSpeechUtt(text, breath, sec, doBreath, doMantra) {
     } else {
       u.rate = isLong ? 1.24 : 1.16;
     }
-    u.pitch = 1.0; // Perfectly natural, warm tone
+    u.pitch = 1.0;
   } else if (s <= 3.5) {
-    // 3s / pose
     if (doBreath && doMantra) {
       u.rate = isLong ? 1.10 : 1.04;
     } else if (doBreath) {
@@ -842,7 +888,6 @@ function makePoseSpeechUtt(text, breath, sec, doBreath, doMantra) {
     }
     u.pitch = 1.0;
   } else {
-    // 4s+ / pose: Meditative, serene, deep
     u.rate = 0.90;
     u.pitch = 1.0;
   }
@@ -854,13 +899,23 @@ function makePoseSpeechUtt(text, breath, sec, doBreath, doMantra) {
 // Dedicated utterance for Inhale / Hold / Exhale — speaks smooth, warm & calm
 function makeBreathUtt(breath, sec) {
   if (!breath) return null;
-  const u = new SpeechSynthesisUtterance(breath);
-  const v = getSmoothBreathVoice();
-  if (v) {
-    u.voice = v;
-    u.lang  = v.lang || "en-IN";
+  const bLang = (typeof cfg !== "undefined" ? (cfg.breathLang || cfg.pranaLang) : "en") || "en";
+  const breathCue = getBreathCueByLang(breath, bLang);
+  const u = new SpeechSynthesisUtterance(breathCue);
+  if (bLang === "hi") {
+    u.lang = "hi-IN";
+    if (hiVoice) u.voice = hiVoice;
+  } else if (bLang === "mr") {
+    u.lang = (typeof mrVoice !== "undefined" && mrVoice) ? "mr-IN" : "hi-IN";
+    if (typeof mrVoice !== "undefined" && mrVoice) u.voice = mrVoice;
+    else if (hiVoice) u.voice = hiVoice;
   } else {
-    u.lang  = "en-IN";
+    u.lang = "en-IN";
+    const v = getSmoothBreathVoice();
+    if (v) {
+      u.voice = v;
+      u.lang  = v.lang || "en-IN";
+    }
   }
   const s = (typeof sec === "number") ? sec : (typeof getPhasePoseSeconds === "function" ? getPhasePoseSeconds() : (cfg.poseSeconds || 3));
   if (s <= 2.2) {
@@ -3571,6 +3626,8 @@ function openSettings() {
   togSet("tog-voice",   cfg.voiceOn);
   togSet("tog-mantras", cfg.mantrasOn !== false);
   togSet("tog-breath",  cfg.breathOn  !== false);
+  const blEl = document.getElementById("cfg-breath-lang");
+  if (blEl) blEl.value = cfg.breathLang || "en";
   togSet("tog-auto",    cfg.autoOn);
   togSet("tog-prana",   cfg.pranayamaAuto !== false);
   togSet("tog-auto-phase", cfg.autoPaceMode !== false);
@@ -3612,6 +3669,8 @@ function closeSettings() {
   cfg.voiceOn          = togGet("tog-voice");
   cfg.mantrasOn        = togGet("tog-mantras");
   cfg.breathOn         = togGet("tog-breath");
+  const blEl2 = document.getElementById("cfg-breath-lang");
+  if (blEl2) cfg.breathLang = blEl2.value || "en";
   cfg.autoOn           = togGet("tog-auto");
   cfg.pranayamaAuto    = togGet("tog-prana");
   cfg.autoPaceMode     = togGet("tog-auto-phase");
