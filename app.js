@@ -3749,7 +3749,18 @@ function toggleSettingKey(id, e) {
   try { if (typeof vib === "function") vib(25); } catch(err){}
 
   // Instant reactive UI sync for diet & water toggles
-  if (id === "tog-show-diet-card") {
+  if (id === "tog-alarm") {
+    if (typeof cfg !== "undefined") {
+      cfg.alarmOn = el.classList.contains("on");
+      if (typeof saveAll === "function") saveAll();
+    }
+    if (typeof updateAlarmButtonUI === "function") updateAlarmButtonUI();
+    if (cfg.alarmOn) {
+      if (typeof scheduleAlarm === "function") scheduleAlarm();
+    } else {
+      if (typeof cancelAlarm === "function") cancelAlarm();
+    }
+  } else if (id === "tog-show-diet-card") {
     if (typeof cfg !== "undefined") {
       cfg.showDietCardOnMain = el.classList.contains("on");
       if (typeof saveAll === "function") saveAll();
@@ -4348,100 +4359,194 @@ function scheduleAlarm() {
   console.log("Alarm timer set for", fmtAlarmTime(h, m), "— fires in", Math.round(ms/1000), "sec");
 }
 
-function _tryAndroidAlarm(h, m) {
-  let hour = parseInt(h !== undefined ? h : (typeof cfg !== "undefined" && cfg.alarmHour !== undefined ? cfg.alarmHour : 5), 10);
-  let min  = parseInt(m !== undefined ? m : (typeof cfg !== "undefined" && cfg.alarmMinute !== undefined ? cfg.alarmMinute : 0), 10);
-  if (isNaN(hour) || hour < 0 || hour > 23) hour = 5;
-  if (isNaN(min) || min < 0 || min > 59) min = 0;
+// ═══════════════════════════════════════════════════════════════
+// ROBUST NATIVE ANDROID CLOCK & IN-APP DAILY ALARM ENGINE
+// 1. Android AlarmClock CTS Intent (SET_ALARM & SHOW_ALARMS)
+// 2. In-App Bhagavad Gita Audio Alarm with 528Hz Temple Chime
+// 3. Persistent UI state (stays active, never reverts prematurely)
+// 4. One-tap fallback actions for all Android manufacturers
+// ═══════════════════════════════════════════════════════════════
 
-  const timeStr = String(hour).padStart(2, '0') + ":" + String(min).padStart(2, '0');
-  const name = (typeof cfg !== "undefined" && cfg.userName) ? cfg.userName : "Vaibhav";
+function getAndroidAlarmIntentUrl(hour, min, message) {
+  let h = parseInt(hour !== undefined ? hour : 5, 10);
+  let m = parseInt(min !== undefined ? min : 0, 10);
+  if (isNaN(h) || h < 0 || h > 23) h = 5;
+  if (isNaN(m) || m < 0 || m > 59) m = 0;
+  const label = encodeURIComponent(message || "Surya Sarthi (सूर्यसारथी)");
+  // Standard CTS Android AlarmClock Intent URI for Android Chrome, Samsung Internet & WebViews
+  return "intent://#Intent;action=android.intent.action.SET_ALARM;i.android.intent.extra.alarm.HOUR=" + h + ";i.android.intent.extra.alarm.MINUTES=" + m + ";S.android.intent.extra.alarm.MESSAGE=" + label + ";end;";
+}
+window.getAndroidAlarmIntentUrl = getAndroidAlarmIntentUrl;
 
-  // Sync to cfg and save immediately
-  if (typeof cfg !== "undefined") {
-    cfg.alarmHour = hour;
-    cfg.alarmMinute = min;
-    cfg.alarmOn = true;
-    if (typeof togSet === "function") togSet("tog-alarm", true);
-    if (typeof saveAll === "function") saveAll();
+function getAndroidClockShowAlarmsUrl() {
+  return "intent://#Intent;action=android.intent.action.SHOW_ALARMS;end;";
+}
+window.getAndroidClockShowAlarmsUrl = getAndroidClockShowAlarmsUrl;
+
+function updateAlarmButtonUI() {
+  const btn = document.getElementById("btn-set-android-alarm");
+  const timeInput = document.getElementById("cfg-alarm-time");
+  if (!btn) return;
+
+  let h = (typeof cfg !== "undefined" && cfg.alarmHour !== undefined) ? cfg.alarmHour : 5;
+  let m = (typeof cfg !== "undefined" && cfg.alarmMinute !== undefined) ? cfg.alarmMinute : 0;
+
+  if (timeInput && timeInput.value) {
+    const parts = timeInput.value.split(":").map(Number);
+    if (!isNaN(parts[0])) h = parts[0];
+    if (!isNaN(parts[1])) m = parts[1];
   }
-  if (typeof scheduleAlarm === "function") scheduleAlarm();
 
-  // Status feedback in app
-  const infoEl = document.getElementById("cfg-voice-info");
-  if (infoEl) {
-    infoEl.textContent = "⏰ Daily alarm scheduled for " + timeStr + " · Opening Clock…";
-    infoEl.style.color = "var(--acc-lt)";
-  }
-  if (typeof setStatus === "function") {
-    setStatus("⏰ Daily alarm scheduled for " + timeStr);
+  const isAlarmOn = (typeof cfg !== "undefined" && cfg.alarmOn !== false);
+  const timeStr = typeof fmtAlarmTime === "function" ? fmtAlarmTime(h, m) : (String(h).padStart(2,'0') + ":" + String(m).padStart(2,'0'));
+  const intentUrl = getAndroidAlarmIntentUrl(h, m);
+
+  if (btn.tagName && btn.tagName.toLowerCase() === "a") {
+    btn.href = intentUrl;
   }
 
-  const isAndroid = /Android/i.test(navigator.userAgent || "");
-  if (isAndroid) {
-    // Primary: Standard Android SET_ALARM Intent with DEFAULT category
-    const intentSet = `intent:#Intent;action=android.intent.action.SET_ALARM;category=android.intent.category.DEFAULT;i.android.intent.extra.alarm.HOUR=${hour};i.android.intent.extra.alarm.MINUTES=${min};S.android.intent.extra.alarm.MESSAGE=Surya%20Sarthi;B.android.intent.extra.alarm.SKIP_UI=false;end`;
-    
-    // Secondary Fallback: SHOW_ALARMS (Universal across all Android Clock apps)
-    const intentShow = `intent:#Intent;action=android.intent.action.SHOW_ALARMS;category=android.intent.category.DEFAULT;end`;
-
-    const launchIntent = (url) => {
-      try {
-        const a = document.createElement("a");
-        a.href = url;
-        a.target = "_top";
-        a.rel = "noopener noreferrer";
-        document.body.appendChild(a);
-        a.click();
-        setTimeout(() => { if (a.parentNode) a.parentNode.removeChild(a); }, 400);
-      } catch (e) {
-        console.warn("[Alarm] Intent launch notice:", e);
-      }
-    };
-
-    launchIntent(intentSet);
-
-    // Watch for window blur; if page stays focused after 400ms, try SHOW_ALARMS
-    let appBlurred = false;
-    const blurHandler = () => { appBlurred = true; };
-    window.addEventListener("blur", blurHandler, { once: true });
-
-    setTimeout(() => {
-      window.removeEventListener("blur", blurHandler);
-      if (!appBlurred && document.visibilityState === "visible") {
-        console.log("[Alarm] Trying universal SHOW_ALARMS intent...");
-        launchIntent(intentShow);
-      }
-    }, 400);
+  if (isAlarmOn) {
+    btn.innerHTML = "✓ Alarm Active (" + timeStr + ")";
+    btn.style.background = "linear-gradient(135deg, #059669, #10B981)";
+    btn.style.color = "#FFFFFF";
+    btn.style.boxShadow = "0 2px 10px rgba(16, 185, 129, 0.4)";
+    btn.setAttribute("title", "Alarm is currently active for " + timeStr);
   } else {
-    alert("⏰ Daily Motivational Alarm is scheduled for " + timeStr + " in Surya Sarthi!\n\nThe app will remind you with sacred Bhagavad Gita wisdom and mantras.");
+    btn.innerHTML = "⏰ Set Android Alarm";
+    btn.style.background = "linear-gradient(135deg, #0284C7, #0D9488)";
+    btn.style.color = "#FFFFFF";
+    btn.style.boxShadow = "0 2px 8px rgba(6, 182, 212, 0.3)";
+    btn.setAttribute("title", "Tap to set device alarm and sync daily motivation");
   }
 }
+window.updateAlarmButtonUI = updateAlarmButtonUI;
 
-function triggerSetAndroidAlarm(btn) {
+function showAlarmConfirmationToast(h, m, isAndroid) {
+  const old = document.getElementById("alarm-sync-toast");
+  if (old) old.remove();
+
+  const timeStr = typeof fmtAlarmTime === "function" ? fmtAlarmTime(h, m) : (String(h).padStart(2,'0') + ":" + String(m).padStart(2,'0'));
+  const toast = document.createElement("div");
+  toast.id = "alarm-sync-toast";
+  toast.setAttribute("role", "alert");
+  toast.style.cssText = "position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:999999;width:calc(100% - 32px);max-width:440px;background:rgba(15,23,42,0.96);border:1px solid #10B981;box-shadow:0 12px 36px rgba(0,0,0,0.7), 0 0 24px rgba(16,185,129,0.3);border-radius:14px;padding:14px 16px;color:#F8FAFC;backdrop-filter:blur(12px);font-family:inherit;-webkit-backdrop-filter:blur(12px);transition:all 0.3s ease";
+
+  const clockIntentUrl = getAndroidClockShowAlarmsUrl();
+
+  const openClockBtnHtml = isAndroid
+    ? `<a href="${clockIntentUrl}" style="flex:1;min-width:130px;background:linear-gradient(135deg,#0284C7,#0D9488);color:#FFF;text-decoration:none;border-radius:8px;padding:8px 10px;font-size:11px;font-weight:800;text-align:center;display:flex;align-items:center;justify-content:center;gap:4px;box-shadow:0 2px 8px rgba(2,132,199,0.3)">
+        🕒 Open Phone Clock
+      </a>`
+    : "";
+
+  toast.innerHTML = `
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px">
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="font-size:26px">⏰</span>
+        <div>
+          <div style="font-weight:900;font-size:14px;color:#34D399">Daily Alarm Set for ${timeStr}!</div>
+          <div style="font-size:11px;color:#94A3B8;margin-top:2px">
+            ${isAndroid ? "Device Clock sync triggered · In-app Bhagavad Gita alarm active" : "Surya Sarthi daily motivational in-app alarm active"}
+          </div>
+        </div>
+      </div>
+      <button onclick="dismissAlarmToast()" style="background:none;border:none;color:#94A3B8;font-size:20px;cursor:pointer;padding:0 4px;line-height:1">✕</button>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+      ${openClockBtnHtml}
+      <button onclick="if(typeof playAlarmBellSound==='function') playAlarmBellSound(); if(typeof speakCurrentGitaQuote==='function') speakCurrentGitaQuote();" style="flex:1;min-width:130px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.2);color:#F8FAFC;border-radius:8px;padding:8px 10px;font-size:11px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px">
+        🔔 Test Sacred Sound
+      </button>
+      <button onclick="dismissAlarmToast()" style="background:rgba(16,185,129,0.18);border:1px solid #10B981;color:#34D399;border-radius:8px;padding:8px 14px;font-size:11px;font-weight:800;cursor:pointer">
+        ✓ Done
+      </button>
+    </div>
+  `;
+
+  document.body.appendChild(toast);
+  setTimeout(() => {
+    if (toast.parentNode) {
+      toast.style.opacity = "0";
+      toast.style.transform = "translateX(-50%) translateY(20px)";
+      setTimeout(() => { if (toast.parentNode) toast.parentNode.removeChild(toast); }, 400);
+    }
+  }, 10000);
+}
+window.showAlarmConfirmationToast = showAlarmConfirmationToast;
+
+function dismissAlarmToast() {
+  const toast = document.getElementById("alarm-sync-toast");
+  if (toast && toast.parentNode) {
+    toast.parentNode.removeChild(toast);
+  }
+}
+window.dismissAlarmToast = dismissAlarmToast;
+
+function triggerSetAndroidAlarm(event, btn) {
   const timeInput = document.getElementById("cfg-alarm-time");
   let h = 5, m = 0;
   if (timeInput && timeInput.value) {
     const parts = timeInput.value.split(":").map(Number);
     h = isNaN(parts[0]) ? 5 : parts[0];
     m = isNaN(parts[1]) ? 0 : parts[1];
+  } else if (typeof cfg !== "undefined" && cfg.alarmHour !== undefined) {
+    h = cfg.alarmHour;
+    m = cfg.alarmMinute || 0;
   }
-  _tryAndroidAlarm(h, m);
 
-  if (btn) {
-    const orig = btn.textContent;
-    const timeStr = String(h).padStart(2, "0") + ":" + String(m).padStart(2, "0");
-    btn.textContent = `✓ Alarm Set (${timeStr})`;
-    btn.style.background = "rgba(16, 185, 129, 0.3)";
-    btn.style.color = "#34D399";
-    setTimeout(() => {
-      btn.textContent = orig;
-      btn.style.background = "";
-      btn.style.color = "";
-    }, 3500);
+  // 1. Sync config & persist
+  if (typeof cfg !== "undefined") {
+    cfg.alarmHour = h;
+    cfg.alarmMinute = m;
+    cfg.alarmOn = true;
+    if (typeof togSet === "function") togSet("tog-alarm", true);
+    if (typeof saveAll === "function") saveAll();
   }
+
+  // 2. Schedule in-app alarm with sacred Bhagavad Gita quotes & temple chime
+  if (typeof scheduleAlarm === "function") scheduleAlarm();
+
+  // 3. Request browser notification permission
+  if ("Notification" in window && Notification.permission === "default") {
+    try { Notification.requestPermission(); } catch(err){}
+  }
+
+  // 4. Update button UI immediately and PERMANENTLY (NO REVERT!)
+  updateAlarmButtonUI();
+
+  // 5. Status message feedback in app
+  const timeStr = typeof fmtAlarmTime === "function" ? fmtAlarmTime(h, m) : (String(h).padStart(2,'0') + ":" + String(m).padStart(2,'0'));
+  if (typeof setStatus === "function") {
+    setStatus("⏰ Daily alarm scheduled for " + timeStr);
+  }
+
+  // 6. Android Intent launch
+  const isAndroid = /Android/i.test(navigator.userAgent || "");
+  const intentSet = getAndroidAlarmIntentUrl(h, m);
+
+  if (isAndroid) {
+    try {
+      window.location.href = intentSet;
+    } catch(err) {
+      console.warn("[Alarm] Intent launch notice:", err);
+    }
+  }
+
+  // 7. Show user-friendly confirmation card with quick actions
+  showAlarmConfirmationToast(h, m, isAndroid);
+
+  if (event && event.type === "click" && !isAndroid) {
+    try { event.preventDefault(); } catch(e){}
+  }
+  return true;
 }
 window.triggerSetAndroidAlarm = triggerSetAndroidAlarm;
+
+function _tryAndroidAlarm(h, m) {
+  triggerSetAndroidAlarm(null, document.getElementById("btn-set-android-alarm"));
+}
+window._tryAndroidAlarm = _tryAndroidAlarm;
+
 
 function cancelAlarm() {
   if(_alarmTimeout) { clearTimeout(_alarmTimeout); _alarmTimeout = null; }
