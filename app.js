@@ -1161,7 +1161,7 @@ function buildAppreciationChunks(lang) {
   const name = (cfg.userName && cfg.userName.trim()) || (lang === "en" ? "Yogi" : "साधक");
 
   const weight = cfg.userWeight || 66;
-  const waterTarget = (weight * 0.035 + done * 0.03).toFixed(1);
+  const waterTarget = Math.max(2.0, Math.min(3.5, weight * 0.035 + Math.min(0.75, done * 0.005))).toFixed(1);
 
   const chunks = [];
 

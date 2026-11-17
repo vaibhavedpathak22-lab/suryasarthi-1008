@@ -252,7 +252,7 @@ function drawScene2_WorkoutReport(ctx, t, data, info, lang) {
   const userW = (typeof cfg !== "undefined" && cfg.userWeight) ? cfg.userWeight : 68;
   const cal = (info && info.calories) || Math.round((8.0 * 3.5 * userW) / 200 * (sets * 1.0));
   const durStr = (info && info.durationStr) || (Math.floor(sets * 1.06) + (lang === "en" ? " mins" : " मि"));
-  const waterStr = (userW * 0.035 + sets * 0.03).toFixed(1) + (lang === "en" ? " Liters" : " लिटर");
+  const waterStr = Math.max(2.0, Math.min(3.5, userW * 0.035 + Math.min(0.75, sets * 0.005))).toFixed(1) + (lang === "en" ? " Liters" : " लिटर");
   const name = (info && info.name) || (typeof cfg !== "undefined" && cfg.userName) || (lang === "en" ? "Sadhak" : "साधक");
 
   const d = new Date();

@@ -488,8 +488,13 @@ function calcAyurvedicHydrationAndProtein() {
     : 0;
   const todayTimeFmt = (typeof fmtTime === "function") ? fmtTime(todayMs) : "0s";
 
-  // 1. Water requirement: 35ml per kg body weight + 30ml per set of Surya Namaskar
-  const waterLiters = (weight * 0.035 + sets * 0.03).toFixed(1);
+  // 1. Water requirement: Standard Balanced Ayurvedic Hydration (ICMR & Charaka Samhita)
+  // Base: 35ml per kg body weight (cellular hydration)
+  // Workout: ~5ml sweat replenishment per set of Surya Namaskar (capped at 0.75L safe ceiling)
+  // Range clamped between 2.0L and 3.5L to protect Jatharagni and prevent hyponatremia
+  const baseWater = weight * 0.035;
+  const workoutWater = Math.min(0.75, sets * 0.005);
+  const waterLiters = Math.max(2.0, Math.min(3.5, baseWater + workoutWater)).toFixed(1);
   const totalWaterMl = Math.round(parseFloat(waterLiters) * 1000);
 
   // Calculate target bottle/container count based on selected bottle capacity
