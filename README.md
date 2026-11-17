@@ -1,45 +1,6 @@
 # SURYASARTHI - 108 | सूर्यसारथी - १०८
 > **Master Technical & User Guide: Ayurvedic Surya Namaskara, Automated 9:16 Social Media Reel Generator, 30s WhatsApp Status Screen Recorder, Bhagavad Gita Shloka Engine, Real Voice Manache Shlok Engine, Guided Pranayama Standards & PWA Architecture**
 
----
-
-## 🚀 Quick Deployment: Run Live on GitHub Pages (100% Free Hosting)
-
-Deploy **Suryasarthi 108** directly on GitHub Pages with zero server setup:
-
-### Step 1: Create a Repository on GitHub
-1. Sign in to your [GitHub account](https://github.com/).
-2. Click **New Repository** (or visit `https://github.com/new`).
-3. Repository name: `suryasarthi-108` (or any name you prefer).
-4. Set visibility to **Public**.
-5. Do NOT initialize with a README (as we already have a full README). Click **Create repository**.
-
-### Step 2: Upload Files
-* **Option A (Web Upload - Easiest)**:
-  1. On your new repository page, click **"uploading an existing file"**.
-  2. Extract `suryasarthi-108-github-ready.zip` (or open the `github-package/` folder).
-  3. Select all files and the `audio/` folder, then drag and drop them into the GitHub web uploader.
-  4. Commit message: `Initial release of Suryasarthi 108 with Real Voice Manache Shlok`.
-  5. Click **Commit changes**.
-* **Option B (Git Command Line)**:
-  ```bash
-  git init
-  git add .
-  git commit -m "Initial release of Suryasarthi 108"
-  git branch -M main
-  git remote add origin https://github.com/<your-username>/suryasarthi-108.git
-  git push -u origin main
-  ```
-
-### Step 3: Enable GitHub Pages
-1. Go to your repository's **Settings** tab.
-2. In the left sidebar, click **Pages** (under "Code and automation").
-3. Under **Build and deployment -> Source**, choose **"Deploy from a branch"**.
-4. Under **Branch**, select `main` (or `master`) and directory `/(root)`, then click **Save**.
-5. Wait 60–90 seconds for GitHub Actions to deploy.
-6. Your live app is now live at:
-   $$\text{\bf https://<your-username>.github.io/suryasarthi-108/}$$
-
 ### Step 4: Install as Mobile App (PWA)
 * **Android (Chrome)**: Open the live link, tap the 3-dots menu (`⋮`), and tap **"Install App"** or **"Add to Home screen"**.
 * **iOS (Safari)**: Open the live link, tap the Share icon (`⎙`), and tap **"Add to Home Screen"**.
