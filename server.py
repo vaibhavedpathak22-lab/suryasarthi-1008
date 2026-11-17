@@ -78,7 +78,7 @@ def init_db():
     with sqlite3.connect(DB_FILE) as conn:
         cursor = conn.cursor()
 
-        # 1. Users Table
+        # 1. Users Table (with mandatory physical profile: age, weight, height)
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS users (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -86,9 +86,21 @@ def init_db():
                 password_hash TEXT NOT NULL,
                 name TEXT NOT NULL,
                 role TEXT DEFAULT 'user',
+                age INTEGER DEFAULT 0,
+                weight REAL DEFAULT 0,
+                height REAL DEFAULT 0,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         """)
+        # Ensure age, weight, height columns exist if table was already created
+        cursor.execute("PRAGMA table_info(users)")
+        existing_cols = [c[1] for c in cursor.fetchall()]
+        if "age" not in existing_cols:
+            cursor.execute("ALTER TABLE users ADD COLUMN age INTEGER DEFAULT 0")
+        if "weight" not in existing_cols:
+            cursor.execute("ALTER TABLE users ADD COLUMN weight REAL DEFAULT 0")
+        if "height" not in existing_cols:
+            cursor.execute("ALTER TABLE users ADD COLUMN height REAL DEFAULT 0")
 
         # 2. User Sessions Table
         cursor.execute("""
@@ -181,7 +193,7 @@ def get_user_by_token(token: str):
         conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
         cursor.execute("""
-            SELECT u.id, u.username, u.name, u.role, u.created_at
+            SELECT u.id, u.username, u.name, u.role, u.age, u.weight, u.height, u.created_at
             FROM users u
             JOIN user_sessions s ON u.id = s.user_id
             WHERE s.token = ?
@@ -448,7 +460,7 @@ class SuryasarthiRequestHandler(http.server.SimpleHTTPRequestHandler):
                 conn.row_factory = sqlite3.Row
                 cursor = conn.cursor()
                 cursor.execute("""
-                    SELECT u.id, u.username, u.name, u.role, u.created_at,
+                    SELECT u.id, u.username, u.name, u.role, u.age, u.weight, u.height, u.created_at,
                            COALESCE(SUM(w.sets), 0) AS total_sets,
                            COUNT(w.date) AS workout_days,
                            MAX(w.date) AS last_active_date
@@ -547,9 +559,33 @@ class SuryasarthiRequestHandler(http.server.SimpleHTTPRequestHandler):
             password = str(payload.get("password", "")).strip()
             name = str(payload.get("name", "")).strip() or username.capitalize()
             role = "user"  # regular user by default
+            try:
+                age = int(payload.get("age", 0))
+            except Exception:
+                age = 0
+            try:
+                weight = float(payload.get("weight", 0.0))
+            except Exception:
+                weight = 0.0
+            try:
+                height = float(payload.get("height", 0.0))
+            except Exception:
+                height = 0.0
 
             if not username or not password:
                 self._send_json(400, {"success": False, "error": "Username and password are required"})
+                return
+
+            if not age or age < 5 or age > 120:
+                self._send_json(400, {"success": False, "error": "Age is mandatory (must be between 5 and 120 years)."})
+                return
+
+            if not weight or weight < 20 or weight > 250:
+                self._send_json(400, {"success": False, "error": "Weight is mandatory (must be between 20 and 250 kg)."})
+                return
+
+            if not height or height < 60 or height > 250:
+                self._send_json(400, {"success": False, "error": "Height is mandatory (must be between 60 and 250 cm)."})
                 return
 
             pwd_hash = hash_password(password)
@@ -559,9 +595,9 @@ class SuryasarthiRequestHandler(http.server.SimpleHTTPRequestHandler):
                 with sqlite3.connect(DB_FILE) as conn:
                     cursor = conn.cursor()
                     cursor.execute("""
-                        INSERT INTO users (username, password_hash, name, role)
-                        VALUES (?, ?, ?, ?)
-                    """, (username, pwd_hash, name, role))
+                        INSERT INTO users (username, password_hash, name, role, age, weight, height)
+                        VALUES (?, ?, ?, ?, ?, ?, ?)
+                    """, (username, pwd_hash, name, role, age, weight, height))
                     user_id = cursor.lastrowid
 
                     cursor.execute("""
@@ -570,7 +606,15 @@ class SuryasarthiRequestHandler(http.server.SimpleHTTPRequestHandler):
                     """, (token, user_id))
                     conn.commit()
 
-                user_obj = {"id": user_id, "username": username, "name": name, "role": role}
+                user_obj = {
+                    "id": user_id,
+                    "username": username,
+                    "name": name,
+                    "role": role,
+                    "age": age,
+                    "weight": weight,
+                    "height": height
+                }
                 self._send_json(200, {
                     "success": True,
                     "message": "User registered successfully",
@@ -596,7 +640,7 @@ class SuryasarthiRequestHandler(http.server.SimpleHTTPRequestHandler):
                 conn.row_factory = sqlite3.Row
                 cursor = conn.cursor()
                 cursor.execute("""
-                    SELECT id, username, password_hash, name, role
+                    SELECT id, username, password_hash, name, role, age, weight, height
                     FROM users
                     WHERE username = ?
                 """, (username,))
@@ -619,7 +663,10 @@ class SuryasarthiRequestHandler(http.server.SimpleHTTPRequestHandler):
                     "id": user_id,
                     "username": row["username"],
                     "name": row["name"],
-                    "role": row["role"]
+                    "role": row["role"],
+                    "age": row["age"] or 0,
+                    "weight": row["weight"] or 0,
+                    "height": row["height"] or 0
                 }
                 self._send_json(200, {
                     "success": True,
@@ -638,6 +685,21 @@ class SuryasarthiRequestHandler(http.server.SimpleHTTPRequestHandler):
                     cursor.execute("DELETE FROM user_sessions WHERE token = ?", (token,))
                     conn.commit()
             self._send_json(200, {"success": True, "message": "Logged out successfully"})
+            return
+
+        # 3b. API: User Account & Data Deletion (Google Play Compliance)
+        if path == "/api/auth/delete-account":
+            token = self._get_auth_token()
+            user = get_user_by_token(token)
+            if not user:
+                self._send_json(401, {"success": False, "error": "Authentication required to delete account"})
+                return
+            with sqlite3.connect(DB_FILE) as conn:
+                cursor = conn.cursor()
+                cursor.execute("PRAGMA foreign_keys = ON")
+                cursor.execute("DELETE FROM users WHERE id = ?", (user["id"],))
+                conn.commit()
+            self._send_json(200, {"success": True, "message": "Account and all associated practice data deleted permanently"})
             return
 
         # 4. API: Save User Practice Data (Strict User Privacy)
@@ -781,7 +843,7 @@ def wsgi_app(environ, start_response):
                 conn.row_factory = sqlite3.Row
                 cursor = conn.cursor()
                 cursor.execute("""
-                    SELECT u.id, u.username, u.name, u.role, u.created_at,
+                    SELECT u.id, u.username, u.name, u.role, u.age, u.weight, u.height, u.created_at,
                            COALESCE(SUM(w.sets), 0) AS total_sets,
                            COUNT(w.date) AS workout_days,
                            MAX(w.date) AS last_active_date
@@ -838,9 +900,30 @@ def wsgi_app(environ, start_response):
             password = str(payload.get("password", "")).strip()
             name = str(payload.get("name", "")).strip() or username.capitalize()
             role = "user"
+            try:
+                age = int(payload.get("age", 0))
+            except Exception:
+                age = 0
+            try:
+                weight = float(payload.get("weight", 0.0))
+            except Exception:
+                weight = 0.0
+            try:
+                height = float(payload.get("height", 0.0))
+            except Exception:
+                height = 0.0
 
             if not username or not password:
                 return send_json(400, {"success": False, "error": "Username and password are required"})
+
+            if not age or age < 5 or age > 120:
+                return send_json(400, {"success": False, "error": "Age is mandatory (must be between 5 and 120 years)."})
+
+            if not weight or weight < 20 or weight > 250:
+                return send_json(400, {"success": False, "error": "Weight is mandatory (must be between 20 and 250 kg)."})
+
+            if not height or height < 60 or height > 250:
+                return send_json(400, {"success": False, "error": "Height is mandatory (must be between 60 and 250 cm)."})
 
             pwd_hash = hash_password(password)
             token = secrets.token_hex(24)
@@ -849,9 +932,9 @@ def wsgi_app(environ, start_response):
                 with sqlite3.connect(DB_FILE) as conn:
                     cursor = conn.cursor()
                     cursor.execute("""
-                        INSERT INTO users (username, password_hash, name, role)
-                        VALUES (?, ?, ?, ?)
-                    """, (username, pwd_hash, name, role))
+                        INSERT INTO users (username, password_hash, name, role, age, weight, height)
+                        VALUES (?, ?, ?, ?, ?, ?, ?)
+                    """, (username, pwd_hash, name, role, age, weight, height))
                     user_id = cursor.lastrowid
                     cursor.execute("""
                         INSERT INTO user_sessions (token, user_id)
@@ -859,7 +942,15 @@ def wsgi_app(environ, start_response):
                     """, (token, user_id))
                     conn.commit()
 
-                user_obj = {"id": user_id, "username": username, "name": name, "role": role}
+                user_obj = {
+                    "id": user_id,
+                    "username": username,
+                    "name": name,
+                    "role": role,
+                    "age": age,
+                    "weight": weight,
+                    "height": height
+                }
                 return send_json(200, {
                     "success": True,
                     "message": "User registered successfully",
@@ -882,7 +973,7 @@ def wsgi_app(environ, start_response):
                 conn.row_factory = sqlite3.Row
                 cursor = conn.cursor()
                 cursor.execute("""
-                    SELECT id, username, password_hash, name, role
+                    SELECT id, username, password_hash, name, role, age, weight, height
                     FROM users
                     WHERE username = ?
                 """, (username,))
@@ -904,7 +995,10 @@ def wsgi_app(environ, start_response):
                     "id": user_id,
                     "username": row["username"],
                     "name": row["name"],
-                    "role": row["role"]
+                    "role": row["role"],
+                    "age": row["age"] or 0,
+                    "weight": row["weight"] or 0,
+                    "height": row["height"] or 0
                 }
                 return send_json(200, {
                     "success": True,

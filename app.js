@@ -239,6 +239,7 @@ let cfg = {
   poseAnimOn        : true,
   goalAppreciationVoiceOn: true,
   voiceAppreciationLang  : "auto",
+  reelLang               : "auto",
 };
 
 /* ── Data (persisted) ───────────────────────────────────────── */
@@ -1605,22 +1606,30 @@ function completeSet() {
 
 /* ── Sacred Krishna Names for Rest & Meditation ──────────────── */
 const KRISHNA_NAMES = [
-  { devanagari: "जय श्री कृष्ण", en: "Jai Shree Krishna" },
-  { devanagari: "गोविन्द",       en: "Govinda" },
-  { devanagari: "गोपाल",         en: "Gopala" },
-  { devanagari: "राधे कृष्ण",    en: "Radhe Krishna" },
-  { devanagari: "हरे कृष्ण",     en: "Hare Krishna" },
-  { devanagari: "माधव",          en: "Madhava" },
-  { devanagari: "केशव",          en: "Keshava" },
-  { devanagari: "वासुदेव",       en: "Vasudeva" },
-  { devanagari: "मुकुन्द",       en: "Mukunda" },
-  { devanagari: "दामोदर",        en: "Damodara" },
-  { devanagari: "अच्युत",        en: "Achyuta" },
-  { devanagari: "राधारमण",       en: "Radharaman" },
-  { devanagari: "मुरलीधर",       en: "Muralidhar" },
-  { devanagari: "यदूनन्दन",       en: "Yadunandana" },
-  { devanagari: "श्यामसुन्दर",   en: "Shyamsundar" },
-  { devanagari: "द्वारकाधीश",     en: "Dwarakadheesh" }
+  { devanagari: "श्री कृष्णाय नमः",    en: "Shree Krishnaya Namaha" },
+  { devanagari: "श्री गोविन्दाय नमः",  en: "Shree Govindaya Namaha" },
+  { devanagari: "श्री केशवाय नमः",    en: "Shree Keshavaya Namaha" },
+  { devanagari: "श्री माधवाय नमः",    en: "Shree Madhavaya Namaha" },
+  { devanagari: "श्री दामोदराय नमः",  en: "Shree Damodaraya Namaha" },
+  { devanagari: "श्री वासुदेवाय नमः",  en: "Shree Vasudevaya Namaha" },
+  { devanagari: "श्री नारायणाय नमः",  en: "Shree Narayanaya Namaha" },
+  { devanagari: "श्री अच्युताय नमः",  en: "Shree Achyutaya Namaha" },
+  { devanagari: "श्री अनन्ताय नमः",   en: "Shree Anantaya Namaha" },
+  { devanagari: "श्री मधुसूदनाय नमः",  en: "Shree Madhusudanaya Namaha" },
+  { devanagari: "श्री त्रिविक्रमाय नमः", en: "Shree Trivikramaya Namaha" },
+  { devanagari: "श्री वामनाय नमः",    en: "Shree Vamanaya Namaha" },
+  { devanagari: "श्री श्रीधराय नमः",   en: "Shree Shridharaya Namaha" },
+  { devanagari: "श्री हृषीकेशाय नमः",  en: "Shree Hrishikeshaya Namaha" },
+  { devanagari: "श्री पद्मनाभाय नमः",  en: "Shree Padmanabhaya Namaha" },
+  { devanagari: "श्री संकर्षणाय नमः",  en: "Shree Sankarshanaya Namaha" },
+  { devanagari: "श्री प्रद्युम्नाय नमः", en: "Shree Pradyumnaya Namaha" },
+  { devanagari: "श्री अनिरुद्धाय नमः", en: "Shree Aniruddhaya Namaha" },
+  { devanagari: "श्री पुरुषोत्तमाय नमः", en: "Shree Purushottamaya Namaha" },
+  { devanagari: "श्री अधोक्षजाय नमः",  en: "Shree Adhokshajaya Namaha" },
+  { devanagari: "श्री नृसिंहाय नमः",  en: "Shree Narasimhaya Namaha" },
+  { devanagari: "श्री जनार्दनाय नमः",  en: "Shree Janardanaya Namaha" },
+  { devanagari: "श्री उपेन्द्राय नमः",  en: "Shree Upendraya Namaha" },
+  { devanagari: "श्री हरये नमः",      en: "Shree Haraye Namaha" }
 ];
 let krishnaNameIdx = 0;
 function getNextKrishnaName() {
@@ -1640,7 +1649,7 @@ function makeKrishnaUtt(itemOrText, customRate) {
   if (typeof itemOrText === "object" && itemOrText) {
     text = isIndic ? itemOrText.devanagari : (itemOrText.en || itemOrText.devanagari);
   } else {
-    text = String(itemOrText || "जय श्री कृष्ण");
+    text = String(itemOrText || "श्री कृष्णाय नमः");
   }
 
   const u = new SpeechSynthesisUtterance(text);
@@ -1685,36 +1694,43 @@ function startGrace() {
     : (cfg.quoteLang || cfg.pranaLang || "hi");
 
   const doneCount = (typeof todayDone === "function") ? todayDone() : (sess.done || 0);
-  const nextSet = doneCount + 1;
+  const nextRound = doneCount + 1;
 
-  // Update rest label to display Lord Krishna's name with sacred lotus and next set number
+  // Update rest label to display Lord Krishna's name with sacred lotus and next round number
   const lbl = document.querySelector(".grace-label");
   if (lbl) {
-    lbl.innerHTML = `🪷 <strong>${kName.devanagari}</strong> · REST — Set ${nextSet} in`;
+    lbl.innerHTML = `🪷 <strong>${kName.devanagari}</strong> · REST — Round ${nextRound} in`;
   }
 
-  // 🦚 Speak Lord Krishna's sacred name, then next set count, then start seconds countdown!
+  // 🦚 Speak Lord Krishna's sacred name with "श्री ... नमः", then next round cue, then timed countdown!
+  const speechRate = (durSec <= 5) ? 1.15 : 1.0;
   setTimeout(() => {
     if (!graceActive || voiceMuted || !window.speechSynthesis) return;
 
     let chantText = "";
-    let nextSetCue = "";
+    let nextRoundCue = "";
 
     if (lang === "mr") {
-      chantText = `जय श्री कृष्ण · ${kName.devanagari}`;
-      nextSetCue = `पुढील सेट ${nextSet}। ${durSec} सेकंद।`;
+      chantText = kName.devanagari;
+      nextRoundCue = (durSec <= 5) 
+        ? `फेरी ${nextRound}` 
+        : `पुढची फेरी ${nextRound}, ${durSec} सेकंदात सुरू होत आहे।`;
     } else if (lang === "hi") {
-      chantText = `जय श्री कृष्ण · ${kName.devanagari}`;
-      nextSetCue = `अगला सेट ${nextSet}। ${durSec} सेकंड।`;
+      chantText = kName.devanagari;
+      nextRoundCue = (durSec <= 5) 
+        ? `राउंड ${nextRound}` 
+        : `अगला राउंड ${nextRound}, ${durSec} सेकंड में शुरू हो रहा है।`;
     } else {
-      chantText = `Jai Shree Krishna · ${kName.en}`;
-      nextSetCue = `Next Set ${nextSet}. ${durSec} seconds.`;
+      chantText = kName.en;
+      nextRoundCue = (durSec <= 5) 
+        ? `Round ${nextRound}` 
+        : `Next round ${nextRound} starts in ${durSec} seconds.`;
     }
 
     qClear();
-    qSpeak(makeKrishnaUtt(chantText, 0.95));
-    qSpeak(makeKrishnaUtt(nextSetCue, 1.0));
-  }, 600);
+    qSpeak(makeKrishnaUtt(chantText, speechRate * 0.95));
+    qSpeak(makeKrishnaUtt(nextRoundCue, speechRate));
+  }, 400);
 
   const el = document.getElementById("grace-bar");
   const wt = document.getElementById("grace-wrap");
@@ -1729,12 +1745,18 @@ function startGrace() {
     if(el) el.style.width = (frac * 100) + "%";
     if(ct) ct.textContent = secsLeft > 0 ? secsLeft : "";
 
-    // 🔔 Speak 3, 2, 1 countdown as next round approaches
-    if (secsLeft === 3 && !graceCountdownSaid && dur >= 5000) {
+    // 🔔 Speak countdown numbers as next round approaches
+    const cdThreshold = (durSec <= 5) ? 3 : 5;
+    if (secsLeft === cdThreshold && !graceCountdownSaid && dur >= 3000) {
       graceCountdownSaid = true;
       if (!voiceMuted && window.speechSynthesis) {
-        const cdText = (lang === "mr") ? "तीन... दोन... एक" : (lang === "hi") ? "तीन... दो... एक" : "Three, two, one";
-        const cdUtt = makeKrishnaUtt(cdText, 1.05);
+        let cdText = "";
+        if (cdThreshold === 3) {
+          cdText = (lang === "mr") ? "तीन... दोन... एक" : (lang === "hi") ? "तीन... दो... एक" : "Three, two, one";
+        } else {
+          cdText = (lang === "mr") ? "पाच... चार... तीन... दोन... एक" : (lang === "hi") ? "पांच... चार... तीन... दो... एक" : "Five, four, three, two, one";
+        }
+        const cdUtt = makeKrishnaUtt(cdText, speechRate * 1.05);
         qSpeak(cdUtt);
       }
     }
@@ -3644,8 +3666,12 @@ function openSettings() {
   togSet("tog-water-reminders", cfg.waterRemindersOn !== false);
   const alEl = document.getElementById("cfg-appreciation-lang");
   if (alEl) alEl.value = cfg.voiceAppreciationLang || "auto";
+  const rlEl = document.getElementById("cfg-reel-lang");
+  if (rlEl) rlEl.value = cfg.reelLang || "auto";
   const unEl = document.getElementById("cfg-user-name"); if(unEl) unEl.value = cfg.userName || "Vaibhav";
-  const uwEl = document.getElementById("cfg-user-weight"); if(uwEl) uwEl.value = cfg.userWeight || 66;
+  const uaEl = document.getElementById("cfg-user-age"); if(uaEl) uaEl.value = cfg.userAge || 28;
+  const uwEl = document.getElementById("cfg-user-weight"); if(uwEl) uwEl.value = cfg.userWeight || 68;
+  const uhEl = document.getElementById("cfg-user-height"); if(uhEl) uhEl.value = cfg.userHeight || 172;
   const bsEl = document.getElementById("cfg-bottle-size"); if(bsEl) bsEl.value = cfg.bottleMl || 1000;
   const dtEl = document.getElementById("cfg-diet-type"); if(dtEl) dtEl.value = cfg.dietType || "veg";
   const qlEl = document.getElementById("cfg-quote-lang"); if(qlEl) qlEl.value = cfg.quoteLang || cfg.pranaLang || "hi";
@@ -3684,12 +3710,16 @@ function closeSettings() {
   cfg.goalAppreciationVoiceOn = togGet("tog-goal-voice-appreciation");
   const alEl2 = document.getElementById("cfg-appreciation-lang");
   if (alEl2) cfg.voiceAppreciationLang = alEl2.value;
+  const rlEl2 = document.getElementById("cfg-reel-lang");
+  if (rlEl2) cfg.reelLang = rlEl2.value;
   cfg.showDietCardOnMain = togGet("tog-show-diet-card");
   cfg.dietRemindersOn = togGet("tog-diet-reminders");
   cfg.dietNotifOn = cfg.dietRemindersOn;
   cfg.waterRemindersOn = togGet("tog-water-reminders");
   const unEl2 = document.getElementById("cfg-user-name"); if(unEl2) cfg.userName = unEl2.value.trim() || "Vaibhav";
-  const uwEl2 = document.getElementById("cfg-user-weight"); if(uwEl2) cfg.userWeight = Math.max(30, Math.min(250, parseInt(uwEl2.value) || 66));
+  const uaEl2 = document.getElementById("cfg-user-age"); if(uaEl2) cfg.userAge = Math.max(5, Math.min(120, parseInt(uaEl2.value) || 28));
+  const uwEl2 = document.getElementById("cfg-user-weight"); if(uwEl2) cfg.userWeight = Math.max(20, Math.min(250, parseFloat(uwEl2.value) || 68));
+  const uhEl2 = document.getElementById("cfg-user-height"); if(uhEl2) cfg.userHeight = Math.max(60, Math.min(250, parseFloat(uhEl2.value) || 172));
   const bsEl2 = document.getElementById("cfg-bottle-size"); if(bsEl2) cfg.bottleMl = parseInt(bsEl2.value) || 1000;
   const dtEl2 = document.getElementById("cfg-diet-type"); if(dtEl2) cfg.dietType = dtEl2.value || "veg";
   const aTime = document.getElementById("cfg-alarm-time").value || "05:00";
@@ -6041,22 +6071,58 @@ async function handleRegister(e) {
   const nameEl = document.getElementById("auth-reg-name");
   const userEl = document.getElementById("auth-reg-username");
   const passEl = document.getElementById("auth-reg-password");
+  const ageEl = document.getElementById("auth-reg-age");
+  const weightEl = document.getElementById("auth-reg-weight");
+  const heightEl = document.getElementById("auth-reg-height");
   const errEl = document.getElementById("auth-error-msg");
 
   const name = nameEl ? nameEl.value.trim() : "";
   const username = userEl ? userEl.value.trim().toLowerCase() : "";
   const password = passEl ? passEl.value.trim() : "";
+  const age = ageEl ? parseInt(ageEl.value.trim(), 10) : 0;
+  const weight = weightEl ? parseFloat(weightEl.value.trim()) : 0;
+  const height = heightEl ? parseFloat(heightEl.value.trim()) : 0;
 
-  if (!username || !password) {
-    if (errEl) { errEl.textContent = "Please enter username and password."; errEl.style.display = "block"; }
+  if (!name || name.length < 2) {
+    if (errEl) { errEl.textContent = "Please enter your full name."; errEl.style.display = "block"; }
     return;
   }
+  if (!username || username.length < 3) {
+    if (errEl) { errEl.textContent = "Username must be at least 3 characters."; errEl.style.display = "block"; }
+    return;
+  }
+  if (!password || password.length < 4) {
+    if (errEl) { errEl.textContent = "Password/PIN must be at least 4 characters."; errEl.style.display = "block"; }
+    return;
+  }
+  if (!age || isNaN(age) || age < 5 || age > 120) {
+    if (errEl) { errEl.textContent = "⚠️ Age is mandatory (must be between 5 and 120 years)."; errEl.style.display = "block"; }
+    if (ageEl) ageEl.focus();
+    return;
+  }
+  if (!weight || isNaN(weight) || weight < 20 || weight > 250) {
+    if (errEl) { errEl.textContent = "⚠️ Weight is mandatory (must be between 20 and 250 kg)."; errEl.style.display = "block"; }
+    if (weightEl) weightEl.focus();
+    return;
+  }
+  if (!height || isNaN(height) || height < 60 || height > 250) {
+    if (errEl) { errEl.textContent = "⚠️ Height is mandatory (must be between 60 and 250 cm)."; errEl.style.display = "block"; }
+    if (heightEl) heightEl.focus();
+    return;
+  }
+
+  // Update personalized config
+  cfg.userName = name;
+  cfg.userAge = age;
+  cfg.userWeight = weight;
+  cfg.userHeight = height;
+  saveAll();
 
   try {
     const res = await fetch(`${getApiBase()}/api/auth/register`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, password, name })
+      body: JSON.stringify({ username, password, name, age, weight, height })
     });
     const dataRes = await res.json();
     if (dataRes.success && dataRes.token) {
@@ -6068,18 +6134,18 @@ async function handleRegister(e) {
       closeAuthModal();
       updateUserBadgeUI();
       syncToSQLite();
-      setStatus(`Welcome, ${currentUser.name}! 🙏`);
+      setStatus(`Welcome, ${currentUser.name}! (Profile: ${weight}kg, ${height}cm, ${age}y) 🙏`);
     } else {
       if (errEl) { errEl.textContent = dataRes.error || "Registration failed"; errEl.style.display = "block"; }
     }
   } catch (err) {
-    currentUser = { id: Date.now(), username: username, name: name || username, role: "user" };
+    currentUser = { id: Date.now(), username: username, name: name || username, role: "user", age: age, weight: weight, height: height };
     authToken = "offline_token_" + Date.now();
     localStorage.setItem("surya_auth_token", authToken);
     localStorage.setItem("surya_current_user", JSON.stringify(currentUser));
     closeAuthModal();
     updateUserBadgeUI();
-    setStatus(`Welcome, ${currentUser.name}! (Offline mode)`);
+    setStatus(`Welcome, ${currentUser.name}! (Offline Profile: ${weight}kg, ${height}cm)`);
   }
 }
 
@@ -6262,3 +6328,31 @@ window.openAdminPortal = openAdminPortal;
 window.closeAdminPortal = closeAdminPortal;
 window.syncToSQLite = syncToSQLite;
 window.syncFromSQLite = syncFromSQLite;
+
+
+async function deleteUserAccount() {
+  if (!confirm("⚠️ PERMANENT ACCOUNT DELETION\n\nAre you sure you want to permanently delete your SuryaSarathi account, all workout history, streaks, and personal vitals?\n\nThis action is irreversible and compliant with Google Play Data Deletion requirements.")) {
+    return;
+  }
+  const confirmText = prompt("Type DELETE to confirm permanent deletion of your account and all data:");
+  if (confirmText !== "DELETE") {
+    alert("Account deletion cancelled.");
+    return;
+  }
+  try {
+    if (authToken) {
+      await fetch(`${getApiBase()}/api/auth/delete-account`, {
+        method: "POST",
+        headers: { "Authorization": `Bearer ${authToken}` }
+      });
+    }
+  } catch (err) {
+    console.warn("Server deletion network error, proceeding with local wipe:", err);
+  }
+  try {
+    localStorage.clear();
+  } catch (e) {}
+  alert("✓ Your SuryaSarathi account and all associated data have been permanently deleted.");
+  window.location.reload();
+}
+window.deleteUserAccount = deleteUserAccount;

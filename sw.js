@@ -1,7 +1,7 @@
-/* Service Worker — surya-v144
+/* Service Worker — surya-v148
    Forces immediate activation so new files are served right away.
    Cache-busted by version string in cache name. */
-const C = "surya-v144";
+const C = "surya-v148";
 const A = [
   "./", "./index.html", "./app.js",
   "./surya-avatars.js", "./gita-quotes.js", "./ayurvedic-diet.js", "./reel-generator.js", "./manache-shlok.js", "./settings-engine.js",
@@ -11,8 +11,10 @@ const A = [
   "./manifest.json", "./favicon.ico",
   "./icon-192.png", "./icon-512.png",
   "./icon-maskable-192.png", "./icon-maskable-512.png",
-  // 30s Master Workout Reel assets
+  // 30s Master Workout Reel assets (MR, HI, EN)
   "./audio/suryasarthi_reel_30s_voice_bgm.mp3",
+  "./audio/suryasarthi_reel_30s_voice_bgm_hi.mp3",
+  "./audio/suryasarthi_reel_30s_voice_bgm_en.mp3",
   "./img/reel_overlays/s1a_shloka.png",
   "./img/reel_overlays/s1b_meaning.png",
   "./img/reel_overlays/s2_report.png",
@@ -20,6 +22,10 @@ const A = [
   "./img/reel_overlays/s3b_set31.png",
   "./img/reel_overlays/s3c_complete.png",
   "./img/reel_overlays/s4_pranayama.png",
+  "./img/reel_overlays/s3_cta_qr_mr.png",
+  "./img/reel_overlays/s3_cta_qr_hi.png",
+  "./img/reel_overlays/s3_cta_qr_en.png",
+  "./img/reel_overlays/playstore_qr_code.png",
   // Flat audio paths (for GitHub direct upload compatibility)
   "./audio/suresh_shlok_1.mp3", "./audio/suresh_shlok_2.mp3", "./audio/suresh_shlok_3.mp3",
   "./audio/suresh_shlok_4.mp3", "./audio/suresh_shlok_5.mp3", "./audio/suresh_shlok_6.mp3",

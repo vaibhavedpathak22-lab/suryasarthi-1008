@@ -3803,6 +3803,17 @@
         </select>
       </div>
 
+      <div class="srow">
+        <label>🎬 Workout Reel Language (व्हिडिओ रील भाषा)</label>
+        <select id="cfg-reel-lang" onchange="if(typeof cfg!=='undefined'){cfg.reelLang=this.value;if(typeof saveAll==='function')saveAll();}" style="background:var(--surf2);border:1px solid var(--bdr);
+        color:var(--txt);border-radius:8px;padding:6px 8px;font-size:13px">
+          <option value="auto">Auto (स्वयंचलित / Follow App Language)</option>
+          <option value="mr">मराठी (Marathi - मराठी व्हॉइस व प्रगती पत्रक)</option>
+          <option value="hi">हिंदी (Hindi - हिंदी वॉइस व स्कोरकार्ड)</option>
+          <option value="en">English (English Voice &amp; Scorecard)</option>
+        </select>
+      </div>
+
       <div class="srow" onclick="toggleSettingKey('tog-auto', event)" style="cursor:pointer">
         <label style="cursor:pointer">⚡ Auto-advance poses</label>
         <button class="tog on" id="tog-auto" onclick="toggleSettingKey('tog-auto', event)"></button>
@@ -3837,14 +3848,56 @@
                font-size:13px;font-weight:700;width:120px">
       </div>
       <div class="srow">
+        <label>🎂 Age (Years)</label>
+        <div style="display:flex;align-items:center;gap:4px">
+          <input type="number" id="cfg-user-age" value="28" min="5" max="120" step="1" placeholder="28" style="background:var(--surf2);border:1px solid var(--bdr);
+                 color:var(--txt);border-radius:8px;padding:6px 8px;
+                 font-size:13px;font-weight:700;width:70px">
+          <span style="font-size:12px;font-weight:700;color:var(--txt2)">yrs</span>
+        </div>
+      </div>
+      <div class="srow">
         <label>⚖️ Body Weight (kg) (for accurate MET calories)</label>
         <div style="display:flex;align-items:center;gap:4px">
-          <input type="number" id="cfg-user-weight" value="66" min="30" max="250" step="1" placeholder="66" style="background:var(--surf2);border:1px solid var(--bdr);
+          <input type="number" id="cfg-user-weight" value="68" min="20" max="250" step="0.5" placeholder="68" style="background:var(--surf2);border:1px solid var(--bdr);
                  color:var(--txt);border-radius:8px;padding:6px 8px;
                  font-size:13px;font-weight:700;width:70px">
           <span style="font-size:12px;font-weight:700;color:var(--txt2)">kg</span>
         </div>
       </div>
+      <div class="srow">
+        <label>📏 Body Height (cm) (for BMI calculation)</label>
+        <div style="display:flex;align-items:center;gap:4px">
+          <input type="number" id="cfg-user-height" value="172" min="60" max="250" step="1" placeholder="172" style="background:var(--surf2);border:1px solid var(--bdr);
+                 color:var(--txt);border-radius:8px;padding:6px 8px;
+                 font-size:13px;font-weight:700;width:70px">
+          <span style="font-size:12px;font-weight:700;color:var(--txt2)">cm</span>
+        </div>
+      </div>
+      <!-- ═══ GOOGLE PLAY PRIVACY & ACCOUNT MANAGEMENT ═══ -->
+      <div style="margin:14px 0 10px 0;padding:12px 14px;background:linear-gradient(135deg,rgba(15,23,42,0.9),rgba(30,41,59,0.7));border:1.2px solid rgba(239,68,68,0.35);border-radius:14px">
+        <div style="font-size:13px;font-weight:900;color:#FCA5A5;display:flex;align-items:center;gap:6px;margin-bottom:8px">
+          🛡️ <span>Account &amp; Data Privacy</span>
+        </div>
+        <div style="font-size:11px;color:#94A3B8;line-height:1.4;margin-bottom:12px">
+          Manage your personal Sadhak profile. You have full control over your data in accordance with Google Play privacy policies.
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button type="button" onclick="logoutUser()"
+            style="flex:1;background:rgba(59,130,246,0.15);border:1px solid #3B82F6;color:#93C5FD;font-size:11.5px;font-weight:800;padding:8px 10px;border-radius:8px;cursor:pointer">
+            🚪 Sign Out
+          </button>
+          <button type="button" onclick="deleteUserAccount()"
+            style="flex:1;background:rgba(239,68,68,0.15);border:1px solid #EF4444;color:#FCA5A5;font-size:11.5px;font-weight:800;padding:8px 10px;border-radius:8px;cursor:pointer">
+            🗑️ Delete Account &amp; Data
+          </button>
+        </div>
+        <!-- Health & Fitness Medical Disclaimer -->
+        <div style="font-size:10px;color:#64748B;line-height:1.4;margin-top:10px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.06)">
+          ⚕️ <strong>Health Advisory:</strong> SuryaSarathi 108 provides yoga, breathing, and wellness routines for general physical fitness. It is not intended to replace professional medical advice, diagnosis, or treatment. Consult a physician before starting strenuous physical yoga.
+        </div>
+      </div>
+
       <!-- ═══ AYURVEDIC DIET & HYDRATION SETTINGS ═══ -->
       <div
         style="margin:14px 0 10px 0;padding:12px 14px;background:linear-gradient(135deg,rgba(245,158,11,0.08),rgba(16,185,129,0.06));border:1.2px solid rgba(245,158,11,0.28);border-radius:14px">
@@ -4579,25 +4632,56 @@
         style="display:flex;flex-direction:column;gap:10px;text-align:left">
         <div>
           <label style="font-size:11px;font-weight:700;color:#93C5FD;display:block;margin-bottom:4px">Your Full
-            Name</label>
+            Name *</label>
           <input type="text" id="auth-reg-name" placeholder="e.g. Vaibhav"
             style="width:100%;background:rgba(15,23,42,0.8);border:1px solid rgba(96,165,250,0.3);border-radius:10px;padding:10px;color:#fff;font-size:13px;outline:none"
             required />
         </div>
         <div>
           <label style="font-size:11px;font-weight:700;color:#93C5FD;display:block;margin-bottom:4px">Choose
-            Username</label>
+            Username *</label>
           <input type="text" id="auth-reg-username" placeholder="e.g. vaibhav"
             style="width:100%;background:rgba(15,23,42,0.8);border:1px solid rgba(96,165,250,0.3);border-radius:10px;padding:10px;color:#fff;font-size:13px;outline:none"
             required />
         </div>
         <div>
           <label style="font-size:11px;font-weight:700;color:#93C5FD;display:block;margin-bottom:4px">Password /
-            PIN</label>
+            PIN *</label>
           <input type="password" id="auth-reg-password" placeholder="••••••••"
             style="width:100%;background:rgba(15,23,42,0.8);border:1px solid rgba(96,165,250,0.3);border-radius:10px;padding:10px;color:#fff;font-size:13px;outline:none"
             required />
         </div>
+
+        <!-- Mandatory Vedic Health Profile (Age, Weight, Height) -->
+        <div style="background:rgba(245,158,11,0.08);border:1.5px solid rgba(245,158,11,0.35);border-radius:12px;padding:10px 12px;margin:2px 0;">
+          <div style="font-size:11px;font-weight:800;color:#FBBF24;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;display:flex;align-items:center;gap:5px;">
+            <span>⚖️ Mandatory Physical Profile</span>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+            <div>
+              <label style="font-size:10.5px;font-weight:700;color:#93C5FD;display:block;margin-bottom:3px">Age (Yrs) *</label>
+              <input type="number" id="auth-reg-age" placeholder="28" min="5" max="120"
+                style="width:100%;background:rgba(15,23,42,0.9);border:1px solid rgba(96,165,250,0.4);border-radius:8px;padding:8px 6px;color:#fff;font-size:13px;font-weight:800;outline:none;text-align:center"
+                required />
+            </div>
+            <div>
+              <label style="font-size:10.5px;font-weight:700;color:#93C5FD;display:block;margin-bottom:3px">Weight (kg) *</label>
+              <input type="number" id="auth-reg-weight" placeholder="68" min="20" max="250" step="0.5"
+                style="width:100%;background:rgba(15,23,42,0.9);border:1px solid rgba(96,165,250,0.4);border-radius:8px;padding:8px 6px;color:#fff;font-size:13px;font-weight:800;outline:none;text-align:center"
+                required />
+            </div>
+            <div>
+              <label style="font-size:10.5px;font-weight:700;color:#93C5FD;display:block;margin-bottom:3px">Height (cm) *</label>
+              <input type="number" id="auth-reg-height" placeholder="172" min="60" max="250"
+                style="width:100%;background:rgba(15,23,42,0.9);border:1px solid rgba(96,165,250,0.4);border-radius:8px;padding:8px 6px;color:#fff;font-size:13px;font-weight:800;outline:none;text-align:center"
+                required />
+            </div>
+          </div>
+          <div style="font-size:9.5px;color:#94A3B8;margin-top:6px;line-height:1.3">
+            Essential for accurate Surya Namaskara calories, Ayurvedic water balance, and body vitals.
+          </div>
+        </div>
+
         <button type="submit"
           style="margin-top:6px;background:linear-gradient(135deg,#34D399,#059669);color:#060D0A;border:none;border-radius:12px;padding:12px;font-size:14px;font-weight:900;cursor:pointer;box-shadow:0 4px 15px rgba(52,211,153,0.35)">
           ✨ Create My Profile &amp; Start
