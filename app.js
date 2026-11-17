@@ -2266,12 +2266,26 @@ function renderBars() {
   requestAnimationFrame(_drawChart);
 }
 
+function getAllHistoryDaysCount() {
+  const hist = (typeof data !== "undefined" && data.history) || {};
+  const keys = Object.keys(hist).filter(k => /^\d{4}-\d{2}-\d{2}$/.test(k));
+  if (keys.length === 0) return 30;
+  keys.sort();
+  const earliestDate = new Date(keys[0] + "T00:00:00");
+  const todayDate = new Date();
+  todayDate.setHours(0, 0, 0, 0);
+  const diffTime = Math.max(0, todayDate - earliestDate);
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+  return Math.max(30, Math.min(730, diffDays));
+}
+
 function _drawChart() {
   const wrap = document.getElementById("chart-wrap");
   if(!wrap) return;
   wrap.innerHTML = "";
 
-  const N    = cfg.chartDays || 7;
+  const isAll = (cfg.chartDays === "all" || cfg.chartDays === 0 || cfg.chartDays === "0");
+  const N    = isAll ? getAllHistoryDaysCount() : (parseInt(cfg.chartDays, 10) || 7);
   const mode = cfg.chartMode || "bar";
   const tk   = todayKey();
 
@@ -2289,8 +2303,8 @@ function _drawChart() {
 
   const maxVal = Math.max(1, ...pts.map(p => Math.max(p.sets, p.goal)));
   const PW   = wrap.offsetWidth || 320;
-  const GAP  = N > 14 ? 2 : 3;
-  const colW = Math.max(10, Math.floor((PW - GAP * (N - 1)) / N));
+  const GAP  = N > 21 ? 2 : (N > 14 ? 2 : 3);
+  const colW = Math.max(12, Math.floor((PW - GAP * (N - 1)) / N));
   const CH   = 80;   // bar height px
   const LH   = 32;   // label area above bar (number + goal)
   const DH   = 20;   // date label below bar
@@ -2308,15 +2322,17 @@ function _drawChart() {
 
   /* ── BAR ──────────────────────────────────────────────────── */
   if(mode === "bar") {
+    const totalW = colW * N + GAP * (N - 1);
     const flex = document.createElement("div");
     flex.style.cssText =
-      "display:flex;gap:"+GAP+"px;width:100%;height:"+TOT+"px;align-items:flex-end";
+      "display:flex;gap:"+GAP+"px;min-width:"+Math.max(PW, totalW)+"px;height:"+TOT+"px;align-items:flex-end";
 
     pts.forEach((p, idx) => {
       const col = document.createElement("div");
       col.style.cssText =
         "flex:0 0 "+colW+"px;display:flex;flex-direction:column;" +
-        "align-items:center;height:"+TOT+"px";
+        "align-items:center;height:"+TOT+"px;cursor:pointer";
+      col.setAttribute("title", p.d + ": " + p.sets + " sets" + (p.goal > 0 ? " (Goal: " + p.goal + ")" : ""));
 
       /* label area ------------------------------------------ */
       const la = document.createElement("div");
@@ -2334,7 +2350,7 @@ function _drawChart() {
         la.appendChild(t1);
 
         // bottom line: /goal
-        if(p.goal > 0) {
+        if(p.goal > 0 && N <= 21) {
           const t2 = document.createElement("div");
           t2.style.cssText =
             "font-size:7px;color:#93C5FD;line-height:1;text-align:center";
@@ -2357,7 +2373,7 @@ function _drawChart() {
       /* date label ------------------------------------------ */
       const dt  = new Date(p.d + "T00:00:00");
       const dl  = document.createElement("div");
-      const skip = N > 14 ? 3 : (N > 7 ? 2 : 1);
+      const skip = N > 60 ? 10 : (N > 30 ? 5 : (N > 14 ? 3 : (N > 7 ? 2 : 1)));
       dl.style.cssText =
         "font-size:"+(N>14?"7":"8")+"px;text-align:center;margin-top:4px;" +
         "height:"+(DH-4)+"px;line-height:"+(DH-4)+"px;color:"+dateCol(p)+";font-weight:600";
@@ -2367,7 +2383,16 @@ function _drawChart() {
 
       flex.appendChild(col);
     });
-    wrap.appendChild(flex);
+
+    const sc = document.createElement("div");
+    sc.style.cssText = "overflow-x:auto;width:100%;-webkit-overflow-scrolling:touch;scrollbar-width:thin";
+    sc.appendChild(flex);
+    wrap.appendChild(sc);
+    if (totalW > PW) {
+      requestAnimationFrame(() => {
+        sc.scrollLeft = sc.scrollWidth;
+      });
+    }
     return;
   }
 
@@ -2437,7 +2462,7 @@ function _drawChart() {
     }
 
     // date label
-    const skip = N > 14 ? 3 : (N > 7 ? 2 : 1);
+    const skip = N > 60 ? 10 : (N > 30 ? 5 : (N > 14 ? 3 : (N > 7 ? 2 : 1)));
     if(i % skip === 0 || p.isToday) {
       const dt = new Date(p.d + "T00:00:00");
       const dl = document.createElementNS("http://www.w3.org/2000/svg", "text");
@@ -2451,9 +2476,14 @@ function _drawChart() {
   });
 
   const sc = document.createElement("div");
-  sc.style.cssText = "overflow-x:auto;width:100%";
+  sc.style.cssText = "overflow-x:auto;width:100%;-webkit-overflow-scrolling:touch;scrollbar-width:thin";
   sc.appendChild(svg);
   wrap.appendChild(sc);
+  if (SW > PW) {
+    requestAnimationFrame(() => {
+      sc.scrollLeft = sc.scrollWidth;
+    });
+  }
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -3556,13 +3586,15 @@ if(voiceBtn) voiceBtn.addEventListener("click",()=>{
   if(!voiceMuted) { qClear(); speakMantra("ॐ"); } else { qClear(); }
 });
 
-// CHART TABS — 7d / 14d / 21d day-window switchers
+// CHART TABS — 7d / 14d / 21d / all day-window switchers
 document.querySelectorAll(".chart-tab[data-days]").forEach(btn => {
   btn.addEventListener("click", () => {
-    const days = parseInt(btn.dataset.days) || 7;
-    if (days > 7 && !data.isPremium) {
+    const rawVal = btn.dataset.days;
+    const isAll = (rawVal === "all" || rawVal === "0");
+    const days = isAll ? "all" : (parseInt(rawVal, 10) || 7);
+    if ((isAll || (typeof days === "number" && days > 7)) && !data.isPremium) {
       vib(30);
-      if (confirm("🔒 14-Day & 21-Day History Analytics are PRO Plan features (only ₹4/day!). View PRO plans?")) {
+      if (confirm("🔒 14-Day, 21-Day & All-Time History Analytics are PRO Plan features (only ₹4/day!). View PRO plans?")) {
         showPaywallOverlay();
       }
       return;
@@ -3575,12 +3607,21 @@ document.querySelectorAll(".chart-tab[data-days]").forEach(btn => {
 });
 
 function syncChartUI() {
-  const days = cfg.chartDays || 7;
+  const isAll = (cfg.chartDays === "all" || cfg.chartDays === 0 || cfg.chartDays === "0");
+  const days = isAll ? "all" : (parseInt(cfg.chartDays, 10) || 7);
   document.querySelectorAll(".chart-tab[data-days]").forEach(b => {
-    b.classList.toggle("active", parseInt(b.dataset.days) === days);
+    const bDays = b.dataset.days;
+    b.classList.toggle("active", isAll ? (bDays === "all" || bDays === "0") : (parseInt(bDays, 10) === days));
   });
   const t = document.getElementById("chart-title");
-  if(t) t.textContent = "Last "+days+" days progress";
+  if(t) {
+    if (isAll) {
+      const allCount = typeof getAllHistoryDaysCount === "function" ? getAllHistoryDaysCount() : 30;
+      t.textContent = "All Workout History (" + allCount + " days)";
+    } else {
+      t.textContent = "Last " + days + " days progress";
+    }
+  }
 }
 
 // PACE BUTTONS — Manual pace adjustment disables Auto Phase Speed for today
@@ -3681,6 +3722,10 @@ function openSettings() {
   document.getElementById("cfg-voice-info").textContent =
     hiVoice ? "Active: "+hiVoice.name+" ("+hiVoice.lang+")"
             : "No hi-IN voice — install Hindi TTS in Android Settings → Language → Text-to-speech.";
+  const cdEl = document.getElementById("cfg-chart-days");
+  if (cdEl) cdEl.value = (cfg.chartDays === "all" || cfg.chartDays === 0 || cfg.chartDays === "0") ? "all" : String(cfg.chartDays || 7);
+  const cmEl = document.getElementById("cfg-chart-mode");
+  if (cmEl) cmEl.value = cfg.chartMode || "bar";
   document.getElementById("dr").classList.add("show");
 }
 function closeSettings() {
@@ -3732,8 +3777,9 @@ function closeSettings() {
   scheduleAyurvedicDietNotifications(); // reschedule diet notifications
   scheduleWaterIntakeReminders(); // reschedule water notifications
   if (typeof updateDietPlanButtonLockUI === "function") updateDietPlanButtonLockUI();
-  cfg.chartDays = parseInt(document.getElementById("cfg-chart-days").value) || 21;
-  cfg.chartMode = document.getElementById("cfg-chart-mode").value || "bar";
+  const cdVal = document.getElementById("cfg-chart-days") ? document.getElementById("cfg-chart-days").value : "7";
+  cfg.chartDays = (cdVal === "all" || cdVal === "0") ? "all" : (parseInt(cdVal, 10) || 7);
+  cfg.chartMode = (document.getElementById("cfg-chart-mode") && document.getElementById("cfg-chart-mode").value) || "bar";
   saveAll(); render();
   document.getElementById("dr").classList.remove("show");
 }
@@ -6461,3 +6507,285 @@ async function deleteUserAccount() {
   window.location.reload();
 }
 window.deleteUserAccount = deleteUserAccount;
+
+
+/* ═══════════════════════════════════════════════════════════════
+   WORKOUT REEL MODAL & SOCIAL SHARE CONTROLLER (Google Tester Ready)
+   ═══════════════════════════════════════════════════════════════ */
+
+function showReelConfirmModal(info) {
+  showReelSocialModal(info);
+}
+window.showReelConfirmModal = showReelConfirmModal;
+
+function closeReelConfirmModal() {
+  const modal = document.getElementById("reel-confirm-modal");
+  if (modal) {
+    modal.style.display = "none";
+    modal.classList.remove("show");
+  }
+}
+window.closeReelConfirmModal = closeReelConfirmModal;
+
+function confirmOpenReelPreview() {
+  closeReelConfirmModal();
+  showReelSocialModal({
+    type: "goal_complete",
+    todaySets: typeof todayDone === "function" ? todayDone() : 12,
+    totalSets: (typeof data !== "undefined" && data.totalAllTime) ? data.totalAllTime : 108,
+    name: (typeof cfg !== "undefined" && cfg.userName) ? cfg.userName : "Vaibhav"
+  });
+}
+window.confirmOpenReelPreview = confirmOpenReelPreview;
+
+function confirmDownloadReelDirect() {
+  closeReelConfirmModal();
+  downloadReelVideo();
+}
+window.confirmDownloadReelDirect = confirmDownloadReelDirect;
+
+function showReelSocialModal(info) {
+  if (!window.generatedReelBlob) return;
+
+  const vid = document.getElementById("reel-video-preview");
+  const img = document.getElementById("reel-image-preview");
+  const isImage = window.generatedReelBlob.type.startsWith("image/");
+  const blobUrl = URL.createObjectURL(window.generatedReelBlob);
+
+  if (isImage) {
+    if (vid) { vid.style.display = "none"; try { vid.pause(); vid.src = ""; } catch(e){} }
+    if (img) { img.style.display = "block"; img.src = blobUrl; }
+  } else {
+    if (img) { img.style.display = "none"; img.src = ""; }
+    if (vid) { vid.style.display = "block"; vid.src = blobUrl; try { vid.play().catch(e=>{}); } catch(e){} }
+  }
+
+  const subLbl = document.getElementById("reel-modal-subtitle");
+  if (subLbl && info) {
+    const setsDone = info.todaySets || (typeof todayDone === "function" ? todayDone() : 12);
+    if (info.type === "streak_milestone") {
+      subLbl.textContent = `🔥 Continuous Streak Reel: ${info.streakDays || (typeof computeStreak === "function" ? computeStreak() : 14)} Days Continuous Workout Mastered!`;
+    } else if (info.type === "lifetime_milestone") {
+      subLbl.textContent = `🏆 Milestone Reel: ${info.totalSets} Total Lifetime Sets Mastered!`;
+    } else {
+      subLbl.textContent = `🎯 Goal Complete Reel: ${setsDone} Rounds Mastered Today!`;
+    }
+  }
+
+  const modal = document.getElementById("reel-social-modal");
+  if (modal) {
+    modal.style.cssText = "display:flex !important; position:fixed !important; inset:0 !important; z-index:999999 !important; background:rgba(7,11,20,0.95) !important; backdrop-filter:blur(16px) !important; align-items:center !important; justify-content:center !important;";
+    modal.classList.add("show");
+  }
+}
+window.showReelSocialModal = showReelSocialModal;
+
+function closeReelSocialModal() {
+  const modal = document.getElementById("reel-social-modal");
+  if (modal) {
+    modal.style.display = "none";
+    modal.classList.remove("show");
+  }
+  const vid = document.getElementById("reel-video-preview");
+  if (vid) { try { vid.pause(); vid.src = ""; } catch(e){} }
+  const img = document.getElementById("reel-image-preview");
+  if (img) { img.style.display = "none"; img.src = ""; }
+
+  try {
+    if (window.speechSynthesis) window.speechSynthesis.cancel();
+    if (typeof qClear === "function") qClear();
+  } catch(e){}
+}
+window.closeReelSocialModal = closeReelSocialModal;
+
+async function shareReelToSocialMedia() {
+  if (!window.generatedReelBlob) return;
+  markReelAsSavedOrShared();
+
+  const shareBtn = document.getElementById("btn-share-reel");
+  if (shareBtn) shareBtn.innerHTML = "📲 Preparing WhatsApp Share... 100% ✓";
+
+  const isImg = window.generatedReelBlob.type.startsWith("image/");
+  const ext = isImg ? "png" : (window.generatedReelBlob.type.includes("mp4") ? "mp4" : "webm");
+  const fileName = `SuryaNamaskara_Workout_Reel_${Date.now()}.${ext}`;
+  const file = new File([window.generatedReelBlob], fileName, { type: window.generatedReelBlob.type });
+
+  if (navigator.canShare && navigator.canShare({ files: [file] })) {
+    try {
+      await navigator.share({
+        files: [file],
+        title: "My Surya Namaskara Workout Reel",
+        text: "Completed my Surya Namaskara session! ☀️🧘 #SuryaNamaskara #SuryaSarathi108"
+      });
+      if (shareBtn) shareBtn.innerHTML = "📲 Share Reel to WhatsApp Status";
+      return;
+    } catch (e) {
+      if (e.name !== 'AbortError') console.error("Share failed:", e);
+    }
+  }
+
+  downloadReelVideo();
+  if (shareBtn) shareBtn.innerHTML = "📲 Share Reel to WhatsApp Status";
+}
+window.shareReelToSocialMedia = shareReelToSocialMedia;
+
+async function downloadReelVideo() {
+  if (!window.generatedReelBlob) {
+    alert("Reel video is preparing. Generating your workout reel now...");
+    handleOpenReelClick();
+    return;
+  }
+  markReelAsSavedOrShared();
+
+  const dlBtn = document.getElementById("btn-download-reel");
+  if (dlBtn) dlBtn.innerHTML = "📥 Saved MP4 to Gallery! 100% ✓";
+
+  const isImg = window.generatedReelBlob.type.startsWith("image/");
+  const ext = isImg ? "png" : "mp4";
+  const fileName = `SuryaNamaskara_Workout_Reel_${Date.now()}.${ext}`;
+
+  // Direct Browser MP4 File Download
+  try {
+    const url = URL.createObjectURL(window.generatedReelBlob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = fileName;
+    a.setAttribute("download", fileName);
+    a.target = "_blank";
+    a.rel = "noopener";
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => {
+      try { document.body.removeChild(a); } catch(e){}
+    }, 1500);
+  } catch(e) {
+    console.warn("Direct MP4 download notice:", e);
+  }
+
+  // Mobile Native Share/Save Sheet (Android & iOS Gallery)
+  const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+  if (isMobile && navigator.canShare) {
+    try {
+      const file = new File([window.generatedReelBlob], fileName, { type: isImg ? "image/png" : "video/mp4" });
+      if (navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          files: [file],
+          title: "Save Surya Namaskara Reel MP4",
+          text: "Save your Surya Namaskara Reel MP4 video to your device gallery!"
+        });
+      }
+    } catch (e){}
+  }
+
+  setTimeout(() => {
+    if (dlBtn) dlBtn.innerHTML = "📥 Save Reel MP4 to Gallery / Device";
+  }, 2500);
+}
+window.downloadReelVideo = downloadReelVideo;
+
+function markReelAsSavedOrShared() {
+  if (typeof data !== "undefined") {
+    if (!data.reels) data.reels = {};
+    const tKey = typeof todayKey === "function" ? todayKey() : new Date().toISOString().slice(0, 10);
+    if (!data.reels[tKey]) {
+      data.reels[tKey] = { date: tKey, savedOrShared: true, timestamp: Date.now() };
+    } else {
+      data.reels[tKey].savedOrShared = true;
+    }
+    if (typeof saveAll === "function") saveAll();
+  }
+}
+window.markReelAsSavedOrShared = markReelAsSavedOrShared;
+
+function cleanupOldWorkoutReels() {
+  if (typeof data === "undefined" || !data.reels) return;
+  const todayMs = new Date().setHours(0, 0, 0, 0);
+  const TWO_DAYS_MS = 2 * 24 * 60 * 60 * 1000;
+  const dateKeys = Object.keys(data.reels);
+  let purgedCount = 0;
+
+  dateKeys.forEach(dateKey => {
+    const reelItem = data.reels[dateKey];
+    if (!reelItem) return;
+    const parts = dateKey.split("-").map(Number);
+    if (parts.length === 3) {
+      const reelDateMs = new Date(parts[0], parts[1] - 1, parts[2]).getTime();
+      const ageMs = todayMs - reelDateMs;
+      if (ageMs > TWO_DAYS_MS && !reelItem.savedOrShared) {
+        delete data.reels[dateKey];
+        try { localStorage.removeItem("surya_reel_" + dateKey); } catch(e){}
+        purgedCount++;
+      }
+    }
+  });
+
+  if (purgedCount > 0 && typeof saveAll === "function") {
+    saveAll();
+    console.log(`[Reel Auto-Cleanup] Purged ${purgedCount} un-shared reel(s) older than 2 days.`);
+  }
+}
+window.cleanupOldWorkoutReels = cleanupOldWorkoutReels;
+
+function handleOpenReelClick() {
+  if (window.generatedReelBlob) {
+    showReelSocialModal({
+      type: "goal_complete",
+      todaySets: typeof todayDone === "function" ? todayDone() : 12,
+      totalSets: (typeof data !== "undefined" && data.totalAllTime) ? data.totalAllTime : 108,
+      name: (typeof cfg !== "undefined" && cfg.userName) ? cfg.userName : "Vaibhav"
+    });
+  } else if (typeof autoGenerateWorkoutReel === "function") {
+    if (typeof setStatus === "function") setStatus("Generating Workout Reel...");
+    autoGenerateWorkoutReel({
+      type: "goal_complete",
+      todaySets: typeof todayDone === "function" ? todayDone() : 12,
+      totalSets: (typeof data !== "undefined" && data.totalAllTime) ? data.totalAllTime : 108,
+      name: (typeof cfg !== "undefined" && cfg.userName) ? cfg.userName : "Vaibhav"
+    });
+  }
+}
+window.handleOpenReelClick = handleOpenReelClick;
+
+/* ═══════════════════════════════════════════════════════════════
+   ANDROID HARDWARE BACK BUTTON & MODAL ROUTER (Google Play Polish)
+   Dismisses top-most open modal/drawer upon back press instead of exiting app
+   ═══════════════════════════════════════════════════════════════ */
+
+function closeTopActiveModal() {
+  const modalClosers = [
+    { id: "alarm-sync-toast", close: () => { if (typeof dismissAlarmToast === "function") dismissAlarmToast(); } },
+    { id: "reel-social-modal", close: () => { if (typeof closeReelSocialModal === "function") closeReelSocialModal(); } },
+    { id: "reel-confirm-modal", close: () => { if (typeof closeReelConfirmModal === "function") closeReelConfirmModal(); } },
+    { id: "reel-download-modal", close: () => { const el = document.getElementById("reel-download-modal"); if (el) el.remove(); } },
+    { id: "diet-modal", close: () => { if (typeof closeDietModal === "function") closeDietModal(); } },
+    { id: "gita-modal", close: () => { if (typeof closeGitaQuoteModal === "function") closeGitaQuoteModal(); } },
+    { id: "prana-guide-modal", close: () => { if (typeof closePranaGuideModal === "function") closePranaGuideModal(); } },
+    { id: "auth-modal", close: () => { if (typeof closeAuthModal === "function") closeAuthModal(); } },
+    { id: "admin-dashboard-modal", close: () => { if (typeof closeAdminPortal === "function") closeAdminPortal(); } },
+    { id: "pwa-install-modal", close: () => { if (typeof closePwaInstallModal === "function") closePwaInstallModal(); } },
+    { id: "dr", close: () => { if (typeof closeSettings === "function") closeSettings(); } },
+    { id: "break-ov", close: () => { if (typeof continueAfterBreak === "function") continueAfterBreak(); } }
+  ];
+
+  for (const m of modalClosers) {
+    const el = document.getElementById(m.id);
+    if (el) {
+      const isVisible = el.classList.contains("show") || (el.style && el.style.display && el.style.display !== "none");
+      if (isVisible) {
+        try { m.close(); } catch(e){}
+        return true;
+      }
+    }
+  }
+  return false;
+}
+window.closeTopActiveModal = closeTopActiveModal;
+
+// Intercept Popstate (Android Back Button / Back Swipe Gesture)
+window.addEventListener("popstate", function(event) {
+  if (closeTopActiveModal()) {
+    try { history.pushState({ app: "suryasarthi" }, ""); } catch(e){}
+  }
+});
+
+try { history.pushState({ app: "suryasarthi" }, ""); } catch(e){}

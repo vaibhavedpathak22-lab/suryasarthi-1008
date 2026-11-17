@@ -1642,21 +1642,27 @@
     .chart-tabs {
       display: flex;
       gap: 6px;
-      margin: 8px 0 12px 0
+      margin: 8px 0 12px 0;
+      overflow-x: auto;
+      scrollbar-width: none;
     }
-
-    .chart-tab {
+.chart-tabs::-webkit-scrollbar {
+      display: none;
+    }
+.chart-tab {
       flex: 1;
-      padding: 7px 10px;
+      padding: 7px 6px;
       border-radius: 10px;
       background: rgba(30, 41, 59, 0.8);
       border: 1.5px solid rgba(56, 189, 248, 0.4);
       color: #94A3B8;
-      font-size: 11px;
+      font-size: 10.5px;
       font-weight: 700;
       cursor: pointer;
+      white-space: nowrap;
+      text-align: center;
       transition: all .2s ease;
-      box-shadow: 0 0 8px rgba(56, 189, 248, 0.15)
+      box-shadow: 0 0 8px rgba(56, 189, 248, 0.15);
     }
 
     .chart-tab.active {
@@ -3274,11 +3280,12 @@
       <div class="htit" style="margin-bottom:6px">
         <span id="chart-title">Last 7 days progress</span>
       </div>
-      <!-- Day window tabs: 7d / 14d / 21d -->
+      <!-- Day window tabs: 7d / 14d / 21d / All -->
       <div class="chart-tabs">
         <button class="chart-tab active" data-days="7">7 days</button>
         <button class="chart-tab" data-days="14">14 days</button>
         <button class="chart-tab" data-days="21">21 days</button>
+        <button class="chart-tab" data-days="all">All History</button>
       </div>
       <!-- Chart type tabs -->
       <div class="chart-tabs">
@@ -3892,6 +3899,12 @@
             🗑️ Delete Account &amp; Data
           </button>
         </div>
+        <div style="margin-top:10px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:space-between">
+          <a href="privacy.html" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;gap:6px;color:#38BDF8;font-size:11px;font-weight:700;text-decoration:none">
+            📜 Read Official Privacy Policy &rarr;
+          </a>
+          <span style="font-size:10px;color:#64748B">Zero Ads · Zero Tracking</span>
+        </div>
         <!-- Health & Fitness Medical Disclaimer -->
         <div style="font-size:10px;color:#64748B;line-height:1.4;margin-top:10px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.06)">
           ⚕️ <strong>Health Advisory:</strong> SuryaSarathi 108 provides yoga, breathing, and wellness routines for general physical fitness. It is not intended to replace professional medical advice, diagnosis, or treatment. Consult a physician before starting strenuous physical yoga.
@@ -3995,12 +4008,13 @@
       </div>
 
       <div class="srow divider">
-        <label>📊 Chart history days (7 / 14 / 21)</label>
+        <label>📊 Chart history days (7 / 14 / 21 / All)</label>
         <select id="cfg-chart-days"
           style="background:var(--surf2);border:1px solid var(--bdr);color:var(--txt);border-radius:8px;padding:6px 8px;font-size:13px">
           <option value="7" selected>7 days</option>
           <option value="14">14 days</option>
           <option value="21">21 days</option>
+          <option value="all">All History (Lifetime)</option>
         </select>
       </div>
       <div class="srow">
@@ -4602,6 +4616,9 @@
       </h2>
       <div style="font-size:11.5px;color:#93C5FD;font-weight:600;margin-bottom:14px">
         Vedic Health · Surya Namaskara · Privacy-First
+      </div>
+      <div style="font-size:10.5px;color:#94A3B8;text-align:center;margin-bottom:12px">
+        By continuing, you agree to our <a href="privacy.html" target="_blank" style="color:#38BDF8;text-decoration:underline">Privacy Policy &amp; Terms</a>
       </div>
 
       <!-- Privacy Banner -->
