@@ -27,6 +27,7 @@ import secrets
 import socket
 from datetime import datetime
 from urllib.parse import urlparse, parse_qs
+import re
 
 try:
     if hasattr(sys.stdout, 'reconfigure'):
@@ -169,6 +170,34 @@ def init_db():
                 user_id INTEGER NOT NULL,
                 timestamp TEXT NOT NULL,
                 payload TEXT NOT NULL,
+                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+            )
+        """)
+
+        # 8. Family Groups Table (Up to 6 members: Primary + 5 Family Members)
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS family_groups (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                family_code TEXT UNIQUE NOT NULL,
+                family_name TEXT NOT NULL,
+                primary_user_id INTEGER NOT NULL,
+                plan_sku TEXT DEFAULT 'surya.family.12month',
+                max_members INTEGER DEFAULT 6,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (primary_user_id) REFERENCES users(id) ON DELETE CASCADE
+            )
+        """)
+
+        # 9. Family Members Table
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS family_members (
+                family_id INTEGER NOT NULL,
+                user_id INTEGER NOT NULL,
+                role TEXT DEFAULT 'member',
+                relation TEXT DEFAULT 'Member',
+                joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                PRIMARY KEY (family_id, user_id),
+                FOREIGN KEY (family_id) REFERENCES family_groups(id) ON DELETE CASCADE,
                 FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
             )
         """)
@@ -451,6 +480,122 @@ class SuryasarthiRequestHandler(http.server.SimpleHTTPRequestHandler):
                 self._send_json(500, {"success": False, "error": str(e)})
             return
 
+        # 2b. API: Family Sadhana Hub & Dashboard (सूर्यसारथी परिवार साधना)
+        if path == "/api/family/dashboard":
+            if not user:
+                self._send_json(401, {"success": False, "error": "Authentication required to access family dashboard"})
+                return
+
+            with sqlite3.connect(DB_FILE) as conn:
+                conn.row_factory = sqlite3.Row
+                cursor = conn.cursor()
+
+                # Find if user belongs to any family group
+                cursor.execute("""
+                    SELECT fg.id, fg.family_code, fg.family_name, fg.primary_user_id, fg.plan_sku, fg.max_members, fg.created_at,
+                           fm.role as user_role, fm.relation as user_relation
+                    FROM family_members fm
+                    JOIN family_groups fg ON fm.family_id = fg.id
+                    WHERE fm.user_id = ?
+                """, (user["id"],))
+                fam_row = cursor.fetchone()
+
+                if not fam_row:
+                    self._send_json(200, {
+                        "success": True,
+                        "in_family": False,
+                        "message": "User does not belong to any family group"
+                    })
+                    return
+
+                family_id = fam_row["id"]
+                is_primary = (user["id"] == fam_row["primary_user_id"])
+
+                # Query all members of this family
+                cursor.execute("""
+                    SELECT u.id, u.username, u.name, u.age, u.weight, u.height,
+                           fm.role, fm.relation, fm.joined_at
+                    FROM family_members fm
+                    JOIN users u ON fm.user_id = u.id
+                    WHERE fm.family_id = ?
+                    ORDER BY CASE WHEN fm.role = 'primary' THEN 0 ELSE 1 END, fm.joined_at ASC
+                """, (family_id,))
+                member_rows = cursor.fetchall()
+
+                today_str = datetime.now().strftime("%Y-%m-%d")
+                members_list = []
+                total_family_sets_today = 0
+                total_family_cal_today = 0.0
+                total_family_sets_all = 0
+
+                for m in member_rows:
+                    m_id = m["id"]
+                    cursor.execute("""
+                        SELECT sets, time_ms, goal FROM user_workouts
+                        WHERE user_id = ? AND date = ?
+                    """, (m_id, today_str))
+                    today_w = cursor.fetchone()
+                    today_sets = today_w["sets"] if today_w else 0
+                    today_goal = today_w["goal"] if today_w else 36
+
+                    m_wt = m["weight"] or 65.0
+                    today_cal = round((today_sets * 0.1) * 8.0 * (m_wt / 60.0) * 12.0, 1) if today_sets > 0 else 0.0
+
+                    cursor.execute("""
+                        SELECT SUM(sets) as all_sets FROM user_workouts
+                        WHERE user_id = ?
+                    """, (m_id,))
+                    all_w = cursor.fetchone()
+                    all_sets = all_w["all_sets"] if (all_w and all_w["all_sets"]) else today_sets
+
+                    total_family_sets_today += today_sets
+                    total_family_cal_today += today_cal
+                    total_family_sets_all += all_sets
+
+                    members_list.append({
+                        "id": m["id"],
+                        "name": m["name"],
+                        "username": m["username"],
+                        "age": m["age"],
+                        "weight": m["weight"],
+                        "height": m["height"],
+                        "role": m["role"],
+                        "relation": m["relation"],
+                        "joined_at": m["joined_at"],
+                        "is_primary": (m["role"] == "primary"),
+                        "today_sets": today_sets,
+                        "today_goal": today_goal,
+                        "today_calories": today_cal,
+                        "all_time_sets": all_sets,
+                        "active_today": (today_sets > 0)
+                    })
+
+                self._send_json(200, {
+                    "success": True,
+                    "in_family": True,
+                    "is_primary": is_primary,
+                    "family": {
+                        "id": fam_row["id"],
+                        "family_name": fam_row["family_name"],
+                        "family_code": fam_row["family_code"],
+                        "primary_user_id": fam_row["primary_user_id"],
+                        "plan_sku": fam_row["plan_sku"],
+                        "max_members": fam_row["max_members"],
+                        "members_count": len(members_list),
+                        "created_at": fam_row["created_at"]
+                    },
+                    "totals": {
+                        "family_sets_today": total_family_sets_today,
+                        "family_calories_today": round(total_family_cal_today, 1),
+                        "family_sets_all_time": total_family_sets_all,
+                        "active_members_today": sum(1 for m in members_list if m["active_today"]),
+                        "total_members": len(members_list),
+                        "slots_remaining": max(0, fam_row["max_members"] - len(members_list))
+                    },
+                    "members": members_list
+                })
+            return
+
         # 3. API: Admin — View All Users List & Stats (Admin Only!)
         if path == "/api/admin/users":
             if not user or user.get("role") != "admin":
@@ -488,6 +633,122 @@ class SuryasarthiRequestHandler(http.server.SimpleHTTPRequestHandler):
                 self._send_json(200, {"success": True, "user_id": target_user_id, **target_payload})
             except Exception as e:
                 self._send_json(500, {"success": False, "error": str(e)})
+            return
+
+        # 2b. API: Family Sadhana Hub & Dashboard (सूर्यसारथी परिवार साधना)
+        if path == "/api/family/dashboard":
+            if not user:
+                self._send_json(401, {"success": False, "error": "Authentication required to access family dashboard"})
+                return
+
+            with sqlite3.connect(DB_FILE) as conn:
+                conn.row_factory = sqlite3.Row
+                cursor = conn.cursor()
+
+                # Find if user belongs to any family group
+                cursor.execute("""
+                    SELECT fg.id, fg.family_code, fg.family_name, fg.primary_user_id, fg.plan_sku, fg.max_members, fg.created_at,
+                           fm.role as user_role, fm.relation as user_relation
+                    FROM family_members fm
+                    JOIN family_groups fg ON fm.family_id = fg.id
+                    WHERE fm.user_id = ?
+                """, (user["id"],))
+                fam_row = cursor.fetchone()
+
+                if not fam_row:
+                    self._send_json(200, {
+                        "success": True,
+                        "in_family": False,
+                        "message": "User does not belong to any family group"
+                    })
+                    return
+
+                family_id = fam_row["id"]
+                is_primary = (user["id"] == fam_row["primary_user_id"])
+
+                # Query all members of this family
+                cursor.execute("""
+                    SELECT u.id, u.username, u.name, u.age, u.weight, u.height,
+                           fm.role, fm.relation, fm.joined_at
+                    FROM family_members fm
+                    JOIN users u ON fm.user_id = u.id
+                    WHERE fm.family_id = ?
+                    ORDER BY CASE WHEN fm.role = 'primary' THEN 0 ELSE 1 END, fm.joined_at ASC
+                """, (family_id,))
+                member_rows = cursor.fetchall()
+
+                today_str = datetime.now().strftime("%Y-%m-%d")
+                members_list = []
+                total_family_sets_today = 0
+                total_family_cal_today = 0.0
+                total_family_sets_all = 0
+
+                for m in member_rows:
+                    m_id = m["id"]
+                    cursor.execute("""
+                        SELECT sets, time_ms, goal FROM user_workouts
+                        WHERE user_id = ? AND date = ?
+                    """, (m_id, today_str))
+                    today_w = cursor.fetchone()
+                    today_sets = today_w["sets"] if today_w else 0
+                    today_goal = today_w["goal"] if today_w else 36
+
+                    m_wt = m["weight"] or 65.0
+                    today_cal = round((today_sets * 0.1) * 8.0 * (m_wt / 60.0) * 12.0, 1) if today_sets > 0 else 0.0
+
+                    cursor.execute("""
+                        SELECT SUM(sets) as all_sets FROM user_workouts
+                        WHERE user_id = ?
+                    """, (m_id,))
+                    all_w = cursor.fetchone()
+                    all_sets = all_w["all_sets"] if (all_w and all_w["all_sets"]) else today_sets
+
+                    total_family_sets_today += today_sets
+                    total_family_cal_today += today_cal
+                    total_family_sets_all += all_sets
+
+                    members_list.append({
+                        "id": m["id"],
+                        "name": m["name"],
+                        "username": m["username"],
+                        "age": m["age"],
+                        "weight": m["weight"],
+                        "height": m["height"],
+                        "role": m["role"],
+                        "relation": m["relation"],
+                        "joined_at": m["joined_at"],
+                        "is_primary": (m["role"] == "primary"),
+                        "today_sets": today_sets,
+                        "today_goal": today_goal,
+                        "today_calories": today_cal,
+                        "all_time_sets": all_sets,
+                        "active_today": (today_sets > 0)
+                    })
+
+                self._send_json(200, {
+                    "success": True,
+                    "in_family": True,
+                    "is_primary": is_primary,
+                    "family": {
+                        "id": fam_row["id"],
+                        "family_name": fam_row["family_name"],
+                        "family_code": fam_row["family_code"],
+                        "primary_user_id": fam_row["primary_user_id"],
+                        "plan_sku": fam_row["plan_sku"],
+                        "max_members": fam_row["max_members"],
+                        "members_count": len(members_list),
+                        "created_at": fam_row["created_at"]
+                    },
+                    "totals": {
+                        "family_sets_today": total_family_sets_today,
+                        "family_calories_today": round(total_family_cal_today, 1),
+                        "family_sets_all_time": total_family_sets_all,
+                        "active_members_today": sum(1 for m in members_list if m["active_today"]),
+                        "total_members": len(members_list),
+                        "slots_remaining": max(0, fam_row["max_members"] - len(members_list))
+                    },
+                    "members": members_list
+                })
             return
 
         # 5. API: Admin — System-wide Stats
@@ -627,6 +888,122 @@ class SuryasarthiRequestHandler(http.server.SimpleHTTPRequestHandler):
                 self._send_json(500, {"success": False, "error": str(e)})
             return
 
+        # 2b. API: Family Sadhana Hub & Dashboard (सूर्यसारथी परिवार साधना)
+        if path == "/api/family/dashboard":
+            if not user:
+                self._send_json(401, {"success": False, "error": "Authentication required to access family dashboard"})
+                return
+
+            with sqlite3.connect(DB_FILE) as conn:
+                conn.row_factory = sqlite3.Row
+                cursor = conn.cursor()
+
+                # Find if user belongs to any family group
+                cursor.execute("""
+                    SELECT fg.id, fg.family_code, fg.family_name, fg.primary_user_id, fg.plan_sku, fg.max_members, fg.created_at,
+                           fm.role as user_role, fm.relation as user_relation
+                    FROM family_members fm
+                    JOIN family_groups fg ON fm.family_id = fg.id
+                    WHERE fm.user_id = ?
+                """, (user["id"],))
+                fam_row = cursor.fetchone()
+
+                if not fam_row:
+                    self._send_json(200, {
+                        "success": True,
+                        "in_family": False,
+                        "message": "User does not belong to any family group"
+                    })
+                    return
+
+                family_id = fam_row["id"]
+                is_primary = (user["id"] == fam_row["primary_user_id"])
+
+                # Query all members of this family
+                cursor.execute("""
+                    SELECT u.id, u.username, u.name, u.age, u.weight, u.height,
+                           fm.role, fm.relation, fm.joined_at
+                    FROM family_members fm
+                    JOIN users u ON fm.user_id = u.id
+                    WHERE fm.family_id = ?
+                    ORDER BY CASE WHEN fm.role = 'primary' THEN 0 ELSE 1 END, fm.joined_at ASC
+                """, (family_id,))
+                member_rows = cursor.fetchall()
+
+                today_str = datetime.now().strftime("%Y-%m-%d")
+                members_list = []
+                total_family_sets_today = 0
+                total_family_cal_today = 0.0
+                total_family_sets_all = 0
+
+                for m in member_rows:
+                    m_id = m["id"]
+                    cursor.execute("""
+                        SELECT sets, time_ms, goal FROM user_workouts
+                        WHERE user_id = ? AND date = ?
+                    """, (m_id, today_str))
+                    today_w = cursor.fetchone()
+                    today_sets = today_w["sets"] if today_w else 0
+                    today_goal = today_w["goal"] if today_w else 36
+
+                    m_wt = m["weight"] or 65.0
+                    today_cal = round((today_sets * 0.1) * 8.0 * (m_wt / 60.0) * 12.0, 1) if today_sets > 0 else 0.0
+
+                    cursor.execute("""
+                        SELECT SUM(sets) as all_sets FROM user_workouts
+                        WHERE user_id = ?
+                    """, (m_id,))
+                    all_w = cursor.fetchone()
+                    all_sets = all_w["all_sets"] if (all_w and all_w["all_sets"]) else today_sets
+
+                    total_family_sets_today += today_sets
+                    total_family_cal_today += today_cal
+                    total_family_sets_all += all_sets
+
+                    members_list.append({
+                        "id": m["id"],
+                        "name": m["name"],
+                        "username": m["username"],
+                        "age": m["age"],
+                        "weight": m["weight"],
+                        "height": m["height"],
+                        "role": m["role"],
+                        "relation": m["relation"],
+                        "joined_at": m["joined_at"],
+                        "is_primary": (m["role"] == "primary"),
+                        "today_sets": today_sets,
+                        "today_goal": today_goal,
+                        "today_calories": today_cal,
+                        "all_time_sets": all_sets,
+                        "active_today": (today_sets > 0)
+                    })
+
+                self._send_json(200, {
+                    "success": True,
+                    "in_family": True,
+                    "is_primary": is_primary,
+                    "family": {
+                        "id": fam_row["id"],
+                        "family_name": fam_row["family_name"],
+                        "family_code": fam_row["family_code"],
+                        "primary_user_id": fam_row["primary_user_id"],
+                        "plan_sku": fam_row["plan_sku"],
+                        "max_members": fam_row["max_members"],
+                        "members_count": len(members_list),
+                        "created_at": fam_row["created_at"]
+                    },
+                    "totals": {
+                        "family_sets_today": total_family_sets_today,
+                        "family_calories_today": round(total_family_cal_today, 1),
+                        "family_sets_all_time": total_family_sets_all,
+                        "active_members_today": sum(1 for m in members_list if m["active_today"]),
+                        "total_members": len(members_list),
+                        "slots_remaining": max(0, fam_row["max_members"] - len(members_list))
+                    },
+                    "members": members_list
+                })
+            return
+
         # 2. API: User Login
         if path == "/api/auth/login":
             username = str(payload.get("username", "")).strip().lower()
@@ -719,6 +1096,326 @@ class SuryasarthiRequestHandler(http.server.SimpleHTTPRequestHandler):
                 })
             except Exception as e:
                 self._send_json(500, {"success": False, "error": str(e)})
+            return
+
+        # 5. API: Create Family Group (Primary Account Holder)
+        if path == "/api/family/create":
+            token = self._get_auth_token()
+            user = get_user_by_token(token)
+            if not user:
+                self._send_json(401, {"success": False, "error": "Authentication required"})
+                return
+
+            family_name = str(payload.get("family_name", "")).strip() or f"{user['name']}'s Parivar"
+            plan_sku = str(payload.get("plan_sku", "surya.family.12month")).strip()
+
+            with sqlite3.connect(DB_FILE) as conn:
+                conn.row_factory = sqlite3.Row
+                cursor = conn.cursor()
+                cursor.execute("PRAGMA foreign_keys = ON;")
+
+                cursor.execute("SELECT id, family_code FROM family_groups WHERE primary_user_id = ?", (user["id"],))
+                existing = cursor.fetchone()
+                if existing:
+                    self._send_json(200, {
+                        "success": True,
+                        "message": "Existing family group retrieved",
+                        "family_id": existing["id"],
+                        "family_code": existing["family_code"]
+                    })
+                    return
+
+                chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
+                fam_code = "SURYA-" + "".join(secrets.choice(chars) for _ in range(4))
+
+                cursor.execute("""
+                    INSERT INTO family_groups (family_code, family_name, primary_user_id, plan_sku, max_members)
+                    VALUES (?, ?, ?, ?, 6)
+                """, (fam_code, family_name, user["id"], plan_sku))
+                family_id = cursor.lastrowid
+
+                cursor.execute("""
+                    INSERT INTO family_members (family_id, user_id, role, relation)
+                    VALUES (?, ?, 'primary', 'Primary Account Holder')
+                """, (family_id, user["id"]))
+                conn.commit()
+
+            self._send_json(200, {
+                "success": True,
+                "message": "Family group created successfully",
+                "family_id": family_id,
+                "family_code": fam_code,
+                "max_members": 6
+            })
+            return
+
+        # 6. API: Join Family via Code
+        if path == "/api/family/join":
+            token = self._get_auth_token()
+            user = get_user_by_token(token)
+            if not user:
+                self._send_json(401, {"success": False, "error": "Authentication required"})
+                return
+
+            code = str(payload.get("family_code", "")).strip().upper()
+            relation = str(payload.get("relation", "Member")).strip()
+
+            if not code:
+                self._send_json(400, {"success": False, "error": "Family code is required"})
+                return
+
+            with sqlite3.connect(DB_FILE) as conn:
+                conn.row_factory = sqlite3.Row
+                cursor = conn.cursor()
+                cursor.execute("PRAGMA foreign_keys = ON;")
+
+                cursor.execute("SELECT id, max_members, family_name FROM family_groups WHERE family_code = ?", (code,))
+                fg = cursor.fetchone()
+                if not fg:
+                    self._send_json(404, {"success": False, "error": "Invalid Family Code. Please check and try again."})
+                    return
+
+                family_id = fg["id"]
+                max_members = fg["max_members"]
+
+                cursor.execute("SELECT COUNT(*) as cnt FROM family_members WHERE family_id = ?", (family_id,))
+                cnt = cursor.fetchone()["cnt"]
+                if cnt >= max_members:
+                    self._send_json(400, {"success": False, "error": f"Family group is full (Maximum {max_members} members reached)."})
+                    return
+
+                cursor.execute("SELECT 1 FROM family_members WHERE family_id = ? AND user_id = ?", (family_id, user["id"]))
+                if cursor.fetchone():
+                    self._send_json(200, {"success": True, "message": "You are already a member of this family group."})
+                    return
+
+                cursor.execute("""
+                    INSERT INTO family_members (family_id, user_id, role, relation)
+                    VALUES (?, ?, 'member', ?)
+                """, (family_id, user["id"], relation))
+                conn.commit()
+
+            self._send_json(200, {
+                "success": True,
+                "message": f"Successfully joined {fg['family_name']}!",
+                "family_id": family_id
+            })
+            return
+
+        # 7. API: Add Member by Mobile Number / Name / Username
+        if path == "/api/family/add-member":
+            token = self._get_auth_token()
+            user = get_user_by_token(token)
+            if not user:
+                self._send_json(401, {"success": False, "error": "Authentication required"})
+                return
+
+            member_name = str(payload.get("name", "")).strip()
+            member_phone = str(payload.get("phone", "")).strip()
+            target_uname = str(payload.get("username", "")).strip().lower()
+            relation = str(payload.get("relation", "Family Member")).strip()
+
+            if not member_name and not target_uname:
+                self._send_json(400, {"success": False, "error": "Member Name or Username is required"})
+                return
+
+            clean_phone = re.sub(r"\D", "", member_phone)[-10:]
+            if not target_uname:
+                target_uname = f"fam_{clean_phone}" if clean_phone else ("user_" + secrets.token_hex(4))
+
+            with sqlite3.connect(DB_FILE) as conn:
+                conn.row_factory = sqlite3.Row
+                cursor = conn.cursor()
+                cursor.execute("PRAGMA foreign_keys = ON;")
+
+                cursor.execute("SELECT id, max_members, family_name, family_code FROM family_groups WHERE primary_user_id = ?", (user["id"],))
+                fg = cursor.fetchone()
+                if not fg:
+                    self._send_json(403, {"success": False, "error": "Only the Primary Account Holder can add members"})
+                    return
+
+                family_id = fg["id"]
+
+                cursor.execute("SELECT COUNT(*) as cnt FROM family_members WHERE family_id = ?", (family_id,))
+                cnt = cursor.fetchone()["cnt"]
+                if cnt >= fg["max_members"]:
+                    self._send_json(400, {"success": False, "error": f"Family plan limit reached ({fg['max_members']} members maximum)."})
+                    return
+
+                # Find or auto-provision member account
+                cursor.execute("SELECT id, name FROM users WHERE username = ?", (target_uname,))
+                target_user = cursor.fetchone()
+                if not target_user:
+                    temp_pwd_hash = hash_password("SuryaPass@" + secrets.token_hex(4))
+                    display_name = member_name or target_uname.capitalize()
+                    cursor.execute("""
+                        INSERT INTO users (username, password_hash, name, role, age, weight, height)
+                        VALUES (?, ?, ?, 'user', 25, 60.0, 165.0)
+                    """, (target_uname, temp_pwd_hash, display_name))
+                    new_uid = cursor.lastrowid
+                    target_user = {"id": new_uid, "name": display_name}
+
+                # Check if already in family
+                cursor.execute("SELECT 1 FROM family_members WHERE family_id = ? AND user_id = ?", (family_id, target_user["id"]))
+                if cursor.fetchone():
+                    self._send_json(400, {"success": False, "error": f"'{target_user['name']}' is already in your family group."})
+                    return
+
+                cursor.execute("""
+                    INSERT INTO family_members (family_id, user_id, role, relation)
+                    VALUES (?, ?, 'member', ?)
+                """, (family_id, target_user["id"], relation))
+                conn.commit()
+
+            # Formulate text invitation message
+            app_url = "https://play.google.com/store/apps/details?id=com.suryasarthi.app"
+            invite_text = (
+                f"☀️ सूर्यसारथी १०८ — परिवार साधना आमंत्रण ☀️\n"
+                f"नमस्ते {target_user['name']}!\n"
+                f"{user['name']} यांनी तुम्हाला '{fg['family_name']}' मध्ये जोडले आहे.\n\n"
+                f"🔑 फॅमिली कोड (Family Code): {fg['family_code']}\n"
+                f"📲 ॲप इन्स्टॉल लिंक: {app_url}\n\n"
+                f"👉 ॲक्टिव्हेट कसे करावे:\n"
+                f"१. ॲप इन्स्टॉल करून उघडा.\n"
+                f"२. फॅमिली कोड '{fg['family_code']}' टाका.\n"
+                f"३. आपला मोफत PRO प्लॅन सक्रिय होईल!\n\n"
+                f"🔒 हा स्लॉट आपल्यासाठी कायमस्वरूपी सुरक्षित (Locked) आहे."
+            )
+
+            self._send_json(200, {
+                "success": True,
+                "message": f"{target_user['name']} यांना फॅमिली पासमध्ये जोडले आणि स्लॉट कायमस्वरूपी लॉक झाला!",
+                "member_id": target_user["id"],
+                "member_name": target_user["name"],
+                "family_code": fg["family_code"],
+                "phone": clean_phone,
+                "invite_text": invite_text,
+                "invite_message": invite_text
+            })
+            return
+
+        # 8. API: Remove Member (Strictly Blocked by Permanent Slot Policy)
+        if path == "/api/family/remove-member":
+            self._send_json(403, {
+                "success": False,
+                "error": "नियम व अटी (Family Policy): एकदा जोडलेला सदस्य स्लॉट सबस्क्रिप्शन संपेपर्यंत कायमस्वरूपी लॉक असतो. सदस्य काढता किंवा बदलता येणार नाही (Member slots are permanently locked and cannot be removed or swapped)."
+            })
+            return
+
+        # 2b. API: Family Sadhana Hub & Dashboard (सूर्यसारथी परिवार साधना)
+        if path == "/api/family/dashboard":
+            if not user:
+                self._send_json(401, {"success": False, "error": "Authentication required to access family dashboard"})
+                return
+
+            with sqlite3.connect(DB_FILE) as conn:
+                conn.row_factory = sqlite3.Row
+                cursor = conn.cursor()
+
+                # Find if user belongs to any family group
+                cursor.execute("""
+                    SELECT fg.id, fg.family_code, fg.family_name, fg.primary_user_id, fg.plan_sku, fg.max_members, fg.created_at,
+                           fm.role as user_role, fm.relation as user_relation
+                    FROM family_members fm
+                    JOIN family_groups fg ON fm.family_id = fg.id
+                    WHERE fm.user_id = ?
+                """, (user["id"],))
+                fam_row = cursor.fetchone()
+
+                if not fam_row:
+                    self._send_json(200, {
+                        "success": True,
+                        "in_family": False,
+                        "message": "User does not belong to any family group"
+                    })
+                    return
+
+                family_id = fam_row["id"]
+                is_primary = (user["id"] == fam_row["primary_user_id"])
+
+                # Query all members of this family
+                cursor.execute("""
+                    SELECT u.id, u.username, u.name, u.age, u.weight, u.height,
+                           fm.role, fm.relation, fm.joined_at
+                    FROM family_members fm
+                    JOIN users u ON fm.user_id = u.id
+                    WHERE fm.family_id = ?
+                    ORDER BY CASE WHEN fm.role = 'primary' THEN 0 ELSE 1 END, fm.joined_at ASC
+                """, (family_id,))
+                member_rows = cursor.fetchall()
+
+                today_str = datetime.now().strftime("%Y-%m-%d")
+                members_list = []
+                total_family_sets_today = 0
+                total_family_cal_today = 0.0
+                total_family_sets_all = 0
+
+                for m in member_rows:
+                    m_id = m["id"]
+                    cursor.execute("""
+                        SELECT sets, time_ms, goal FROM user_workouts
+                        WHERE user_id = ? AND date = ?
+                    """, (m_id, today_str))
+                    today_w = cursor.fetchone()
+                    today_sets = today_w["sets"] if today_w else 0
+                    today_goal = today_w["goal"] if today_w else 36
+
+                    m_wt = m["weight"] or 65.0
+                    today_cal = round((today_sets * 0.1) * 8.0 * (m_wt / 60.0) * 12.0, 1) if today_sets > 0 else 0.0
+
+                    cursor.execute("""
+                        SELECT SUM(sets) as all_sets FROM user_workouts
+                        WHERE user_id = ?
+                    """, (m_id,))
+                    all_w = cursor.fetchone()
+                    all_sets = all_w["all_sets"] if (all_w and all_w["all_sets"]) else today_sets
+
+                    total_family_sets_today += today_sets
+                    total_family_cal_today += today_cal
+                    total_family_sets_all += all_sets
+
+                    members_list.append({
+                        "id": m["id"],
+                        "name": m["name"],
+                        "username": m["username"],
+                        "age": m["age"],
+                        "weight": m["weight"],
+                        "height": m["height"],
+                        "role": m["role"],
+                        "relation": m["relation"],
+                        "joined_at": m["joined_at"],
+                        "is_primary": (m["role"] == "primary"),
+                        "today_sets": today_sets,
+                        "today_goal": today_goal,
+                        "today_calories": today_cal,
+                        "all_time_sets": all_sets,
+                        "active_today": (today_sets > 0)
+                    })
+
+                self._send_json(200, {
+                    "success": True,
+                    "in_family": True,
+                    "is_primary": is_primary,
+                    "family": {
+                        "id": fam_row["id"],
+                        "family_name": fam_row["family_name"],
+                        "family_code": fam_row["family_code"],
+                        "primary_user_id": fam_row["primary_user_id"],
+                        "plan_sku": fam_row["plan_sku"],
+                        "max_members": fam_row["max_members"],
+                        "members_count": len(members_list),
+                        "created_at": fam_row["created_at"]
+                    },
+                    "totals": {
+                        "family_sets_today": total_family_sets_today,
+                        "family_calories_today": round(total_family_cal_today, 1),
+                        "family_sets_all_time": total_family_sets_all,
+                        "active_members_today": sum(1 for m in members_list if m["active_today"]),
+                        "total_members": len(members_list),
+                        "slots_remaining": max(0, fam_row["max_members"] - len(members_list))
+                    },
+                    "members": members_list
+                })
             return
 
         self._send_json(404, {"success": False, "error": "Endpoint not found"})

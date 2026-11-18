@@ -3548,10 +3548,22 @@
           Offline PWA &amp; Zero Ads Forever</div>
       </div>
 
-      <!-- Subscription Tier Cards (Calculated based on ₹99 / Month Starter Rate!) -->
-      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px">
+      <!-- Plan Type Tab Switcher: Individual vs Family Pass -->
+      <div style="display:flex;background:var(--surf2);border:1.5px solid var(--bdr);border-radius:12px;padding:3px;margin-bottom:14px;gap:4px">
+        <button type="button" id="tab-btn-indiv" onclick="switchPaywallTab('indiv')"
+          style="flex:1;padding:8px 4px;font-size:12px;font-weight:800;border-radius:9px;border:none;cursor:pointer;background:linear-gradient(135deg,#1DB87F,#059669);color:#FFF;transition:all .2s ease">
+          👤 व्यक्तिगत (Individual)
+        </button>
+        <button type="button" id="tab-btn-family" onclick="switchPaywallTab('family')"
+          style="flex:1;padding:8px 4px;font-size:12px;font-weight:800;border-radius:9px;border:none;cursor:pointer;background:transparent;color:var(--txt2);transition:all .2s ease">
+          👨‍👩‍👧‍👦 परिवार साधना (Family Pass)
+        </button>
+      </div>
 
-        <!-- 1 Month Pass (₹99 — ₹3.3/day) -->
+      <!-- Individual Subscription Tier Cards -->
+      <div id="pricing-group-indiv" style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px">
+
+        <!-- 1 Month Pass (₹129 — ₹4.30/day) -->
         <div class="sub-card" id="sub-card-1month" onclick="selectSubTier('surya.pass.1month')"
           style="background:var(--surf);border:1.5px solid var(--bdr);border-radius:14px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;position:relative">
           <div>
@@ -3559,12 +3571,12 @@
             <div style="font-size:11px;color:#38BDF8">30 Days · Starter Rate</div>
           </div>
           <div style="text-align:right">
-            <div style="font-size:18px;font-weight:900;color:#38BDF8">₹99</div>
-            <div style="font-size:10px;color:var(--muted)">₹3.30 / day</div>
+            <div style="font-size:18px;font-weight:900;color:#38BDF8">₹129</div>
+            <div style="font-size:10px;color:var(--muted)">₹4.30 / day</div>
           </div>
         </div>
 
-        <!-- 3 Month Plan (₹269 — Save 10%) -->
+        <!-- 3 Month Plan (₹349 — Save 10%) -->
         <div class="sub-card" id="sub-card-3month" onclick="selectSubTier('surya.sub.3month')"
           style="background:var(--surf);border:1.5px solid var(--bdr);border-radius:14px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;position:relative">
           <div
@@ -3572,43 +3584,90 @@
             🔥 SAVE 10%</div>
           <div>
             <div style="font-size:14px;font-weight:800;color:var(--txt)">3-Month Plan</div>
-            <div style="font-size:11px;color:#34D399">90 Days · ₹2.98 / day</div>
+            <div style="font-size:11px;color:#34D399">90 Days · ₹3.87 / day</div>
           </div>
           <div style="text-align:right">
-            <div style="font-size:18px;font-weight:900;color:#34D399">₹269</div>
-            <div style="font-size:10px;color:var(--muted)">₹89.6 / mo</div>
+            <div style="font-size:18px;font-weight:900;color:#34D399">₹349</div>
+            <div style="font-size:10px;color:var(--muted)">₹116.3 / mo</div>
           </div>
         </div>
 
-        <!-- 6 Month Plan (₹479 — Save 20%) -->
+        <!-- 6 Month Plan (₹599 — Save 23%) -->
         <div class="sub-card" id="sub-card-6month" onclick="selectSubTier('surya.sub.6month')"
           style="background:var(--surf);border:1.5px solid var(--bdr);border-radius:14px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;position:relative">
           <div
             style="position:absolute;top:-9px;right:14px;background:linear-gradient(135deg,#A855F7,#7E22CE);color:#FFF;font-size:9px;font-weight:900;padding:2px 8px;border-radius:10px;text-transform:uppercase">
-            ⚡ SAVE 20%</div>
+            ⚡ SAVE 23%</div>
           <div>
             <div style="font-size:14px;font-weight:800;color:var(--txt)">6-Month Plan</div>
-            <div style="font-size:11px;color:#C084FC">180 Days · ₹2.66 / day</div>
+            <div style="font-size:11px;color:#C084FC">180 Days · ₹3.32 / day</div>
           </div>
           <div style="text-align:right">
-            <div style="font-size:18px;font-weight:900;color:#C084FC">₹479</div>
-            <div style="font-size:10px;color:var(--muted)">₹79.8 / mo</div>
+            <div style="font-size:18px;font-weight:900;color:#C084FC">₹599</div>
+            <div style="font-size:10px;color:var(--muted)">₹99.8 / mo</div>
           </div>
         </div>
 
-        <!-- 12 Month Annual Pass (₹749 — Save 37% — BEST VALUE) -->
+        <!-- 12 Month Annual Pass (₹999 — Save 35% — BEST VALUE) -->
         <div class="sub-card active" id="sub-card-12month" onclick="selectSubTier('surya.sub.12month')"
           style="background:rgba(245,158,11,0.12);border:2.5px solid #FBBF24;border-radius:14px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;position:relative;box-shadow:0 0 14px rgba(245,158,11,0.4)">
           <div
             style="position:absolute;top:-10px;right:14px;background:linear-gradient(135deg,#F59E0B,#D97706);color:#1E1000;font-size:9.5px;font-weight:900;padding:2px 9px;border-radius:10px;text-transform:uppercase">
-            🌟 SAVE 37% · BEST VALUE (ONLY ₹2.05/DAY)</div>
+            🌟 SAVE 35% · BEST VALUE (ONLY ₹2.73/DAY)</div>
           <div>
             <div style="font-size:14px;font-weight:900;color:#FBBF24">12-Month Annual Pass</div>
-            <div style="font-size:11px;color:#FBBF24;font-weight:700">365 Days · Only ₹2.05 / day</div>
+            <div style="font-size:11px;color:#FBBF24;font-weight:700">365 Days · Only ₹2.73 / day</div>
           </div>
           <div style="text-align:right">
-            <div style="font-size:20px;font-weight:900;color:#FBBF24">₹749</div>
-            <div style="font-size:10px;color:#FBBF24;font-weight:700">₹62.4 / mo</div>
+            <div style="font-size:20px;font-weight:900;color:#FBBF24">₹999</div>
+            <div style="font-size:10px;color:#FBBF24;font-weight:700">₹83.2 / mo</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Family Pass Subscription Tier Cards (Up to 6 Members) -->
+      <div id="pricing-group-family" style="display:none;flex-direction:column;gap:10px;margin-bottom:16px">
+
+        <!-- Family Pass Policy & Guidelines Notice -->
+        <div style="background:rgba(245,158,11,0.12);border:1.5px dashed #F59E0B;border-radius:14px;padding:12px 14px;font-size:11.5px;color:var(--txt);line-height:1.45">
+          <div style="font-size:13px;font-weight:900;color:#FBBF24;margin-bottom:6px">👨‍👩‍👧‍👦 सूर्यसारथी परिवार साधना — नियम व अटी (Family Pass Guidelines)</div>
+          <div style="display:flex;flex-direction:column;gap:5px;font-size:11px;color:var(--txt2)">
+            <div>✓ <strong>६ सदस्य मर्यादा (Up to 6 Accounts):</strong> १ मुख्य खाते (Primary Holder) + ५ कुटुंब सदस्य. प्रत्येकाचे स्वतःचे स्वतंत्र खाते, वैयक्तिक वजन/उंची आणि स्वतःची दैनिक गीता रील.</div>
+            <div>🔒 <strong>कायमस्वरूपी स्लॉट लॉक (Strict Permanent Lock):</strong> एकदा सदस्य जोडल्यानंतर तो स्लॉट सबस्क्रिप्शन संपेपर्यंत <strong>कायमस्वरूपी लॉक</strong> होतो. नंतर सदस्य बदलता किंवा काढता येत नाही (No swapping or rotation).</div>
+            <div>📱 <strong>डिव्हाइस बदल १००% सुरक्षित (Device Switch Safe):</strong> मुख्य सदस्याने मोबाइल बदलल्यास इतर सदस्यांच्या खात्यावर कोणताही परिणाम होत नाही. नवीन फोनवर लॉगिन करताच संपूर्ण फॅमिली पास अखंड सुरू राहतो.</div>
+          </div>
+        </div>
+
+        <!-- 6 Month Family Pass (₹999 — Up to 6 Members) -->
+        <div class="sub-card" id="sub-card-fam-6month" onclick="selectSubTier('surya.family.6month')"
+          style="background:var(--surf);border:1.5px solid var(--bdr);border-radius:14px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;position:relative">
+          <div
+            style="position:absolute;top:-9px;right:14px;background:linear-gradient(135deg,#06B6D4,#0284C7);color:#FFF;font-size:9px;font-weight:900;padding:2px 8px;border-radius:10px;text-transform:uppercase">
+            👨‍👩‍👧‍👦 UP TO 6 MEMBERS</div>
+          <div>
+            <div style="font-size:14px;font-weight:800;color:var(--txt)">6-Month Family Pass</div>
+            <div style="font-size:11px;color:#38BDF8">180 Days · 6 Accounts · ₹166/member</div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-size:18px;font-weight:900;color:#38BDF8">₹999</div>
+            <div style="font-size:10px;color:var(--muted)">₹166.5 / mo total</div>
+          </div>
+        </div>
+
+        <!-- 12 Month Annual Family Pass (₹1,499 — Save 60% — BEST FAMILY VALUE) -->
+        <div class="sub-card" id="sub-card-fam-12month" onclick="selectSubTier('surya.family.12month')"
+          style="background:var(--surf);border:1.5px solid var(--bdr);border-radius:14px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;position:relative">
+          <div
+            style="position:absolute;top:-10px;right:14px;background:linear-gradient(135deg,#F59E0B,#D97706);color:#1E1000;font-size:9.5px;font-weight:900;padding:2px 9px;border-radius:10px;text-transform:uppercase">
+            🌟 SAVE 60% · BEST VALUE (ONLY ₹25/MO PER MEMBER)</div>
+          <div>
+            <div style="font-size:14px;font-weight:900;color:#FBBF24">12-Month Annual Family Pass</div>
+            <div style="font-size:11px;color:#FBBF24;font-weight:700">365 Days · 6 Accounts · ₹250/yr/member</div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-size:20px;font-weight:900;color:#FBBF24">₹1,499</div>
+            <div style="font-size:10px;color:#FBBF24;font-weight:700">₹124.9 / mo total</div>
           </div>
         </div>
 
@@ -3668,6 +3727,12 @@
       <button id="pwa-install-btn" onclick="installPwa()"
         style="width:100%;margin:4px 0 6px 0;background:linear-gradient(135deg,#F59E0B 0%,#D97706 100%);color:#070B14;font-size:13px;font-weight:900;padding:10px 14px;border:none;border-radius:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 16px rgba(245,158,11,0.35);">
         📲 Install Surya Sarthi App (Offline Ready)
+      </button>
+
+      <!-- Family Pass Dashboard Button -->
+      <button id="family-drawer-btn" onclick="openFamilyDashboard()"
+        style="width:100%;margin:4px 0 8px 0;background:linear-gradient(135deg,rgba(245,158,11,0.18),rgba(29,184,127,0.18));border:1.5px solid var(--acc);color:var(--txt);font-size:13px;font-weight:800;padding:10px 14px;border-radius:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">
+        👨‍👩‍👧‍👦 सूर्यसारथी परिवार साधना (Family Hub)
       </button>
 
       <!-- Current User Badge -->
@@ -4923,6 +4988,186 @@ function switchAuthTab(tab) {
         }
       })();
     </script>
+  <!-- ═══════════════════════════════════════════════════════════════════
+       सूर्यसारथी परिवार साधना — FAMILY PASS DASHBOARD MODAL
+       Primary Account Holder Member Progress & Multi-User Family Hub
+  ═══════════════════════════════════════════════════════════════════ -->
+  <div class="ov" id="family-dashboard-ov" style="z-index:450;padding:1rem;overflow-y:auto;justify-content:flex-start;">
+    <div style="width:100%;max-width:440px;margin:auto;">
+      <!-- Top Bar -->
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:22px">👨‍👩‍👧‍👦</span>
+          <div>
+            <div style="background:linear-gradient(135deg,#FFD700,#5DE0A8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:900;font-size:16px;letter-spacing:.02em">
+              सूर्यसारथी परिवार साधना
+            </div>
+            <div style="font-size:10px;color:var(--txt2);font-weight:700">Family Pass Hub · Up to 6 Members</div>
+          </div>
+        </div>
+        <button class="dr-close" onclick="closeFamilyDashboard()" style="font-size:18px">✕</button>
+      </div>
+
+      <!-- Family Header Banner / Info -->
+      <div id="family-status-banner" style="background:linear-gradient(135deg,rgba(245,158,11,0.18),rgba(29,184,127,0.15));border:1.5px solid var(--acc);border-radius:16px;padding:14px;margin-bottom:14px;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+          <div>
+            <div id="family-name-display" style="font-size:16px;font-weight:900;color:var(--txt)">शर्मा परिवार साधना</div>
+            <div id="family-role-display" style="font-size:11px;color:var(--acc-lt);font-weight:700;margin-top:2px">👑 Primary Account Holder</div>
+          </div>
+          <span id="family-plan-badge" style="background:var(--acc-dim);color:var(--acc-lt);border:1px solid var(--acc);font-size:10px;font-weight:800;padding:3px 8px;border-radius:10px;">
+            12-Month Family Pass
+          </span>
+        </div>
+
+        <!-- Family Code Sharing Box -->
+        <div style="background:var(--surf2);border:1px solid var(--bdr);border-radius:12px;padding:10px 12px;margin-top:12px;display:flex;justify-content:space-between;align-items:center;">
+          <div>
+            <div style="font-size:9.5px;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;font-weight:800">Family Invite Code</div>
+            <div id="family-code-text" style="font-size:17px;font-weight:900;color:#FBBF24;letter-spacing:0.1em;font-family:monospace">SURYA-7X9K</div>
+          </div>
+          <div style="display:flex;gap:6px">
+            <button type="button" onclick="copyFamilyCode()" style="background:var(--surf);border:1px solid var(--bdr);color:var(--txt);font-size:11px;font-weight:700;padding:6px 9px;border-radius:8px;cursor:pointer">
+              📋 Copy
+            </button>
+            <button type="button" onclick="shareFamilyCodeWhatsApp()" style="background:linear-gradient(135deg,#25D366,#128C7E);color:#FFF;border:none;font-size:11px;font-weight:800;padding:6px 10px;border-radius:8px;cursor:pointer">
+              📲 Share
+            </button>
+          </div>
+        </div>
+        <div style="font-size:10px;color:var(--txt2);margin-top:6px;line-height:1.3">
+          Share this code with your family members so they can join your Family Pass on their smartphones!
+        </div>
+
+        <!-- Device Switch Safety Indicator -->
+        <div style="background:rgba(6,182,212,0.12);border:1px solid #06B6D4;border-radius:10px;padding:8px 10px;margin-top:10px;display:flex;align-items:center;gap:8px;font-size:10.5px;color:var(--txt2);line-height:1.35">
+          <span style="font-size:16px">📱</span>
+          <div>
+            <strong style="color:#22D3EE">डिव्हाइस बदल सुरक्षित (Device Switch Safe):</strong> मुख्य सदस्याने मोबाइल बदलल्यास नवीन फोनवर लॉगिन करा. इतर सर्व ५ सदस्यांची खाती अखंड सुरू राहतील.
+          </div>
+        </div>
+      </div>
+
+      <!-- Family Aggregate Scorecard (Today & All-Time) -->
+      <div style="background:var(--surf2);border:1px solid var(--bdr);border-radius:14px;padding:12px;margin-bottom:14px;">
+        <div style="font-size:12px;font-weight:800;color:var(--txt);margin-bottom:10px;display:flex;justify-content:space-between">
+          <span>📊 परिवार दैनिक प्रगती (Family Aggregate)</span>
+          <span id="family-active-badge" style="font-size:10px;color:var(--acc-lt);font-weight:700">4 / 5 Active Today</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center">
+          <div style="background:var(--surf);border:1px solid var(--bdr);border-radius:10px;padding:8px 4px">
+            <div id="stat-fam-sets-today" style="font-size:18px;font-weight:900;color:#38BDF8">144</div>
+            <div style="font-size:9.5px;color:var(--muted)">Sets Today</div>
+          </div>
+          <div style="background:var(--surf);border:1px solid var(--bdr);border-radius:10px;padding:8px 4px">
+            <div id="stat-fam-cal-today" style="font-size:18px;font-weight:900;color:#F43F5E">1,280</div>
+            <div style="font-size:9.5px;color:var(--muted)">Calories (kcal)</div>
+          </div>
+          <div style="background:var(--surf);border:1px solid var(--bdr);border-radius:10px;padding:8px 4px">
+            <div id="stat-fam-sets-all" style="font-size:18px;font-weight:900;color:#FBBF24">1,842</div>
+            <div style="font-size:9.5px;color:var(--muted)">All-Time Sets</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Member Progress Cards List -->
+      <div style="margin-bottom:14px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <div style="font-size:13px;font-weight:800;color:var(--txt)">👥 परिवार सदस्य प्रगती (Members)</div>
+          <div id="family-member-count-badge" style="font-size:11px;font-weight:800;color:var(--acc-lt)">5 / 6 Slots</div>
+        </div>
+        <div id="family-members-container" style="display:flex;flex-direction:column;gap:8px">
+          <!-- Dynamically populated member cards -->
+        </div>
+      </div>
+
+      <!-- Primary Account Holder Controls: Add Member (Name + Mobile + Permanent Lock) -->
+      <div id="primary-controls-container" style="background:var(--surf2);border:1.5px solid var(--acc);border-radius:14px;padding:14px;margin-bottom:14px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <div style="font-size:13px;font-weight:900;color:var(--txt)">➕ नवीन कुटुंब सदस्य जोडा (Add Member)</div>
+          <span style="background:rgba(239,68,68,0.15);color:#F87171;border:1px solid #EF4444;font-size:9.5px;font-weight:800;padding:2px 6px;border-radius:6px">🔒 Permanent Slot</span>
+        </div>
+
+        <!-- Strict Lock Policy Warning -->
+        <div style="background:rgba(239,68,68,0.1);border-left:3px solid #EF4444;border-radius:6px;padding:7px 10px;margin-bottom:10px;font-size:10.5px;color:var(--txt2);line-height:1.4">
+          <strong style="color:#F87171">⚠️ महत्त्वाचा नियम:</strong> एकदा सदस्य जोडल्यानंतर हा स्लॉट <strong>कायमस्वरूपी लॉक (Locked)</strong> होईल. नंतर सदस्य बदलता किंवा काढता येणार नाही. कृपया योग्य सदस्याची माहिती भरा.
+        </div>
+
+        <!-- Member Name -->
+        <div style="margin-bottom:8px">
+          <label style="font-size:10.5px;font-weight:800;color:var(--muted);text-transform:uppercase;display:block;margin-bottom:3px">सदस्याचे नाव (Member Full Name)</label>
+          <input type="text" id="add-member-name-input" placeholder="उदा. अनन्या शर्मा (Ananya Sharma)"
+            style="width:100%;background:var(--surf);border:1px solid var(--bdr);color:var(--txt);font-size:12px;padding:8px 10px;border-radius:8px">
+        </div>
+
+        <!-- Mobile Number & Relation -->
+        <div style="display:grid;grid-template-columns:1.4fr 1fr;gap:8px;margin-bottom:12px">
+          <div>
+            <label style="font-size:10.5px;font-weight:800;color:var(--muted);text-transform:uppercase;display:block;margin-bottom:3px">मोबाईल नंबर (10-Digit Mobile)</label>
+            <input type="tel" id="add-member-phone-input" maxlength="10" placeholder="उदा. 9876543210"
+              style="width:100%;background:var(--surf);border:1px solid var(--bdr);color:var(--txt);font-size:12px;padding:8px 10px;border-radius:8px">
+          </div>
+          <div>
+            <label style="font-size:10.5px;font-weight:800;color:var(--muted);text-transform:uppercase;display:block;margin-bottom:3px">नाते (Relation)</label>
+            <select id="add-member-relation-select"
+              style="width:100%;background:var(--surf);border:1px solid var(--bdr);color:var(--txt);font-size:12px;padding:8px 6px;border-radius:8px">
+              <option value="Spouse">पती / पत्नी (Spouse)</option>
+              <option value="Child / Teen">मुलगा / मुलगी (Child/Teen)</option>
+              <option value="Parent / Elder">आई / वडील (Parent/Elder)</option>
+              <option value="Sibling">भाऊ / बहीण (Sibling)</option>
+              <option value="Family Member">इतर कुटुंब सदस्य (Other)</option>
+            </select>
+          </div>
+        </div>
+
+        <button type="button" onclick="submitAddFamilyMember()"
+          style="width:100%;background:linear-gradient(135deg,#1DB87F,#059669);color:#FFF;border:none;border-radius:10px;padding:10px;font-size:13px;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:0 3px 12px rgba(29,184,127,0.3)">
+          🔒 सदस्य जोडा व स्लॉट लॉक करा (Add &amp; Lock Slot)
+        </button>
+      </div>
+
+      <!-- Generated Invitation Share Card -->
+      <div id="family-invite-share-card" style="display:none;background:linear-gradient(135deg,rgba(16,185,129,0.15),rgba(6,182,212,0.12));border:1.5px solid #10B981;border-radius:14px;padding:14px;margin-bottom:14px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <div style="font-size:13px;font-weight:900;color:#10B981">🎉 आमंत्रण संदेश तयार झाला! (Invite Ready)</div>
+          <button type="button" onclick="document.getElementById('family-invite-share-card').style.display='none'" style="background:transparent;border:none;color:var(--txt2);font-size:14px;cursor:pointer">✕</button>
+        </div>
+        <div style="font-size:11px;color:var(--txt2);margin-bottom:10px;line-height:1.4">
+          सदस्य यशस्वीरित्या जोडला गेला आहे व स्लॉट लॉक झाला आहे. खालील बटणावर क्लिक करून थेट <strong>WhatsApp</strong> किंवा <strong>SMS</strong> द्वारे आमंत्रण पाठवा:
+        </div>
+        <textarea id="family-invite-msg-preview" readonly rows="5"
+          style="width:100%;background:var(--surf);border:1px solid var(--bdr);color:var(--txt);font-size:11px;padding:8px;border-radius:8px;resize:none;margin-bottom:10px;font-family:inherit"></textarea>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
+          <button type="button" id="btn-share-invite-wa" onclick="sendInviteWhatsApp()"
+            style="background:linear-gradient(135deg,#25D366,#128C7E);color:#FFF;border:none;border-radius:8px;padding:8px 4px;font-size:11px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px">
+            📲 WhatsApp
+          </button>
+          <button type="button" id="btn-share-invite-sms" onclick="sendInviteSMS()"
+            style="background:linear-gradient(135deg,#0284C7,#0369A1);color:#FFF;border:none;border-radius:8px;padding:8px 4px;font-size:11px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px">
+            💬 Direct SMS
+          </button>
+          <button type="button" onclick="copyInviteMessage()"
+            style="background:var(--surf);border:1px solid var(--bdr);color:var(--txt);border-radius:8px;padding:8px 4px;font-size:11px;font-weight:800;cursor:pointer">
+            📋 Copy Text
+          </button>
+        </div>
+      </div>
+
+      <!-- Upgrade to Family Pass Promotional CTA (if not on Family plan) -->
+      <div id="family-upgrade-cta" style="display:none;background:linear-gradient(135deg,rgba(245,158,11,0.15),rgba(29,184,127,0.15));border:1.5px solid #F59E0B;border-radius:14px;padding:14px;text-align:center;margin-bottom:14px">
+        <div style="font-size:15px;font-weight:900;color:#FBBF24;margin-bottom:4px">🌟 Get SuryaSarathi Family Pass</div>
+        <div style="font-size:11.5px;color:var(--txt2);margin-bottom:10px;line-height:1.4">
+          One pass unlocks unlimited 108 Surya Namaskara tracking for up to 6 family members! Only ₹25/mo per member.
+        </div>
+        <button type="button" onclick="showPaywallOverlay('family')"
+          style="background:linear-gradient(135deg,#F59E0B,#D97706);color:#070B14;border:none;border-radius:10px;padding:9px 16px;font-size:13px;font-weight:900;cursor:pointer">
+          Upgrade to Family Pass (From ₹999)
+        </button>
+      </div>
+
+    </div>
+  </div>
+
 </body>
 
 </html>
