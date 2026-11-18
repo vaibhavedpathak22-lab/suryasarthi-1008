@@ -470,10 +470,67 @@ function loadAll() {
         Object.keys(data.history).forEach(k => {
           data.history[k] = normRec(data.history[k]);
         });
-        // totalAllTime, totalTimeMs, today's sets and time are AUTHORITATIVE
-        // as stored — never recompute, never override. completeSet() is the
-        // only function allowed to increment these.
       }
+
+      // ── PERMANENT ANTI-DATA-LOSS MULTI-VERSION MERGE ─────────────
+      // ALWAYS inspect ALL localStorage keys, previous versions & immutable backups
+      // to ensure historical sets, days, and total counts are 100% preserved and NEVER reset to 0!
+      const candidateKeys = new Set(OLD_KEYS);
+      candidateKeys.add("surya_vault_backup");
+      candidateKeys.add("surya_history_backup");
+      try {
+        for (let i = 0; i < localStorage.length; i++) {
+          const lk = localStorage.key(i);
+          if (lk && (lk.startsWith("surya-") || lk.startsWith("suryasarthi") || lk.startsWith("surya_"))) {
+            candidateKeys.add(lk);
+          }
+        }
+      } catch(e) {}
+
+      for (const ok of candidateKeys) {
+        if (ok === KEY) continue;
+        try {
+          const r = localStorage.getItem(ok);
+          if (r) {
+            const p = parseSave(r);
+            if (p && p.data) {
+              if ((p.data.totalAllTime || 0) > (data.totalAllTime || 0)) {
+                data.totalAllTime = p.data.totalAllTime;
+              }
+              if ((p.data.totalTimeMs || 0) > (data.totalTimeMs || 0)) {
+                data.totalTimeMs = p.data.totalTimeMs;
+              }
+              if (p.data.history && typeof p.data.history === "object") {
+                Object.keys(p.data.history).forEach(date => {
+                  const rec = normRec(p.data.history[date]);
+                  if (!data.history[date]) {
+                    data.history[date] = rec;
+                  } else {
+                    data.history[date].sets = Math.max(data.history[date].sets || 0, rec.sets || 0);
+                    data.history[date].timeMs = Math.max(data.history[date].timeMs || 0, rec.timeMs || 0);
+                    if (!data.history[date].goal && rec.goal) data.history[date].goal = rec.goal;
+                  }
+                });
+              }
+            }
+          }
+        } catch(e) {}
+      }
+
+      // Guarantee totalAllTime is never less than sum of historical days
+      const histSum = Object.values(data.history || {}).reduce((acc, h) => {
+        const s = (typeof h === "number") ? h : (h && h.sets ? h.sets : 0);
+        return acc + s;
+      }, 0);
+      if (histSum > (data.totalAllTime || 0)) {
+        data.totalAllTime = histSum;
+      }
+
+      // Save an immediate redundant safety backup
+      try {
+        localStorage.setItem(KEY, JSON.stringify({ cfg, data }));
+        localStorage.setItem("surya_vault_backup", JSON.stringify({ cfg, data }));
+      } catch(e) {}
 
     } else {
       // ── First-time load with new key — one-time migration from old keys ──
@@ -573,10 +630,10 @@ function loadAll() {
           // Save under new key immediately
           try { localStorage.setItem(KEY, JSON.stringify({cfg, data})); } catch(e){}
 
-          // Delete old keys — migration runs exactly once
-          for(const s of allRaws) {
-            try { localStorage.removeItem(s.key); } catch(e){}
-          }
+          // Retain old keys as local backups — NEVER wipe user historical keys!
+          // for(const s of allRaws) {
+          //   try { localStorage.removeItem(s.key); } catch(e){}
+          // }
         }
       }
     }
@@ -641,8 +698,10 @@ function loadAll() {
   if (typeof applyTheme === "function") applyTheme(cfg.theme || "vaikuntha_amrita");
 }
 function saveAll() {
-  try { localStorage.setItem(KEY, JSON.stringify({cfg,data})); }
-  catch(e){ setStatus("Storage full"); }
+  try {
+    localStorage.setItem(KEY, JSON.stringify({cfg,data}));
+    localStorage.setItem("surya_vault_backup", JSON.stringify({cfg,data}));
+  } catch(e){ setStatus("Storage full"); }
   if (typeof syncToSQLite === "function") syncToSQLite();
 }
 
@@ -2013,6 +2072,10 @@ function render() {
   const tomorrowG = Math.min(goal + (cfg.dailyIncrease || 4), cfg.maxSets);
 
   // Stats row
+  const calculatedHistSum = Object.values(data.history || {}).reduce((acc, h) => acc + ((typeof h === "number") ? h : (h && h.sets) ? h.sets : 0), 0);
+  if (calculatedHistSum > (data.totalAllTime || 0)) {
+    data.totalAllTime = calculatedHistSum;
+  }
   const sToday = document.getElementById("s-today"); if(sToday) sToday.textContent = done;
   const sGoal = document.getElementById("s-goal"); if(sGoal) sGoal.textContent = isGoalLocked ? (tomorrowG + " 🔒") : goal;
   const sStreak = document.getElementById("s-streak"); if(sStreak) sStreak.textContent = computeStreak();
@@ -5130,63 +5193,18 @@ window.startPracticeFromCompanion = startPracticeFromCompanion;
 /* ═══════════════════════════════════════════════════════════════
    IN-APP BILLING — Google Play / Digital Goods API
    Product IDs matching Google Play Console:
-     surya.pass.1month   — One-Month Pass (non-renewing, ₹129)
-     surya.sub.3month    — 3-Month auto-renewing subscription (₹349)
-     surya.sub.6month    — 6-Month auto-renewing subscription (₹599)
-     surya.sub.12month   — 12-Month auto-renewing subscription (₹999)
-     surya.family.6month — 6-Month Family Pass (Up to 6 accounts, ₹999)
-     surya.family.12month— 12-Month Annual Family Pass (Up to 6 accounts, ₹1,499)
+     surya.pass.1month  — One-Month Pass (non-renewing)
+     surya.sub.6month   — 6-Month auto-renewing subscription
+     surya.sub.12month  — 12-Month auto-renewing subscription
 ═══════════════════════════════════════════════════════════════ */
 var selectedSku = "surya.sub.12month";
 
-function switchPaywallTab(tab) {
-  const indivGroup = document.getElementById("pricing-group-indiv");
-  const familyGroup = document.getElementById("pricing-group-family");
-  const btnIndiv = document.getElementById("tab-btn-indiv");
-  const btnFamily = document.getElementById("tab-btn-family");
-
-  if (tab === "family") {
-    if (indivGroup) indivGroup.style.display = "none";
-    if (familyGroup) familyGroup.style.display = "flex";
-    if (btnFamily) {
-      btnFamily.style.background = "linear-gradient(135deg,#F59E0B,#D97706)";
-      btnFamily.style.color = "#070B14";
-    }
-    if (btnIndiv) {
-      btnIndiv.style.background = "transparent";
-      btnIndiv.style.color = "var(--txt2)";
-    }
-    selectSubTier("surya.family.12month");
-  } else {
-    if (familyGroup) familyGroup.style.display = "none";
-    if (indivGroup) indivGroup.style.display = "flex";
-    if (btnIndiv) {
-      btnIndiv.style.background = "linear-gradient(135deg,#1DB87F,#059669)";
-      btnIndiv.style.color = "#FFF";
-    }
-    if (btnFamily) {
-      btnFamily.style.background = "transparent";
-      btnFamily.style.color = "var(--txt2)";
-    }
-    selectSubTier("surya.sub.12month");
-  }
-}
-
 function selectSubTier(sku) {
   selectedSku = sku;
-  const cards = [
-    { id: "sub-card-1month", match: sku === "surya.pass.1month" },
-    { id: "sub-card-3month", match: sku === "surya.sub.3month" },
-    { id: "sub-card-6month", match: sku === "surya.sub.6month" },
-    { id: "sub-card-12month", match: sku === "surya.sub.12month" },
-    { id: "sub-card-fam-6month", match: sku === "surya.family.6month" },
-    { id: "sub-card-fam-12month", match: sku === "surya.family.12month" }
-  ];
-
-  cards.forEach(c => {
-    const el = document.getElementById(c.id);
-    if (el) {
-      if (c.match) {
+  ["1month", "3month", "6month", "12month"].forEach(t => {
+    const el = document.getElementById("sub-card-" + t);
+    if(el) {
+      if(sku.includes(t)) {
         el.style.borderColor = "#FBBF24";
         el.style.borderWidth = "2.5px";
         el.style.background = "rgba(245,158,11,0.12)";
@@ -5216,14 +5234,12 @@ async function executePlayPurchase() {
 
   try {
     const priceMap = {
-      "surya.pass.1month": "129",
-      "surya.sub.3month": "349",
-      "surya.sub.6month": "599",
-      "surya.sub.12month": "999",
-      "surya.family.6month": "999",
-      "surya.family.12month": "1499"
+      "surya.pass.1month": "99",
+      "surya.sub.3month": "269",
+      "surya.sub.6month": "479",
+      "surya.sub.12month": "749"
     };
-    const price = priceMap[selectedSku] || "999";
+    const price = priceMap[selectedSku] || "749";
 
     // 1. Digital Goods API for Android TWA (Google Play Store App)
     if ("getDigitalGoodsService" in window) {
@@ -5267,13 +5283,8 @@ async function executePlayPurchase() {
   }
 }
 
-function showPaywallOverlay(initialTab) {
+function showPaywallOverlay() {
   renderSubOverlayUI();
-  if (initialTab === "family") {
-    switchPaywallTab("family");
-  } else {
-    switchPaywallTab("indiv");
-  }
   const ov = document.getElementById("paywall-ov");
   if(ov) ov.classList.add("show");
 }
@@ -5337,15 +5348,15 @@ function getSubscriptionInfo() {
     return { active: false, daysLeft: 0, isExpired: false, isExpiringSoon: false };
   }
   const start = new Date(data.subDate);
-  const sku = data.subSku || "surya.sub.12month";
-  const isFamily = sku.includes("family");
+  const sku = data.subSku || "surya.sub.6month";
   const is12m = sku.includes("12month");
   const is6m  = sku.includes("6month");
-  const is3m  = sku.includes("3month");
   const is1m  = sku.includes("pass.1month") || sku.includes("1month");
 
-  const durationDays = is12m ? 365 : (is6m ? 180 : (is3m ? 90 : 30));
-  const autoRenew = is6m || is12m || is3m;
+  const durationDays = is12m ? 365 : (is6m ? 180 : 30);
+  // 1-Month Plan = One-Time Pass (No Auto-Renew)
+  // 6-Month & 12-Month Plans = Auto-Renewing Subscriptions via Google Play Store
+  const autoRenew = is6m || is12m;
 
   const end = new Date(start.getTime() + durationDays * 86400000);
   const now = new Date();
@@ -5353,25 +5364,11 @@ function getSubscriptionInfo() {
   const daysLeft = Math.max(0, Math.ceil(diffMs / 86400000));
   const active = diffMs > 0;
 
-  let planName = "12-Month Annual Pass";
-  if (isFamily) {
-    planName = is12m ? "12-Month Family Pass (6 Members)" : "6-Month Family Pass (6 Members)";
-  } else if (is12m) {
-    planName = "12-Month Annual Pass";
-  } else if (is6m) {
-    planName = "6-Month Subscription Plan";
-  } else if (is3m) {
-    planName = "3-Month Subscription Plan";
-  } else {
-    planName = "1-Month Pass";
-  }
-
   const opt = { month: 'short', day: 'numeric', year: 'numeric' };
   return {
     active,
     sku,
-    isFamily,
-    planName,
+    planName: is12m ? "12-Month Annual Pass" : (is6m ? "6-Month Subscription Plan" : "1-Month Pass"),
     startDateStr: start.toLocaleDateString(undefined, opt),
     endDateStr: end.toLocaleDateString(undefined, opt),
     daysLeft,
@@ -6455,8 +6452,19 @@ function updateUserBadgeUI() {
   }
 }
 
+let isSQLiteSynced = false;
+
 async function syncToSQLite() {
   if (!authToken || !currentUser) return;
+
+  // ANTI-DATA-LOSS GUARD:
+  // Never push empty data (0 sets) to SQLite if initial sync from server hasn't completed yet!
+  const hasLocalSets = (data.totalAllTime > 0) || Object.values(data.history || {}).some(h => ((typeof h === 'number' ? h : (h && h.sets)) || 0) > 0);
+  if (!isSQLiteSynced && !hasLocalSets) {
+    console.log("[Sync] Waiting for initial SQLite sync before saving to avoid overwriting existing history");
+    return;
+  }
+
   try {
     await fetch(`${getApiBase()}/api/data`, {
       method: "POST",
@@ -6477,6 +6485,7 @@ async function syncFromSQLite() {
     });
     const jsonRes = await res.json();
     if (jsonRes.success && jsonRes.data) {
+      isSQLiteSynced = true;
       if (jsonRes.cfg) {
         Object.assign(cfg, jsonRes.cfg);
         if (typeof applyTheme === "function") applyTheme(cfg.theme || "vaikuntha_amrita");
@@ -6489,6 +6498,7 @@ async function syncFromSQLite() {
           } else {
             data.history[dKey].sets = Math.max(data.history[dKey].sets || 0, remoteRec.sets || 0);
             data.history[dKey].timeMs = Math.max(data.history[dKey].timeMs || 0, remoteRec.timeMs || 0);
+            if (!data.history[dKey].goal && remoteRec.goal) data.history[dKey].goal = remoteRec.goal;
           }
         });
       }
@@ -6497,6 +6507,22 @@ async function syncFromSQLite() {
       }
       data.totalAllTime = Math.max(data.totalAllTime || 0, jsonRes.data.totalAllTime || 0);
       data.totalTimeMs = Math.max(data.totalTimeMs || 0, jsonRes.data.totalTimeMs || 0);
+
+      // Verify totalAllTime is never less than sum of historical sets
+      const histSum = Object.values(data.history || {}).reduce((acc, h) => {
+        const s = (typeof h === "number") ? h : (h && h.sets ? h.sets : 0);
+        return acc + s;
+      }, 0);
+      if (histSum > data.totalAllTime) {
+        data.totalAllTime = histSum;
+      }
+
+      // Persist merged authoritative data to localStorage so device NEVER resets
+      try {
+        localStorage.setItem(KEY, JSON.stringify({ cfg, data }));
+        localStorage.setItem("surya_vault_backup", JSON.stringify({ cfg, data }));
+      } catch(e){}
+
       render();
       renderBars();
     }
@@ -6893,417 +6919,3 @@ window.addEventListener("popstate", function(event) {
 });
 
 try { history.pushState({ app: "suryasarthi" }, ""); } catch(e){}
-
-
-/* ═══════════════════════════════════════════════════════════════
-   सूर्यसारथी परिवार साधना — FAMILY PASS DASHBOARD CONTROLLER
-   Primary Account Holder Progress Tracking & Family Code Linking
-═══════════════════════════════════════════════════════════════ */
-var currentFamilyData = null;
-
-function openFamilyDashboard() {
-  const ov = document.getElementById("family-dashboard-ov");
-  if(ov) ov.classList.add("show");
-  fetchFamilyDashboard();
-}
-
-function closeFamilyDashboard() {
-  const ov = document.getElementById("family-dashboard-ov");
-  if(ov) ov.classList.remove("show");
-}
-
-async function fetchFamilyDashboard() {
-  const token = (typeof currentAuthToken !== "undefined" && currentAuthToken) ? currentAuthToken : (data.sessionToken || "");
-  let famInfo = null;
-
-  if (token) {
-    try {
-      const res = await fetch("/api/family/dashboard", {
-        headers: { "Authorization": "Bearer " + token }
-      });
-      if (res.ok) {
-        const json = await res.json();
-        if (json.success && json.in_family) {
-          famInfo = json;
-        }
-      }
-    } catch (e) {
-      console.warn("Family dashboard fetch fallback to local:", e);
-    }
-  }
-
-  // Fallback to local / mock family data so Primary Account Holder can immediately view progress
-  if (!famInfo) {
-    const curName = (data.userProfile && data.userProfile.name) || (typeof currentUserName !== "undefined" && currentUserName) || "Rajesh Sharma";
-    const curSets = (data.history && data.history[getTodayDateStr()] && data.history[getTodayDateStr()].sets) || 36;
-    const curGoal = data.baseGoal || 36;
-    const curCal  = Math.round((curSets * 0.1) * 8.0 * ((data.userProfile?.weight || 68) / 60.0) * 12.0);
-
-    famInfo = {
-      success: true,
-      in_family: true,
-      is_primary: true,
-      family: {
-        family_name: curName.split(" ")[0] + " Parivar Sadhana",
-        family_code: "SURYA-7X9K",
-        plan_sku: data.subSku && data.subSku.includes("family") ? data.subSku : "surya.family.12month",
-        max_members: 6,
-        members_count: 5
-      },
-      totals: {
-        family_sets_today: curSets + 108,
-        family_calories_today: curCal + 940,
-        family_sets_all_time: (data.totalAllTime || 432) + 1410,
-        active_members_today: 4,
-        total_members: 5,
-        slots_remaining: 1
-      },
-      members: [
-        {
-          id: 1,
-          name: curName,
-          username: "primary_holder",
-          relation: "Primary Account Holder",
-          role: "primary",
-          is_primary: true,
-          age: data.userProfile?.age || 40,
-          weight: data.userProfile?.weight || 72.0,
-          height: data.userProfile?.height || 172.0,
-          today_sets: curSets,
-          today_goal: curGoal,
-          today_calories: curCal,
-          all_time_sets: data.totalAllTime || 432,
-          active_today: true
-        },
-        {
-          id: 2,
-          name: "Sunita Sharma",
-          username: "sunita_s",
-          relation: "Spouse",
-          role: "member",
-          is_primary: false,
-          age: 38,
-          weight: 62.0,
-          height: 160.0,
-          today_sets: 36,
-          today_goal: 36,
-          today_calories: 285.4,
-          all_time_sets: 380,
-          active_today: true
-        },
-        {
-          id: 3,
-          name: "Aarav Sharma",
-          username: "aarav_bal_yogi",
-          relation: "Child / Teen",
-          role: "member",
-          is_primary: false,
-          age: 14,
-          weight: 42.0,
-          height: 154.0,
-          today_sets: 48,
-          today_goal: 36,
-          today_calories: 322.0,
-          all_time_sets: 520,
-          active_today: true
-        },
-        {
-          id: 4,
-          name: "Ananya Sharma",
-          username: "ananya_s",
-          relation: "Child / Teen",
-          role: "member",
-          is_primary: false,
-          age: 16,
-          weight: 48.0,
-          height: 158.0,
-          today_sets: 24,
-          today_goal: 36,
-          today_calories: 198.5,
-          all_time_sets: 290,
-          active_today: true
-        },
-        {
-          id: 5,
-          name: "Ramchandra Sharma",
-          username: "dada_ramchandra",
-          relation: "Parent / Elder",
-          role: "member",
-          is_primary: false,
-          age: 68,
-          weight: 65.0,
-          height: 168.0,
-          today_sets: 0,
-          today_goal: 12,
-          today_calories: 0.0,
-          all_time_sets: 220,
-          active_today: false
-        }
-      ]
-    };
-  }
-
-  currentFamilyData = famInfo;
-  renderFamilyDashboardUI(famInfo);
-}
-
-function renderFamilyDashboardUI(f) {
-  if (!f || !f.in_family) return;
-
-  const fnEl = document.getElementById("family-name-display");
-  if(fnEl) fnEl.textContent = f.family.family_name;
-
-  const roleEl = document.getElementById("family-role-display");
-  if(roleEl) roleEl.innerHTML = f.is_primary ? "👑 Primary Account Holder" : `🪷 Family Member (${f.user_relation || 'Member'})`;
-
-  const codeEl = document.getElementById("family-code-text");
-  if(codeEl) codeEl.textContent = f.family.family_code;
-
-  const skuBadge = document.getElementById("family-plan-badge");
-  if(skuBadge) {
-    const is12m = f.family.plan_sku.includes("12month");
-    skuBadge.textContent = is12m ? "12-Month Family Pass (6 Accounts)" : "6-Month Family Pass (6 Accounts)";
-  }
-
-  const sSetsToday = document.getElementById("stat-fam-sets-today");
-  if(sSetsToday) sSetsToday.textContent = f.totals.family_sets_today;
-
-  const sCalToday = document.getElementById("stat-fam-cal-today");
-  if(sCalToday) sCalToday.textContent = f.totals.family_calories_today.toLocaleString();
-
-  const sSetsAll = document.getElementById("stat-fam-sets-all");
-  if(sSetsAll) sSetsAll.textContent = f.totals.family_sets_all_time.toLocaleString();
-
-  const sActiveBadge = document.getElementById("family-active-badge");
-  if(sActiveBadge) sActiveBadge.textContent = `${f.totals.active_members_today} / ${f.totals.total_members} Active Today`;
-
-  const sSlotsBadge = document.getElementById("family-member-count-badge");
-  if(sSlotsBadge) sSlotsBadge.textContent = `${f.totals.total_members} / ${f.family.max_members} Slots`;
-
-  // Render member cards
-  const container = document.getElementById("family-members-container");
-  if (!container) return;
-
-  container.innerHTML = f.members.map((m) => {
-    const statusColor = m.active_today ? "#10B981" : "var(--muted)";
-    const statusText = m.active_today ? `✓ ${m.today_sets} Sets Done` : "Pending Today";
-    const roleBadge = m.is_primary 
-      ? '<span style="background:rgba(245,158,11,0.2);color:#FBBF24;border:1px solid #F59E0B;font-size:9.5px;font-weight:800;padding:2px 6px;border-radius:6px">👑 PRIMARY</span>'
-      : `<span style="background:var(--surf);color:var(--txt2);border:1px solid var(--bdr);font-size:9.5px;font-weight:700;padding:2px 6px;border-radius:6px">${m.relation}</span>`;
-
-    const lockBadge = m.is_primary
-      ? ''
-      : '<span style="background:rgba(16,185,129,0.15);color:#10B981;border:1px solid #10B981;font-size:9.5px;font-weight:800;padding:2px 6px;border-radius:6px" title="Slot Permanently Locked">🔒 LOCKED</span>';
-
-    return `
-      <div style="background:var(--surf2);border:1px solid ${m.is_primary ? 'var(--acc)' : 'var(--bdr)'};border-radius:12px;padding:10px 12px">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-          <div style="display:flex;align-items:center;gap:6px">
-            <span style="font-size:15px">${m.is_primary ? '👑' : (m.relation.includes('Child') ? '🌟' : (m.relation.includes('Elder') ? '🕉️' : '🪷'))}</span>
-            <div style="font-size:13px;font-weight:800;color:var(--txt)">${m.name}</div>
-            ${roleBadge}
-          </div>
-          <div style="display:flex;align-items:center;gap:6px">
-            <span style="font-size:11px;font-weight:800;color:${statusColor}">${statusText}</span>
-            ${lockBadge}
-          </div>
-        </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;font-size:10.5px;color:var(--txt2);background:var(--surf);padding:6px 8px;border-radius:8px">
-          <div>Today: <strong style="color:var(--txt)">${m.today_sets}/${m.today_goal}</strong> sets</div>
-          <div>Calories: <strong style="color:#F43F5E">${m.today_calories}</strong> kcal</div>
-          <div>All-Time: <strong style="color:#FBBF24">${m.all_time_sets}</strong> sets</div>
-        </div>
-      </div>
-    `;
-  }).join("");
-
-  const ctrlContainer = document.getElementById("primary-controls-container");
-  if(ctrlContainer) {
-    ctrlContainer.style.display = (f.is_primary && f.totals.slots_remaining > 0) ? "block" : "none";
-  }
-}
-
-function copyFamilyCode() {
-  const code = document.getElementById("family-code-text")?.textContent || "SURYA-7X9K";
-  if (navigator.clipboard) {
-    navigator.clipboard.writeText(code).then(() => {
-      alert("📋 Family Invite Code " + code + " copied to clipboard!");
-    }).catch(() => {
-      alert("Invite Code: " + code);
-    });
-  } else {
-    alert("Invite Code: " + code);
-  }
-}
-
-function shareFamilyCodeWhatsApp() {
-  const code = document.getElementById("family-code-text")?.textContent || "SURYA-7X9K";
-  const msg = "☀️ Namaste! Join our Family Surya Namaskara Sadhana on the SuryaSarathi 108 App!\n\nUse Family Invite Code: *" + code + "* to link your account to our Family Pass.\n\nDownload app: https://suryasarthi.app";
-  const url = "https://api.whatsapp.com/send?text=" + encodeURIComponent(msg);
-  window.open(url, "_blank");
-}
-
-var lastGeneratedInvite = {
-  text: "",
-  phone: "",
-  name: ""
-};
-
-async function submitAddFamilyMember() {
-  const nameInput = document.getElementById("add-member-name-input");
-  const phoneInput = document.getElementById("add-member-phone-input");
-  const relSelect = document.getElementById("add-member-relation-select");
-
-  const mName = nameInput ? nameInput.value.trim() : "";
-  const rawPhone = phoneInput ? phoneInput.value.trim() : "";
-  const relation = relSelect ? relSelect.value : "Family Member";
-
-  if (!mName) {
-    alert("कृपया कुटुंब सदस्याचे नाव प्रविष्ट करा (Please enter member full name).");
-    if (nameInput) nameInput.focus();
-    return;
-  }
-
-  const cleanPhone = rawPhone.replace(/\D/g, "").slice(-10);
-  if (!cleanPhone || cleanPhone.length !== 10 || !/^[6-9]/.test(cleanPhone)) {
-    alert("कृपया वैध १०-अंकी भारतीय मोबाईल नंबर टाका (Please enter valid 10-digit mobile number, e.g. 9876543210).");
-    if (phoneInput) phoneInput.focus();
-    return;
-  }
-
-  // Strict Policy Confirmation Notice
-  const confirmMsg = "⚠️ महत्त्वाचा नियम व स्लॉट लॉक सूचना (Permanent Slot Lock):\n\n" +
-    "फॅमिली पासमध्ये \"" + mName + " (" + cleanPhone + ")\" यांना जोडल्यास हा स्लॉट कायमस्वरूपी लॉक होईल.\n\n" +
-    "सबस्क्रिप्शन संपेपर्यंत हा स्लॉट बदलता किंवा काढता येणार नाही.\n\n" +
-    "आपण खात्रीपूर्वक स्लॉट लॉक करू इच्छिता का?";
-  
-  if (!confirm(confirmMsg)) {
-    return;
-  }
-
-  const primaryName = (data.userProfile && data.userProfile.name) || (typeof currentUserName !== "undefined" && currentUserName) || "मुख्य सदस्य";
-  const famCode = (currentFamilyData && currentFamilyData.family && currentFamilyData.family.family_code) || "SURYA-7X9K";
-  const appUrl = "https://play.google.com/store/apps/details?id=com.suryasarthi.app";
-
-  const inviteText = "☀️ सूर्यसारथी १०८ — परिवार साधना आमंत्रण ☀️\n" +
-    "नमस्ते " + mName + "!\n" +
-    primaryName + " यांनी तुम्हाला 'सूर्यसारथी १०८ परिवार साधना' मध्ये जोडले आहे.\n\n" +
-    "🔑 आपला फॅमिली कोड (Family Code): " + famCode + "\n" +
-    "📲 ॲप डाऊनलोड लिंक (Google Play Store):\n" + appUrl + "\n\n" +
-    "👉 ॲक्टिव्हेट करण्याची पद्धत:\n" +
-    "१. वरील लिंकवरून ॲप इन्स्टॉल करून उघडा.\n" +
-    "२. 'परिवार साधना' निवडून फॅमिली कोड \"" + famCode + "\" टाका.\n" +
-    "३. आपला मोफत PRO प्लॅन सक्रिय होईल आणि दैनंदिन सूर्य नमस्कार व प्राणायाम साधना सुरू करा!\n\n" +
-    "(🔒 टीप: हा स्लॉट आपल्यासाठी कायमस्वरूपी सुरक्षित व लॉक करण्यात आला आहे).";
-
-  lastGeneratedInvite = {
-    text: inviteText,
-    phone: cleanPhone,
-    name: mName
-  };
-
-  const token = (typeof currentAuthToken !== "undefined" && currentAuthToken) ? currentAuthToken : (data.sessionToken || "");
-  if (token) {
-    try {
-      const res = await fetch("/api/family/add-member", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
-        body: JSON.stringify({ name: mName, phone: cleanPhone, relation: relation })
-      });
-      const json = await res.json();
-      if (json.success) {
-        showInviteShareCard(inviteText, cleanPhone, mName);
-        if (nameInput) nameInput.value = "";
-        if (phoneInput) phoneInput.value = "";
-        fetchFamilyDashboard();
-        return;
-      } else {
-        alert("⚠️ " + (json.error || "Could not add member."));
-        return;
-      }
-    } catch (e) {
-      console.warn("Server add member error:", e);
-    }
-  }
-
-  // Local fallback
-  if (currentFamilyData && currentFamilyData.members.length < 6) {
-    currentFamilyData.members.push({
-      id: Date.now(),
-      name: mName,
-      username: "fam_" + cleanPhone,
-      relation: relation,
-      role: "member",
-      is_primary: false,
-      age: 25,
-      weight: 60.0,
-      height: 165.0,
-      today_sets: 0,
-      today_goal: 36,
-      today_calories: 0.0,
-      all_time_sets: 0,
-      active_today: false
-    });
-    currentFamilyData.totals.total_members = currentFamilyData.members.length;
-    currentFamilyData.totals.slots_remaining = 6 - currentFamilyData.members.length;
-    renderFamilyDashboardUI(currentFamilyData);
-    showInviteShareCard(inviteText, cleanPhone, mName);
-    if (nameInput) nameInput.value = "";
-    if (phoneInput) phoneInput.value = "";
-  }
-}
-
-function showInviteShareCard(inviteText, phone, name) {
-  const card = document.getElementById("family-invite-share-card");
-  const preview = document.getElementById("family-invite-msg-preview");
-  if (card && preview) {
-    preview.value = inviteText;
-    card.style.display = "block";
-    card.scrollIntoView({ behavior: "smooth", block: "nearest" });
-  }
-  alert("🎉 " + name + " यांना फॅमिली पासमध्ये यशस्वीरित्या जोडले व स्लॉट कायमस्वरूपी लॉक झाला! खालील बटणांवरून थेट WhatsApp किंवा SMS द्वारे आमंत्रण पाठवा.");
-}
-
-function sendInviteWhatsApp() {
-  if (!lastGeneratedInvite.phone) {
-    alert("आमंत्रण माहिती उपलब्ध नाही.");
-    return;
-  }
-  const cleanPhone = "91" + lastGeneratedInvite.phone.replace(/\D/g, "").slice(-10);
-  const url = "https://api.whatsapp.com/send?phone=" + cleanPhone + "&text=" + encodeURIComponent(lastGeneratedInvite.text);
-  window.open(url, "_blank");
-}
-
-function sendInviteSMS() {
-  if (!lastGeneratedInvite.phone) {
-    alert("आमंत्रण माहिती उपलब्ध नाही.");
-    return;
-  }
-  const cleanPhone = "+91" + lastGeneratedInvite.phone.replace(/\D/g, "").slice(-10);
-  const url = "sms:" + cleanPhone + "?body=" + encodeURIComponent(lastGeneratedInvite.text);
-  window.location.href = url;
-}
-
-function copyInviteMessage() {
-  if (!lastGeneratedInvite.text) {
-    const preview = document.getElementById("family-invite-msg-preview");
-    if (preview && preview.value) lastGeneratedInvite.text = preview.value;
-  }
-  if (navigator.clipboard && lastGeneratedInvite.text) {
-    navigator.clipboard.writeText(lastGeneratedInvite.text).then(() => {
-      alert("📋 आमंत्रण संदेश क्लिपबोर्डवर कॉपी झाला! आपण कुठेही पेस्ट करू शकता.");
-    }).catch(() => {
-      alert("आमंत्रण संदेश:
-
-" + lastGeneratedInvite.text);
-    });
-  } else {
-    alert("आमंत्रण संदेश:
-
-" + lastGeneratedInvite.text);
-  }
-}
-
-async function removeFamilyMember(userId) {
-  alert("🔒 नियम व अटी (Strict Policy): एकदा जोडलेला सदस्य स्लॉट सबस्क्रिप्शन संपेपर्यंत कायमस्वरूपी लॉक असतो. सदस्य काढता किंवा बदलता येत नाही (Member slots are permanently locked and cannot be removed or swapped).");
-}
