@@ -1894,19 +1894,7 @@ function finishSession(goalDone) {
       speakGoalCelebrationAppreciation();
     }, 600);
 
-    // Auto-Generate 20s Workout Marketing Reel on Goal Completion
-    setTimeout(() => {
-      if (typeof autoGenerateWorkoutReel === "function") {
-        autoGenerateWorkoutReel({
-          type: isStreakMilestone ? "streak_milestone" : "goal_complete",
-          todaySets: todaySets,
-          totalSets: totalSets,
-          streakDays: streak,
-          name: name,
-          capturedMovements: sess.capturedMovements || []
-        });
-      }
-    }, 1500);
+    // Note: Reel auto-generation deferred until user completes & closes Pranayama/Dhyana session!
 
     if(cfg.pranayamaAuto !== false) {
       setTimeout(()=>startPranaRestTransition(60), 3000);
@@ -3525,8 +3513,9 @@ function skipPranaPhase() {
 function closePranayama() {
   clearPranaTimers();
   try { window.speechSynthesis.cancel(); } catch(e){}
+  let elapsedMs = 0;
   if(pranaState.active) {
-    const elapsedMs = pranaElapsedTotalMs();
+    elapsedMs = pranaElapsedTotalMs();
     const today = todayKey();
     if(!data.history[today]) data.history[today] = { sets:0, timeMs:0, goal:0 };
     data.history[today].pranaMs = (data.history[today].pranaMs || 0) + elapsedMs;
@@ -3540,6 +3529,37 @@ function closePranayama() {
   qClear();
   document.getElementById("prana-ov").classList.remove("show");
   updateDietPlanButtonLockUI();
+
+  // AUTO-GENERATE 30s REEL: Triggered specifically after user closes Dhyana / Pranayama screen!
+  if (cfg.autoReelOn !== false) {
+    setTimeout(() => {
+      if (typeof autoGenerateWorkoutReel === "function") {
+        const today = todayKey();
+        const tSets = (typeof todayDone === "function" && todayDone() > 0) ? todayDone() : 12;
+        const totSets = (typeof data !== "undefined" && data.totalAllTime) ? data.totalAllTime : tSets;
+        const uName = (typeof cfg !== "undefined" && cfg.userName && cfg.userName.trim()) ? cfg.userName : "Vaibhav";
+        const strk = typeof computeStreak === "function" ? computeStreak() : 1;
+        const cal = (typeof todayCalories === "function" && todayCalories() > 0)
+          ? Math.round(todayCalories())
+          : Math.round((8.0 * 3.5 * ((typeof cfg !== "undefined" && cfg.userWeight) || 66)) / 200 * tSets);
+        const tMs = (typeof data !== "undefined" && data.history && data.history[today]) ? (data.history[today].timeMs || 0) : 0;
+        const pMs = (typeof data !== "undefined" && data.history && data.history[today]) ? (data.history[today].pranaMs || 0) : 0;
+        const pMins = Math.max(1, Math.round(pMs / 60000)) || (cfg.pranayamaMinutes || 35);
+
+        autoGenerateWorkoutReel({
+          type: "dhyana_session_complete",
+          todaySets: tSets,
+          totalSets: totSets,
+          streakDays: strk,
+          calories: cal,
+          durationMs: tMs,
+          pranaMs: pMs,
+          pranaMinutes: pMins,
+          name: uName
+        });
+      }
+    }, 600);
+  }
 }
 
 /* ── Pranayama overlay buttons ──────────────────────────────── */
@@ -6727,21 +6747,39 @@ function cleanupOldWorkoutReels() {
 window.cleanupOldWorkoutReels = cleanupOldWorkoutReels;
 
 function handleOpenReelClick() {
+  const tSets = (typeof todayDone === "function" && todayDone() > 0) ? todayDone() : 12;
+  const totSets = (typeof data !== "undefined" && data.totalAllTime) ? data.totalAllTime : tSets;
+  const uName = (typeof cfg !== "undefined" && cfg.userName && cfg.userName.trim()) ? cfg.userName : "Vaibhav";
+  const strk = typeof computeStreak === "function" ? computeStreak() : 1;
+  const cal = (typeof todayCalories === "function" && todayCalories() > 0)
+    ? Math.round(todayCalories())
+    : Math.round((8.0 * 3.5 * ((typeof cfg !== "undefined" && cfg.userWeight) || 66)) / 200 * tSets);
+  const tMs = (typeof data !== "undefined" && data.history && typeof todayKey === "function" && data.history[todayKey()])
+    ? (data.history[todayKey()].timeMs || 0)
+    : 0;
+
+  const pMs = (typeof data !== "undefined" && data.history && data.history[todayKey()])
+    ? (data.history[todayKey()].pranaMs || 0)
+    : 0;
+  const pMins = Math.max(1, Math.round(pMs / 60000)) || (cfg.pranayamaMinutes || 35);
+
+  const payload = {
+    type: "goal_complete",
+    todaySets: tSets,
+    totalSets: totSets,
+    streakDays: strk,
+    calories: cal,
+    durationMs: tMs,
+    pranaMs: pMs,
+    pranaMinutes: pMins,
+    name: uName
+  };
+
   if (window.generatedReelBlob) {
-    showReelSocialModal({
-      type: "goal_complete",
-      todaySets: typeof todayDone === "function" ? todayDone() : 12,
-      totalSets: (typeof data !== "undefined" && data.totalAllTime) ? data.totalAllTime : 108,
-      name: (typeof cfg !== "undefined" && cfg.userName) ? cfg.userName : "Vaibhav"
-    });
+    showReelSocialModal(payload);
   } else if (typeof autoGenerateWorkoutReel === "function") {
     if (typeof setStatus === "function") setStatus("Generating Workout Reel...");
-    autoGenerateWorkoutReel({
-      type: "goal_complete",
-      todaySets: typeof todayDone === "function" ? todayDone() : 12,
-      totalSets: (typeof data !== "undefined" && data.totalAllTime) ? data.totalAllTime : 108,
-      name: (typeof cfg !== "undefined" && cfg.userName) ? cfg.userName : "Vaibhav"
-    });
+    autoGenerateWorkoutReel(payload);
   }
 }
 window.handleOpenReelClick = handleOpenReelClick;
